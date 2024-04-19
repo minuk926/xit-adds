@@ -1,0 +1,14 @@
+app:
+  inf:
+    nims:
+      # 기관명
+      onm: 수지구보건소
+      bssh-cd: TST000543
+      url: https://test.nims.or.kr
+      api-key: 998003699950fa950b798c9edea1b38f3cfbcf3b77e03e419
+      api:
+        bsshinfoStV1: /api/bsshinfo_st_v1.do
+        productinfoKd: /api/productinfo_kd.do
+        seqinfo: /api/seqinfo.do
+        officeinfo: /api/officeinfo.do
+        placeinfoV1: /api/placeinfo_v1.do

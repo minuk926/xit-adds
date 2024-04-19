@@ -1,0 +1,15 @@
+### 마약류취급자정보 조회 ###
+POST {{nims-url}}/api/bsshinfo_st_v1.do
+content-type: application/x-www-form-urlencoded
+
+k={{nims-api-key}}&fg=1&pg=1&bi=1279145372&hp=&bn=&bc=&ymd=&fg2=
+
+### 품목정보_kd ###
+POST {{nims-url}}/api/productinfo_kd.do
+content-type: application/x-www-form-urlencoded
+
+k={{nims-api-key}}&pg=1&fg=1&fg2=&p=&pn=&ymd=
+
+
+
+

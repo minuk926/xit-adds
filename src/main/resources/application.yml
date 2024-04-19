@@ -1,0 +1,158 @@
+server:
+  shutdown: graceful
+  port: 8081
+  tomcat:
+    uri-encoding: UTF-8
+  #    remote-ip-header: x-forwarded-for
+  #    protocol-header: x-forwarded-proto
+  #    internal-proxies: "10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|20\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3}|169\\.254\\.\\d{1,3}\\.\\d{1,3}|127\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|172\\.1[6-9]{1}\\.\\d{1,3}\\.\\d{1,3}|172\\.2[0-9]{1}\\.\\d{1,3}\\.\\d{1,3}|172\\.3[0-1]{1}\\.\\d{1,3}\\.\\d{1,3}|0:0:0:0:0:0:0:1|::1"
+  servlet:
+    context-path:
+    session.timeout: 3600 #sec
+    encoding:
+      enabled: true
+      charset: utf-8
+      force: true
+  #  forward-headers-strategy: FRAMEWORK #NATIVE|FRAMEWORK
+  error:
+    include-exception: on
+    include-stacktrace: always #never|always|on_trace_param
+    include-message: always #never|always|on_trace_param
+    include-binding-errors: always #never|always|on_trace_param
+
+spring:
+  application:
+    name: xit-adds
+  profiles:
+    active: '@springProfilesActive@'
+    include:
+      - app
+      - inf
+  main:
+    allow-bean-definition-overriding: true
+
+  datasource:
+    hikari:
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy #org.mariadb.jdbc.Driver
+      #driver-class-name: org.mariadb.jdbc.Driver
+      jdbc-url: jdbc:log4jdbc:mariadb://211.119.124.9:4407/adds?useUnicode=true&characterEncoding=utf-8&rewriteBatchedStatements=true&autoReconnect=true
+      #jdbc-url: jdbc:mariadb://211.119.124.9:4407/egov?useUnicode=true&characterEncoding=utf-8&rewriteBatchedStatements=true&autoReconnect=true
+      username: addsweb
+      password: addsweb1234
+      auto-commit: false
+  #      read-only: false
+
+  security:
+    user:
+      name: admin
+      password: admin
+  mvc:
+    static-path-pattern: /resources/static/**
+    log-request-details: false
+  web:
+    resources:
+      static-locations: /resources/
+
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+messageSource:
+  basenames:
+    - classpath:org/egovframe/rte/fdl/property/messages/properties
+    - classpath:messages/message-common
+
+propertyService:
+  properties:
+    - tempDir: d:\temp
+    - pageUnit: 10
+    - pageSize: 10
+    - permitAccess:
+        - /swagger-ui.html
+        - /swagger-ui/**
+        - /swagger-resources/**
+        - /v2/api-docs
+        - /webjars/**
+        - /zxing/**
+#  extFileName:
+#    - encoding: UTF-8
+#      filename: classpath*:intf-conf/xit-lvis.properties
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    csrf:
+      enabled: false
+
+#app:
+#api-ip: 211.119.124.73
+# \uAC15\uC81C\uB85C swagger-url\uC744 \uC9C0\uC815\uD574\uC57C \uD558\uB294 \uACBD\uC6B0\uB9CC \uC120\uC5B8
+#swagger-url: 'http://localhost:${server.port}${server.servlet.context-path:}/'
+
+# ==================================================================================================================
+# SQL logging lib setting
+# ==================================================================================================================
+#decorator:
+#  datasource:
+#    p6spy:
+#      enable-logging: true
+
+logging:
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([%18.18thread]){magenta}[traceId=%X{request_trace_id}] %clr([%-35.35logger{35}::%-25.25method{25}:%4line]){cyan} %clr(%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}){faint}'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} [%18.18thread][traceId=%X{request_trace_id}] [%-35.35logger{35}::%-25.25method{25}:%4line] %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}'
+  level:
+    root: info
+    web: debug
+    cokr.xit: debug
+    log4jdbc.log4j2: info
+  #    org.springframework.jdbc.core: debug
+  #    org.springframework.jdbc.connection.init: debug
+  # log file
+  file:
+    path: ${app.data.root.path}/logs
+    name: ${spring.application.name}
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  #  h2:
+  #    console:
+  #      enabled: true
+  #      path: /h2-console
+  #      settings:
+  #        trace: false
+  #        web-allow-others: true
+
+  sql:
+    init:
+      mode: never # embedded | always | never
+      schema-locations: classpath:db-init/schema.sql
+  #      data-locations: classpath:db-init/data.sql
+
+#  datasource:
+#    hikari:
+#      driver-class-name: org.h2.Driver
+#      jdbc-url: jdbc:h2:~/test;AUTO_SERVER=true;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+#      #      jdbc-url: jdbc:h2:mem:xitdb;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+#      #jdbc-url: jdbc:h2:tcp://localhost:9092/mem:testdb;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+#      username: sa
+#      password:
+#      auto-commit: false
+#      read-only: false
+
+app:
+  log:
+    parameter-enabled: true
+    response-enabled: true
+    mdc:
+      enabled: false
+      # batch 실행 url 제외 패턴
+      exclude-patterns: '/api/batch/(.*), /api/batch/v1/*Bulks(.*)'

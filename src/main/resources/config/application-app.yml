@@ -1,0 +1,27 @@
+app:
+  data:
+    root:
+      path: d:/data
+  # 암호화 알고리즘
+  encrypt:
+    alg: SHA-256
+    passwd: gdyYs/IZqY86VcWhT8emCYfqY1ahw2vtLG+/FzNqtrQ=
+  jasypt:
+    secretKey: xit5811807!@
+    alg: PBEWithMD5AndDES
+    type: base64
+  token:
+    typ: JWT
+    alg: HS512
+    grant: Bearer
+    issuer: xit
+    audience: ${spring.application.name}
+    # day
+    tokenExpiry: 1
+    # day
+    refreshTokenExpiry: 7
+    apiKey: lf2McyT3V5gDu2pNNm4VxmX3C2mezX3s
+    #secretKey: 8sknjlO3NPTBqo319DHLNqsQAfRJEdKsETOds
+    secretKey: a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
+    # 토큰 재발급시 토큰(refresh) 전달 방식 : COOKIE | HEADER | DTO
+    saveType: HEADER
