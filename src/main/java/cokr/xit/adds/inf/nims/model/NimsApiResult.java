@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * <pre>
@@ -44,57 +45,9 @@ public class NimsApiResult<T> {
     @JsonProperty(value = "response", required = true)
     private Response<T> response;
 
-    /**
-     * API call 성공시 결과 목록 return
-     * 실패시 ApiCustomException throw
-     * 결과 코드: 0-성공, 1-실패, 8-인증완료, 9-인증실패
-     * @return List<T> or throw ApiCustomException
-     */
-    @JsonIgnore
-    public List<T> getResultOrThrow() {
-        if(!ObjectUtils.isEmpty(getResult())) return getResult();
-        if(response.header.resultCd == 0 || response.header.resultCd == 8){
-            throw ApiCustomException.create(ResultCode.NO_CONTENT);
-        }
-        throw Objects.requireNonNull(ApiCustomException.of(response.header));
-    }
-
-    /**
-     * API call 성공시 결과 목록 return
-     * 실패시 null return
-     * 결과 코드: 0-성공, 1-실패, 8-인증완료, 9-인증실패
-     * @return List<T> or null
-     */
-    @JsonIgnore
-    public List<T> getResultOrNull() {
-        return getResult();
-    }
-
-    /**
-     * Header 정보 return
-     * @return Header
-     */
-    public Header getHeader() {
-        return response.header;
-    }
-
-    /**
-     * Body 정보 return
-     * @return Body<T>
-     */
-    public Body<T> getBody() {
-        return response.body;
-    }
-
-    private List<T> getResult() {
-        if(response.header.resultCd == 0 || response.header.resultCd == 8) {
-            return response.body.list;
-        }
-        return null;
-    }
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -106,10 +59,44 @@ public class NimsApiResult<T> {
         @Schema(description = "body", requiredMode = REQUIRED)
         @JsonProperty(value = "body", required = true)
         private Body<T> body;
+
+        /**
+         * API call 성공시 결과 목록 return
+         * 실패시 ApiCustomException throw
+         * 결과 코드: 0-성공, 1-실패, 8-인증완료, 9-인증실패
+         * @return List<T> or throw ApiCustomException
+         */
+        @JsonIgnore
+        public List<T> getResultOrThrow() {
+            if(!ObjectUtils.isEmpty(getResult())) return getResult();
+            if(header.resultCd == 0 || header.resultCd == 8){
+                throw ApiCustomException.create(ResultCode.NO_CONTENT);
+            }
+            throw Objects.requireNonNull(ApiCustomException.of(header));
+        }
+
+        /**
+         * API call 성공시 결과 목록 return
+         * 실패시 null return
+         * 결과 코드: 0-성공, 1-실패, 8-인증완료, 9-인증실패
+         * @return List<T> or null
+         */
+        @JsonIgnore
+        public List<T> getResultOrNull() {
+            return getResult();
+        }
+
+        private List<T> getResult() {
+            if(header.resultCd == 0 || header.resultCd == 8) {
+                return body.list;
+            }
+            return null;
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -128,6 +115,7 @@ public class NimsApiResult<T> {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder

@@ -12,3 +12,4 @@ app:
         seqinfo: /api/seqinfo.do
         officeinfo: /api/officeinfo.do
         placeinfoV1: /api/placeinfo_v1.do
+        reportinfo: /api/reportinfo_ggg.do

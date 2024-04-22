@@ -1,5 +1,7 @@
 package cokr.xit.adds.inf.nims.service.bean;
 
+import java.util.List;
+
 import javax.validation.Validation;
 import javax.validation.Validator;
 
@@ -17,7 +19,6 @@ import cokr.xit.adds.inf.nims.model.NimsApiResult;
 import cokr.xit.adds.inf.nims.service.InfNimsService;
 import cokr.xit.foundation.component.AbstractServiceBean;
 import cokr.xit.foundation.data.JSON;
-import cokr.xit.foundation.web.WebClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,7 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsService {
 	private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-	private static WebClient webClient = new WebClient();
 	private static JSON json = new JSON();
 
 	@Value("${app.inf.nims.url}")
@@ -56,6 +56,9 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 	@Value("${app.inf.nims.api.productinfoKd}")
 	private String productinfoKd;
 
+	@Value("${app.inf.nims.api.reportinfo}")
+	private String reportinfo;
+
 	@Value("${app.inf.nims.api.seqinfo}")
 	private String seqinfo;
 
@@ -67,7 +70,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 	@Override
 	@TraceLogging
-	public NimsApiResult<NimsApiDto.BsshInfoSt> getBsshInfoSt(NimsApiRequest.BsshInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.BsshInfoSt> getBsshInfoSt(NimsApiRequest.BsshInfoRequest dto) {
 		dto.setK(nimsApiKey);
 		ApiUtil.validate(dto, null, validator);
 		if(isEmpty(dto.getBi()) && isEmpty(dto.getHp()) && isEmpty(dto.getBn()) && isEmpty(dto.getBc())) {
@@ -75,35 +78,38 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 		}
 		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
 
-		String result = ApiUtil.callNimsApi(nimsUrl + bsshInfoStV1, dto);
-		return json.parse(result, new TypeReference<NimsApiResult<NimsApiDto.BsshInfoSt>>() {});
+		String rslt = ApiUtil.callNimsApi(nimsUrl + bsshInfoStV1, dto);
+		NimsApiResult<NimsApiDto.BsshInfoSt> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.BsshInfoSt>>() {});
+		return result.getResponse();
 	}
 
 	@Override
 	@TraceLogging
-	public NimsApiResult<NimsApiDto.ProductInfoKd> getProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.ProductInfoKd> getProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
 		dto.setK(nimsApiKey);
 		ApiUtil.validate(dto, null, validator);
 		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
 
-		String result = ApiUtil.callNimsApi(nimsUrl + productinfoKd, dto);
-		return json.parse(result, new TypeReference<NimsApiResult<NimsApiDto.ProductInfoKd>>() {});
+		String rslt = ApiUtil.callNimsApi(nimsUrl + productinfoKd, dto);
+		NimsApiResult<NimsApiDto.ProductInfoKd> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.ProductInfoKd>>() {});
+		return result.getResponse();
 	}
 
 	@Override
 	@TraceLogging
-	public NimsApiResult<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
 		dto.setK(nimsApiKey);
 		ApiUtil.validate(dto, null, validator);
 		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
 
-		String result = ApiUtil.callNimsApi(nimsUrl + seqinfo, dto);
-		return json.parse(result, new TypeReference<NimsApiResult<NimsApiDto.MnfSeqInfo>>() {});
+		String rslt = ApiUtil.callNimsApi(nimsUrl + seqinfo, dto);
+		NimsApiResult<NimsApiDto.MnfSeqInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.MnfSeqInfo>>() {});
+		return result.getResponse();
 	}
 
 	@Override
 	@TraceLogging
-	public NimsApiResult<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(
+	public NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(
 		NimsApiRequest.JurisdictionGovInfoRequest dto) {
 		dto.setK(nimsApiKey);
 		ApiUtil.validate(dto, null, validator);
@@ -111,13 +117,14 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			throw ApiCustomException.create("필수 파라메터 에러(ocd-기관 코드, onm-기관명, adr-주소 중 하나는 필수)");
 		}
 
-		String result = ApiUtil.callNimsApi(nimsUrl + officeinfo, dto);
-		return json.parse(result, new TypeReference<NimsApiResult<NimsApiDto.JurisdictionGovInfo>>() {});
+		String rslt = ApiUtil.callNimsApi(nimsUrl + officeinfo, dto);
+		NimsApiResult<NimsApiDto.JurisdictionGovInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.JurisdictionGovInfo>>() {});
+		return result.getResponse();
 	}
 
 	@Override
 	@TraceLogging
-	public NimsApiResult<NimsApiDto.StorageInfo> getStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.StorageInfo> getStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
 		dto.setK(nimsApiKey);
 		ApiUtil.validate(dto, null, validator);
 		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
@@ -127,8 +134,87 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			}
 		}
 
-		String result = ApiUtil.callNimsApi(nimsUrl + placeinfoV1, dto);
-		return json.parse(result, new TypeReference<NimsApiResult<NimsApiDto.StorageInfo>>() {});
+		String rslt = ApiUtil.callNimsApi(nimsUrl + placeinfoV1, dto);
+		NimsApiResult<NimsApiDto.StorageInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.StorageInfo>>() {});
+		return result.getResponse();
+	}
+
+	@Override
+	public NimsApiResult.Response<NimsApiDto.DsuseRpt> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto) {
+		dto.setK(nimsApiKey);
+		ApiUtil.validate(dto, null, validator);
+		ApiUtil.checkYmdError(dto.getSdt(), "sdt");
+		ApiUtil.checkYmdError(dto.getEdt(), "edt");
+
+		//String rslt = ApiUtil.callNimsApi(nimsUrl + reportinfo, dto);
+		//NimsApiResult<NimsApiDto.DsuseRpt> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.DsuseRpt>>() {});
+		//return result.getResponse();
+
+		return getDsuseRptResponse();
+	}
+
+	private NimsApiResult.Response<NimsApiDto.DsuseRpt> getDsuseRptResponse() {
+		NimsApiDto.DsuseRptDtl dtl1 = NimsApiDto.DsuseRptDtl.builder()
+			.usrRptLnIdNo("dsuseRptDtlIdNo")
+			.prdctCd("상품코드")
+			.prductNm("제품명")
+			.minDistbQy(1)
+			.pceQy(0)
+			.mnfNo("제조번호")
+			.prdValidDe("20240401")
+			.mnfSeq("-")
+			.storgeNo("저장소번호")
+			.storgeNm("저장소명")
+			.mvmnTyCd("1102")
+			.dsuseQy(30)
+			.build();
+		NimsApiDto.DsuseRptDtl dtl2 = NimsApiDto.DsuseRptDtl.builder()
+			.usrRptLnIdNo("dsuseRptDtlIdNo1")
+			.prdctCd("상품코드1")
+			.prductNm("제품명1")
+			.minDistbQy(1)
+			.pceQy(0)
+			.mnfNo("제조번호1")
+			.prdValidDe("20240401")
+			.mnfSeq("-")
+			.storgeNo("저장소번호1")
+			.storgeNm("저장소명1")
+			.mvmnTyCd("1102")
+			.dsuseQy(10)
+			.build();
+
+		NimsApiDto.DsuseRpt dsuseRpt = NimsApiDto.DsuseRpt.builder()
+			.bsshCd("bsshCd")
+			.usrRptIdNo("usrRptIdNo")
+			.rptTyCd("0")
+			.rndDtlRptCnt(2)
+			.hdrDe("20240401")
+			.rptDe("20240401")
+			.dsuseSeCd("1")
+			.dsusePrvCd("01")
+			.dsuseMthCd("1")
+			.dsuseLoc("보건소")
+			.status("0")
+			.dsuseRptSttusCd("0")
+			.dsuseRptDtls(List.of(dtl1, dtl2))
+			.build();
+
+		return NimsApiResult.Response.<NimsApiDto.DsuseRpt>builder()
+			.header(
+				NimsApiResult.Header.builder()
+					.resultCd(0)
+					.resultMsg("성공")
+					.build()
+			)
+			.body(
+				NimsApiResult.Body.<NimsApiDto.DsuseRpt>builder()
+					.list(List.of(dsuseRpt))
+					.isEndYn("Y")
+					.nRecord(2)
+					.totalCount(2)
+					.build()
+			)
+			.build();
 	}
 
 }

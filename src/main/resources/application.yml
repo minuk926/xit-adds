@@ -134,8 +134,8 @@ spring:
   sql:
     init:
       mode: never # embedded | always | never
-      schema-locations: classpath:db-init/schema.sql
-  #      data-locations: classpath:db-init/data.sql
+      schema-locations: classpath:database/schema.sql
+  #      data-locations: classpath:database/data.sql
 
 #  datasource:
 #    hikari:

@@ -179,7 +179,109 @@ public class NimsApiRequest {
         String pn = StringUtils.EMPTY;
     }
 
-    /**
+    @Schema(name = "DsuseRptInfoRequest", description = "폐기 보고 정보 조회 request")
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class DsuseRptInfoRequest {
+        /**
+         * 인증키
+         */
+        @Schema(requiredMode = REQUIRED, title = "인증키", description = "인증키", example = "998003699950fa950b798c9edea1b38f3cfbcf3b77e03e419")
+        @NotEmpty(message = "인증키는 필수 입니다")
+        String k;
+
+        /**
+         * 조회범위
+         * 1-취소제외(신규, 변경), 2-취소포함(신규,변경,취소)
+         */
+        @Schema(requiredMode = REQUIRED, title = "조회범위(1-취소제외(신규,변경), 2-취소포함)", description = "조회범위(1-취소제외(신규,변경), 2-취소포함)", example = "1", allowableValues = {"1", "2"})
+        @Pattern(regexp = "[12]", message = "조회범위는 필수 입니다(1-취소제외(신규,변경), 2-취소포함)")
+        @Builder.Default
+        String fg = "1";
+
+        /**
+         * 조회 페이지
+         */
+        @Schema(requiredMode = REQUIRED, title = "조회 페이지", description = "조회 페이지", example = "1")
+        @Pattern(regexp = "[0-9]{1,}", message = "조회 페이지는 필수 입니다")
+        String pg;
+
+        /**
+         * 상태
+         * 1:정상
+         * 2:전체(변경, 취소 포함)
+         */
+        @Schema(title = "상태(1:정상, 2:전체(정상,변경,취소))", description = "상태(1:정상, 2:전체(정상,변경,취소))", example = "1", allowableValues = {"1", "2"})
+        @Pattern(regexp = "[12]", message = "상태는 필수 입니다(상태(1:정상, 2:전체(정상,변경,취소))")
+        @Builder.Default
+        String fg2 = "1";
+
+        /**
+         * 보고구분코드
+         * AAR - 폐기보고
+         */
+        @Schema(title = "보고 구분 코드(AAR-폐기보고)", description = "보고 구분 코드(AAR-폐기보고)", example = "AAR")
+        @Pattern(regexp = "[A-Z]{3}", message = "보고 구분 코드는 필수 입니다(AAR-폐기보고)")
+        @Builder.Default
+        String se = "AAR";
+
+        /**
+         * 조회 기준 일자
+         * 1:보고 일자
+         * 2:취급 일자
+         */
+        @Schema(title = "조회 기준 일자(1:보고 일자, 2:취급 일자)", description = "조회 기준 일자(1:보고 일자, 2:취급 일자)", example = "1", allowableValues = {"1", "2"})
+        @Pattern(regexp = "[12]", message = "조회 기준 일자는 필수 입니다(1:보고 일자, 2:취급 일자)")
+        @Builder.Default
+        String fg3 = "1";
+
+        /**
+         * 조회 시작일(yyyyMMdd)
+         * 최대 1개월
+         */
+        @Schema(title = "조회 시작일(yyyyMMdd)", description = "조회 시작일(yyyyMMdd)", example = "20240101")
+        @Pattern(regexp = Constants.DATE_REGX, message = "조회 시작일은 필수 입니다(yyyyMMdd)")
+        String sdt;
+
+        /**
+         * 조회 종료일(yyyyMMdd)
+         * 최대 1개월
+         */
+        @Schema(title = "조회 종료일(yyyyMMdd)", description = "조회 종료일(yyyyMMdd)", example = "20240131")
+        @Pattern(regexp = Constants.DATE_REGX, message = "조회 종료일은 필수 입니다(yyyyMMdd)")
+        String edt;
+
+        /**
+         * 마약류 취급자 식별 번호
+         */
+        @Schema(title = "마약류 취급자 식별 번호", description = "마약류 취급자 식별 번호", example = " ")
+        String bc;
+
+        /**
+         * 업체명
+         */
+        @Schema(title = "마약류 취급자 업체명", description = "마약류 취급자 업체명", example = " ")
+        String bn;
+
+        /**
+         * 사용자 보고 식별 번호
+         */
+        @Schema(title = "사용자 보고 식별 번호", description = "사용자 보고 식별 번호", example = " ")
+        String ur;
+
+        /**
+         * FIXME : 속성명 및 상태값 확정 필요
+         * 폐기 보고 진행 상태
+         * 0: 전체, 1: 미처리, 2: 처리중, 3: 완료
+         */
+        @Schema(title = "폐기 보고 진행 상태", description = "폐기 보고 진행 상태", example = " ", allowableValues = {"0", "1", "2", "3"})
+        String ps;
+
+    }
+
+        /**
      * 제품 일련 번호 정보 조회 request
      */
     @Schema(name = "MnfSeqInfoRequest", description = "제품 일련 번호 정보 조회 request")

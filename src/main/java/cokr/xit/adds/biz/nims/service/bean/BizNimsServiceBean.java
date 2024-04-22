@@ -73,7 +73,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	//------------------------------------------------------------------------------------------------------
 	@Override
 	public List<BsshInfoSt> saveBsshInfoSt(BsshInfoRequest dto) {
-		NimsApiResult<BsshInfoSt> result = infNimsService.getBsshInfoSt(dto);
+		NimsApiResult.Response<BsshInfoSt> result = infNimsService.getBsshInfoSt(dto);
 		List<BsshInfoSt> list = result.getResultOrThrow();
 
 		for (BsshInfoSt d : list) {
@@ -85,7 +85,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 	@Override
 	public List<ProductInfoKd> saveProductInfoKd(ProductInfoRequest dto) {
-		NimsApiResult<ProductInfoKd> result = infNimsService.getProductInfoKd(dto);
+		NimsApiResult.Response<ProductInfoKd> result = infNimsService.getProductInfoKd(dto);
 		List<ProductInfoKd> list = result.getResultOrThrow();
 
 		for (ProductInfoKd d : list) {
@@ -97,19 +97,20 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 	@Override
 	public List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
-		NimsApiResult<NimsApiDto.MnfSeqInfo> result = infNimsService.getMnfSeqInfo(dto);
-		return result.getResultOrThrow();
+		NimsApiResult.Response<NimsApiDto.MnfSeqInfo> response = infNimsService.getMnfSeqInfo(dto);
+
+		return response.getResultOrThrow();
 	}
 
 	@Override
 	public List<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(NimsApiRequest.JurisdictionGovInfoRequest dto) {
-		NimsApiResult<NimsApiDto.JurisdictionGovInfo> result = infNimsService.getJurisdictionGovInfo(dto);
+		NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> result = infNimsService.getJurisdictionGovInfo(dto);
 		return result.getResultOrThrow();
 	}
 
 	@Override
 	public List<NimsApiDto.StorageInfo> saveStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
-		NimsApiResult<NimsApiDto.StorageInfo> result = infNimsService.getStorageInfo(dto);
+		NimsApiResult.Response<NimsApiDto.StorageInfo> result = infNimsService.getStorageInfo(dto);
 		List<NimsApiDto.StorageInfo> list = result.getResultOrThrow();
 
 		for (NimsApiDto.StorageInfo d : list) {
@@ -119,9 +120,11 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return list;
 	}
 
-
-
-
+	@Override
+	public List<NimsApiDto.DsuseRpt> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto) {
+		NimsApiResult.Response<NimsApiDto.DsuseRpt> result = infNimsService.getDsuseRptInfo(dto);
+		return result.getResultOrThrow();
+	}
 
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ

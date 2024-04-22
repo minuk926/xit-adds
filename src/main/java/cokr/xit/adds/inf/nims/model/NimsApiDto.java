@@ -1,7 +1,10 @@
 package cokr.xit.adds.inf.nims.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -11,6 +14,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import cokr.xit.adds.core.model.AuditDto;
 import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -194,6 +198,186 @@ public class NimsApiDto {
          */
         @JsonProperty(value = "UPD_DT")
         private String updDt;
+    }
+
+    /**
+     * 폐기보고 response
+     */
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @SuperBuilder
+    public static class DsuseRpt {
+
+        /**
+         * 마약류취급자식별번호
+         */
+        @JsonProperty(value = "BSSH_CD", required = true)
+        private String bsshCd;
+
+        /**
+         * 사용자 보고 식별 번호
+         */
+        @JsonProperty(value = "USR_RPT_ID_NO", required = true)
+        private String usrRptIdNo;
+
+        /**
+         * 보고 유형 코드(0-신규,1-취소,2-변경)
+         */
+        @JsonProperty(value = "RPT_TY_CD", required = true)
+        private String rptTyCd;
+
+        /**
+         * 수불 상세 보고 수
+         */
+        @JsonProperty(value = "RND_DTL_RPT_CNT", required = true)
+        private Integer rndDtlRptCnt;
+
+        /**
+         * 취급 일자
+         */
+        @JsonProperty(value = "HDR_DE", required = true)
+        private String hdrDe;
+
+        /**
+         * 보고 일자
+         */
+        @JsonProperty(value = "RPT_DE", required = true)
+        private String rptDe;
+
+        /**
+         * 폐기 구분 코드
+         * 1-보건소폐기, 2-공무원임회, 4-도난/분실/재해 발생 사고마약류
+         */
+        @JsonProperty(value = "DSUSE_SE_CD", required = true)
+        private String dsuseSeCd;
+
+        /**
+         * 폐기 사유 코드
+         * 01~05, 07~09, 12
+         */
+        @JsonProperty(value = "DSUSE_PRV_CD", required = true)
+        private String dsusePrvCd;
+
+        /**
+         * 폐기 방법 코드
+         * 1 ~ 9
+         */
+        @JsonProperty(value = "DSUSE_MTH_CD", required = true)
+        private String dsuseMthCd;
+
+        /**
+         * 폐기 장소
+         */
+        @JsonProperty(value = "DSUSE_LOC", required = true)
+        private String dsuseLoc;
+
+        /**
+         * 폐기 일자
+         */
+        @JsonProperty(value = "DSUSE_DE", required = true)
+        private String dsuseDe;
+
+        /**
+         * 처리 상태 코드(0-정상,1-취소,2-변경)
+         */
+        @JsonProperty(value = "STATUS", required = true)
+        private String status;
+
+        /**
+         * FIXME: 속성명 확정 필요
+         * 폐기 보고 상태
+         */
+        @JsonProperty(value = "DSUSE_RPT_STTUS_CD", required = true)
+        private String dsuseRptSttusCd;
+
+        /**
+         * 폐기보고상세 목록
+         */
+        @Builder.Default
+        @Valid
+        private List<DsuseRptDtl> dsuseRptDtls = new ArrayList<>();
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @SuperBuilder
+    public static class DsuseRptDtl {
+        /**
+         * 사용자 보고 라인 식별 번호
+         */
+        @JsonProperty(value = "USR_RPT_LN_ID_NO", required = true)
+        private String usrRptLnIdNo;
+
+        /**
+         * 제품 코드
+         */
+        @JsonProperty(value = "PRDCT_CD", required = true)
+        private String prdctCd;
+
+        /**
+         * 제품 명
+         */
+        @JsonProperty(value = "PRDCT_NM", required = true)
+        private String prductNm;
+
+        /**
+         * 최소 유통 단위 수량
+         */
+        @JsonProperty(value = "MIN_DISTB_QY", required = true)
+        private Integer minDistbQy;
+
+        /**
+         * 낱개 단위 수량
+         */
+        @JsonProperty(value = "PCE_QY", required = true)
+        private Integer pceQy;
+
+        /**
+         * 제조 번호
+         */
+        @JsonProperty(value = "MNF_NO", required = true)
+        private String mnfNo;
+
+        /**
+         * 제품 유효기한 일자
+         */
+        @JsonProperty(value = "PRD_VALID_DE", required = true)
+        private String prdValidDe;
+
+        /**
+         * 제조 일련번호
+         */
+        @JsonProperty(value = "MNF_SEQ")
+        private String mnfSeq;
+
+        /**
+         * 저장소 번호
+         */
+        @JsonProperty(value = "STORGE_NO", required = true)
+        private String storgeNo;
+
+        /**
+         * 저장소명
+         */
+        @JsonProperty(value = "STORGE_NM", required = true)
+        private String storgeNm;
+
+        /**
+         * 이동 유형 코드
+         * 1102: 재고차감, 1170: 재고미차감
+         */
+        @JsonProperty(value = "MVMN_TY_CD", required = true)
+        private String mvmnTyCd;
+
+        /**
+         * 폐기 수량
+         */
+        @JsonProperty(value = "DSUSE_QY", required = true)
+        private Integer dsuseQy;
     }
 
     /**

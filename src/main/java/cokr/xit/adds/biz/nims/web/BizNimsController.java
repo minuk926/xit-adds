@@ -88,7 +88,13 @@ public class BizNimsController {
 		return ApiBaseResponse.of(bizNimsService.saveStorageInfo(dto));
 	}
 
-
+	@Operation(summary = "폐기 보고 정보 조회", description = "폐기 보고 정보 조회<br><br>NIMS API 호출 결과 Return")
+	@PostMapping("/getDsuseRptInfo")
+	public ApiBaseResponse<List<NimsApiDto.DsuseRpt>> getDsuseRptInfo(
+		@RequestBody @Validated NimsApiRequest.DsuseRptInfoRequest dto
+	) {
+		return ApiBaseResponse.of(bizNimsService.getDsuseRptInfo(dto));
+	}
 
 
 	//------------------------------------------------------------------------------------------------------

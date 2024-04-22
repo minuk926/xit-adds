@@ -331,7 +331,7 @@ create or replace table tb_dsuse_mgt_dtl
     mdfcn_dt       varchar(14) null comment '수정_일시',
     mdfr           varchar(10) null comment '수정자',
     primary key (dscdmng_id, dscdmng_sn),
-    constraint fk_dsuse_mgt_dtl_dsuse_mgt
+    constraint fk_dsuse_mgt_to_dtl_dsuse_mgt
         foreign key (dscdmng_id) references tb_dsuse_mgt (dscdmng_id)
 )
     comment '폐기관리_상세';
@@ -567,40 +567,3 @@ create or replace table tb_cmm_refresh_token
 /* -------------------------------------------------------------------------------- */
 /* adds                                                                             */
 /* -------------------------------------------------------------------------------- */
-
-/*
-create table xit_user_info
-(
-    user_id            varchar(20)          not null comment '사용자 id'
-        primary key,
-    orgnzt_id          varchar(20)          null comment '조직 id',
-    user_nm            varchar(50)          null comment '사용자 명',
-    password           varchar(200)         null comment '비밀번호',
-    empl_no            varchar(20)          null comment '사원 번호',
-    ihidnum            varchar(200)         null comment '주민등록번호',
-    sexdstn_code       char                 null comment '성별 코드',
-    brthdy             varchar(20)          null comment '생일',
-    fxnum              varchar(20)          null comment '팩스번호',
-    house_adres        varchar(150)         null comment '주택 주소',
-    password_hint      varchar(100)         null comment '비밀번호 힌트',
-    password_cnsr      varchar(100)         null comment '비밀번호 정답',
-    house_end_telno    varchar(200)         null comment '주택 끝 전화번호',
-    area_no            varchar(200)         null comment '지역 번호',
-    detail_adres       varchar(150)         null comment '상세 주소',
-    zip                varchar(6)           null comment '우편번호',
-    offm_telno         varchar(20)          null comment '사무실 전화번호',
-    mbtlnum            varchar(20)          null comment '이동전화번호',
-    email_adres        varchar(50)          null comment '이메일 주소',
-    ofcps_nm           varchar(60)          null comment '직위 명',
-    house_middle_telno varchar(200)         null comment '주택 중간 전화번호',
-    group_id           varchar(20)          null comment '그룹 id',
-    pstinst_code       varchar(8)           null comment '소속기관 코드',
-    user_sttus_code    varchar(15)          null comment '사용자 상태 코드',
-    esntl_id           varchar(20)          null comment '고유 id',
-    crtfc_dn_value     varchar(20)          null comment '인증 dn 값',
-    sbscrb_de          datetime             null comment '가입 일',
-    login_fail         decimal(1) default 0 null,
-    login_fail_de      datetime             null
-)
-    comment '사용자 정보';
- */
