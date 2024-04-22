@@ -69,6 +69,7 @@ CREATE TABLE tb_dsuse_mgt
   dsuse_loc       varchar(120) NULL     COMMENT '폐기_장소',
   dsuse_de        varchar(80)  NULL     COMMENT '폐기_일자',
   status          varchar(1)   NULL     COMMENT '처리상태(0-정상,1-취소,2-변경)',
+  rpt_prg_stts_cd varchar(10)  NULL     COMMENT '보고_진행_상태_코드',
   use_yn          varchar(1)   NOT NULL COMMENT '사용_여부',
   reg_dt          varchar(14)  NOT NULL COMMENT '등록_일시',
   rgtr            varchar(10)  NOT NULL COMMENT '등록자',

@@ -287,10 +287,10 @@ public class NimsApiDto {
 
         /**
          * FIXME: 속성명 확정 필요
-         * 폐기 보고 상태
+         * 보고 진행 상태 코드(0-정상,1-취소,2-변경)
          */
-        @JsonProperty(value = "DSUSE_RPT_STTUS_CD", required = true)
-        private String dsuseRptSttusCd;
+        @JsonProperty(value = "RPT_PRG_STTS_CD", required = true)
+        private String rptPgrSttsCd;
 
         /**
          * 폐기보고상세 목록

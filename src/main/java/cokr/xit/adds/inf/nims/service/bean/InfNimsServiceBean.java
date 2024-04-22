@@ -195,7 +195,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			.dsuseMthCd("1")
 			.dsuseLoc("보건소")
 			.status("0")
-			.dsuseRptSttusCd("0")
+			.rptPgrSttsCd("0")
 			.dsuseRptDtls(List.of(dtl1, dtl2))
 			.build();
 
