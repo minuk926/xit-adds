@@ -77,7 +77,7 @@ select tdm.dscdmng_id                       /* 폐기관리ID */
   join tb_dsuse_mgt_dtl tdmd
     on tdm.dscdmng_id = tdmd.dscdmng_id
   join tb_prduct_info tpi
-    on tdmd.prdct_cd = tpi.prduct_cd
+    on tdmd.prduct_cd = tpi.prduct_cd
   left outer join tb_storge_info tsi
     on tdm.bssh_cd = tsi.bssh_cd
  where tdm.dscdmng_id = '2024040001';

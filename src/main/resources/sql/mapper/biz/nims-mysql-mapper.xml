@@ -156,20 +156,46 @@
              WHERE dscdmng_id LIKE CONCAT(DATE_FORMAT(now(), '%Y%m'), '%');
         </selectKey>
         INSERT INTO tb_dsuse_mgt (
-            dscdmng_id,
-            user_id,
-            bssh_cd,
-            prgrs_stts_cd,
-            rpt_rcept_no,
+            dscdmng_id,             /* 폐기관리ID */
+            usr_rpt_id_no,          /* 사용자보고식별번호 */
+            ref_usr_rpt_id_no,      /* 참조사용자식별번호 */
+            user_id,                /* 사용자ID */
+            prgrs_stts_cd,          /* 폐기관리진행상태코드 */
+            bssh_cd,                /* 마약류취급자식별번호 */
+            rpt_rcept_no,           /* 보고접수번호 */
+            rpt_ty_cd,              /* 보고유형코드 : AAR - 폐기보고 */
+            rnd_dtl_rpt_cnt,        /* 수불상세보고수 */
+            hdr_de,                 /* 취급일자 */
+            rpt_de,                 /* 보고일자 */
+            dsuse_se_cd,            /* 폐기구분코드 */
+            dsuse_prv_cd,           /* 폐기사유코드 */
+            dsuse_mth_cd,           /* 폐기방법코드 */
+            dsuse_loc,              /* 폐기장소 */
+            dsuse_de,               /* 폐기일자 */
+            status,                 /* 상태 */
+            rpt_prg_stts_cd,        /* 보고진행상태코드 */
             use_yn,
             reg_dt,
             rgtr
         ) VALUES (
             #{dscdmngId},
+            #{usrRptIdNo},
+            #{refUsrRptIdNo},
             #{userId},
-            #{bsshCd},
             #{prgrsSttsCd},
+            #{bsshCd},
             #{rptRceptNo},
+            #{rptTyCd},
+            #{rndDtlRptCnt},
+            #{hdrDe},
+            #{rptDe},
+            #{dsuseSeCd},
+            #{dsusePrvCd},
+            #{dsuseMthCd},
+            #{dsuseLoc},
+            #{dsuseDe},
+            #{status},
+            #{rptPrgSttsCd},
             'Y',
             DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
             #{rgtr}
@@ -179,29 +205,63 @@
     <insert id="insertDsuseMgtDtl" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgtDtl">
         /** nims-mysql-mapper|insertDsuseMgtDtl-폐기관리 상세 생성|julim  */
         INSERT INTO tb_dsuse_mgt_dtl (
-            dscdmng_id,
-            dscdmng_sn,
-            prdct_cd,
-            dsuse_qy,
-            acdnt_ocrn_day,
-            ocrn_rpt_day,
-            acdnt_ocrn_rsn,
+            dscdmng_id,         /* 폐기관리ID */
+            usr_rpt_id_no,      /* 사용자보고식별번호 */
+            usr_rpt_ln_id_no,   /* 사용자보고라인식별번호 */
+            prduct_cd,          /* 제품코드 */
+            prduct_nm,          /* 제품명 */
+            min_distb_qy,       /* 최소유통단위수량 */
+            pce_qy,             /* 낱개단위수량 */
+            mnf_no,             /* 제조번호 */
+            prd_valid_de,       /* 제품유효기한일자 */
+            mnf_seq,            /* 제품일련번호 */
+            storge_no,          /* 저장소번호 */
+            storge_nm,          /* 저장소명 */
+            mvmn_ty_cd,         /* 이동유형코드 */
+            dsuse_qy,           /* 폐기수량 */
             use_yn,
             reg_dt,
             rgtr
         ) VALUES (
             #{dscdmngId},
-            #{dscdmngSn},
-            #{prdctCd},
+            #{usrRptIdNo},
+            #{usrRptLnIdNo},
+            #{prductCd},
+            #{prductNm},
+            #{minDistbQy},
+            #{pceQy},
+            #{mnfNo},
+            #{prdValidDe},
+            #{mnfSeq},
+            #{storgeNo},
+            #{storgeNm},
+            #{mvmnTyCd},
             #{dsuseQy},
-            #{acdntOcrnDay},
-            #{ocrnRptDay},
-            #{acdntOcrnRsn},
             'Y',
             DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
             #{rgtr}
         )
     </insert>
+
+    <update id="updateCancelDsuseMgt" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgt">
+        /** nims-mysql-mapper|updateCancelDsuseMgt-폐기관리 취소|julim  */
+        UPDATE tb_dsuse_mgt
+           SET use_yn = 'N'
+             , mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s')
+             , mdfr = #{rgtr}
+         WHERE usr_rpt_id_no = #{refUsrRptIdNo}
+           AND use_yn = 'Y'
+    </update>
+
+    <update id="updateCancelDsuseMgtDtl" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgt">
+        /** nims-mysql-mapper|updateCancelDsuseMgtDtl-폐기관리 상세 취소 조회|julim  */
+        UPDATE tb_dsuse_mgt_dtl
+        SET use_yn = 'N'
+          , mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s')
+          , mdfr = #{rgtr}
+        WHERE usr_rpt_id_no = #{refUsrRptIdNo}
+          AND use_yn = 'Y'
+    </update>
 
     <select id="selectTgtAarHeader" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgt" resultType="cokr.xit.adds.biz.nims.model.BizNimsAarDto$AarHeader">
         /** nims-mysql-mapper|selectTgtAarHeader-폐기 보고 대상 헤더 조회|julim  */
@@ -265,7 +325,7 @@
         JOIN tb_dsuse_mgt_dtl tdmd
           ON tdm.dscdmng_id = tdmd.dscdmng_id
         JOIN tb_prduct_info tpi
-          ON tdmd.prdct_cd = tpi.prduct_cd
+          ON tdmd.prduct_cd = tpi.prduct_cd
         LEFT OUTER JOIN tb_storge_info tsi
           ON tdm.bssh_cd = tsi.bssh_cd
        WHERE tdm.dscdmng_id = #{dscdmngId}

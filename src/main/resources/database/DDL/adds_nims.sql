@@ -21,44 +21,14 @@ CREATE TABLE tb_bssh_info
   PRIMARY KEY (bssh_cd)
 ) COMMENT '취급자_정보';
 
-CREATE TABLE tb_cmm_api_log
-(
-  request_id    varchar(40)   NOT NULL COMMENT '요청 id',
-  system_id     varchar(20)   NULL     COMMENT '시스템 id(ens|fims등)',
-  req_system_id varchar(20)   NULL     COMMENT '요청시스템 id(kakao|kt등)',
-  method        varchar(10)   NULL     COMMENT '메소드(get|put|post|delete)',
-  uri           varchar(255)  NULL     COMMENT '호출 uri',
-  success       varchar(5)    NULL     COMMENT '성공/실패(true|false)',
-  param         longtext      NULL     COMMENT '파라메터',
-  response      longtext      NULL     COMMENT '호출 결과',
-  message       longtext      NULL     COMMENT '메세지(에러메세지)',
-  ip            varchar(30)   NULL     COMMENT 'ip',
-  access_token  varchar(2000) NULL     COMMENT '토큰',
-  session_id    varchar(255)  NULL     COMMENT '세션id',
-  updt_dt       datetime(3)   NULL     COMMENT '변경일시(now(3)-밀리세컨드까지)',
-  updt_id       varchar(20)   NULL     COMMENT '변경자',
-  regist_dt     datetime(3)   NULL     COMMENT '생성일시(now(3)-밀리세컨드까지)',
-  regist_id     varchar(20)   NULL     COMMENT '생성자',
-  PRIMARY KEY (request_id)
-) COMMENT 'api 호출 로그';
-
-CREATE TABLE tb_cmm_refresh_token
-(
-  id            varchar(20)  NOT NULL COMMENT 'id',
-  refresh_token varchar(256) NOT NULL COMMENT 'refreshtoken',
-  regist_dt     timestamp    NULL     COMMENT '등록일시',
-  updt_dt       timestamp    NULL     COMMENT '변경일시',
-  PRIMARY KEY (id)
-) COMMENT '리프레쉬토큰';
-
 CREATE TABLE tb_dsuse_mgt
 (
   dscdmng_id      varchar(10)  NOT NULL COMMENT '폐기관리_id',
   usr_rpt_id_no   varchar(30)  NOT NULL COMMENT '사용자_보고_식별_번호',
   ref_usr_rpt_id_no varchar(30)  NULL COMMENT '참조_사용자_보고_식별_번호',
   user_id         varchar(10)  NULL     COMMENT '사용자_아이디',
-  bssh_cd         varchar(10)  NOT NULL COMMENT '마약류취급자식별_번호',
   prgrs_stts_cd   varchar(10)  NULL     COMMENT '진행_상태_코드',
+  bssh_cd         varchar(10)  NOT NULL COMMENT '마약류취급자식별_번호',
   rpt_rcept_no    varchar(30)  NULL     COMMENT '보고_접수_번호',
   rpt_ty_cd       varchar(1)   NULL     COMMENT '보고_유형_코드(0-신규,1-취소,2-변경)',
   rnd_dtl_rpt_cnt decimal      NULL     COMMENT '수불_상세_보고_수',
@@ -84,7 +54,7 @@ CREATE TABLE tb_dsuse_mgt_dtl
   dscdmng_id       varchar(10)  NOT NULL COMMENT '폐기관리_id',
   usr_rpt_id_no   varchar(30)   NOT NULL COMMENT '사용자_보고_식별_번호',
   usr_rpt_ln_id_no varchar(35)  NOT NULL COMMENT '사용자_보고_라인_식별_번호',
-  prdct_cd         varchar(14)  NOT NULL COMMENT '제품_코드',
+  prduct_cd         varchar(14) NOT NULL COMMENT '제품_코드',
   prduct_nm        varchar(300) NULL     COMMENT '제품_명',
   min_distb_qy     decimal      NULL     COMMENT '최소_유통단위_수량',
   pce_qy           decimal      NULL     COMMENT '낱개단위_수량',
@@ -104,6 +74,24 @@ CREATE TABLE tb_dsuse_mgt_dtl
   constraint fk_dsuse_mgt_to_dtl_dsuse_mgt
       foreign key (dscdmng_id, usr_rpt_id_no) references tb_dsuse_mgt (dscdmng_id, usr_rpt_id_no)
 ) COMMENT '폐기관리_상세';
+
+CREATE TABLE tb_storge_info
+(
+    bssh_cd        varchar(10)  NOT NULL COMMENT '마약류취급자식별_번호',
+    bssh_nm        varchar(120) NULL     COMMENT '업체_명',
+    use_at         char         NULL     COMMENT '사용_유무',
+    storge_se_nm   varchar(200) NULL     COMMENT '저장소_유형',
+    storge_no      varchar(16)  NULL     COMMENT '저장소_번호',
+    storge_nm      varchar(100) NULL     COMMENT '저장소_명',
+    bass_adres     varchar(200) NULL     COMMENT '기본_주소',
+    bass_dtl_adres varchar(200) NULL     COMMENT '상세_주소',
+    use_yn         varchar(1)   NOT NULL COMMENT '사용_여부',
+    reg_dt         varchar(14)  NOT NULL COMMENT '등록_일시',
+    rgtr           varchar(10)  NOT NULL COMMENT '등록자',
+    mdfcn_dt       varchar(14)  NULL     COMMENT '수정_일시',
+    mdfr           varchar(10)  NULL     COMMENT '수정자',
+    PRIMARY KEY (bssh_cd)
+) COMMENT '저장소_정보';
 
 CREATE TABLE tb_jrdt_gov_info
 (
@@ -143,6 +131,37 @@ CREATE TABLE tb_prduct_info
   mdfr               varchar(10)  NULL     COMMENT '수정자',
   PRIMARY KEY (prduct_cd)
 ) COMMENT '품목_정보';
+
+CREATE TABLE tb_cmm_api_log
+(
+    request_id    varchar(40)   NOT NULL COMMENT '요청 id',
+    system_id     varchar(20)   NULL     COMMENT '시스템 id(ens|fims등)',
+    req_system_id varchar(20)   NULL     COMMENT '요청시스템 id(kakao|kt등)',
+    method        varchar(10)   NULL     COMMENT '메소드(get|put|post|delete)',
+    uri           varchar(255)  NULL     COMMENT '호출 uri',
+    success       varchar(5)    NULL     COMMENT '성공/실패(true|false)',
+    param         longtext      NULL     COMMENT '파라메터',
+    response      longtext      NULL     COMMENT '호출 결과',
+    message       longtext      NULL     COMMENT '메세지(에러메세지)',
+    ip            varchar(30)   NULL     COMMENT 'ip',
+    access_token  varchar(2000) NULL     COMMENT '토큰',
+    session_id    varchar(255)  NULL     COMMENT '세션id',
+    updt_dt       datetime(3)   NULL     COMMENT '변경일시(now(3)-밀리세컨드까지)',
+    updt_id       varchar(20)   NULL     COMMENT '변경자',
+    regist_dt     datetime(3)   NULL     COMMENT '생성일시(now(3)-밀리세컨드까지)',
+    regist_id     varchar(20)   NULL     COMMENT '생성자',
+    PRIMARY KEY (request_id)
+) COMMENT 'api 호출 로그';
+
+CREATE TABLE tb_cmm_refresh_token
+(
+    id            varchar(20)  NOT NULL COMMENT 'id',
+    refresh_token varchar(256) NOT NULL COMMENT 'refreshtoken',
+    regist_dt     timestamp    NULL     COMMENT '등록일시',
+    updt_dt       timestamp    NULL     COMMENT '변경일시',
+    PRIMARY KEY (id)
+) COMMENT '리프레쉬토큰';
+
 
 CREATE TABLE tb_purchase_info
 (
@@ -206,23 +225,5 @@ CREATE TABLE tb_stock_info
   mdfr               varchar(10)  NULL    ,
   PRIMARY KEY (storge_no, prduct_cd)
 ) COMMENT '재고_정보';
-
-CREATE TABLE tb_storge_info
-(
-  bssh_cd        varchar(10)  NOT NULL COMMENT '마약류취급자식별_번호',
-  bssh_nm        varchar(120) NULL     COMMENT '업체_명',
-  use_at         char         NULL     COMMENT '사용_유무',
-  storge_se_nm   varchar(200) NULL     COMMENT '저장소_유형',
-  storge_no      varchar(16)  NULL     COMMENT '저장소_번호',
-  storge_nm      varchar(100) NULL     COMMENT '저장소_명',
-  bass_adres     varchar(200) NULL     COMMENT '기본_주소',
-  bass_dtl_adres varchar(200) NULL     COMMENT '상세_주소',
-  use_yn         varchar(1)   NOT NULL COMMENT '사용_여부',
-  reg_dt         varchar(14)  NOT NULL COMMENT '등록_일시',
-  rgtr           varchar(10)  NOT NULL COMMENT '등록자',
-  mdfcn_dt       varchar(14)  NULL     COMMENT '수정_일시',
-  mdfr           varchar(10)  NULL     COMMENT '수정자',
-  PRIMARY KEY (bssh_cd)
-) COMMENT '저장소_정보';
 
 

@@ -1,10 +1,7 @@
 package cokr.xit.adds.biz.nims.dao;
 
-import java.util.List;
-
 import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
 
-import cokr.xit.adds.biz.nims.model.BizNimsAarDto;
 import cokr.xit.adds.biz.nims.model.BizNimsRequest;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import cokr.xit.foundation.component.AbstractMapper;
@@ -37,8 +34,10 @@ public interface BizNimsMapper extends AbstractMapper {
 	// NIMS BIZ
 	//------------------------------------------------------------------------------------------------------
 	int insertDsuseMgt(BizNimsRequest.DsuseMgt dto);
-	int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl d);
+	int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
+	int updateCancelDsuseMgt(BizNimsRequest.DsuseMgt dto);
+	int updateCancelDsuseMgtDtl(BizNimsRequest.DsuseMgt dto);
 
-	BizNimsAarDto.AarHeader selectTgtAarHeader(BizNimsRequest.DsuseMgt dto);
-	List<BizNimsAarDto.AarDetail> selectTgtAarDetails(BizNimsRequest.DsuseMgt dto);
+	// BizNimsAarDto.AarHeader selectTgtAarHeader(BizNimsRequest.DsuseMgt dto);
+	// List<BizNimsAarDto.AarDetail> selectTgtAarDetails(BizNimsRequest.DsuseMgt dto);
 }

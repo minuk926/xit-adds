@@ -297,7 +297,7 @@ public class NimsApiDto {
          * 보고 진행 상태 코드(0-정상,1-취소,2-변경)
          */
         @JsonProperty(value = "RPT_PRG_STTS_CD", required = true)
-        private String rptPgrSttsCd;
+        private String rptPrgSttsCd;
 
 
         /**
@@ -329,8 +329,8 @@ public class NimsApiDto {
         /**
          * 제품 코드
          */
-        @JsonProperty(value = "PRDCT_CD", required = true)
-        private String prdctCd;
+        @JsonProperty(value = "PRDUCT_CD", required = true)
+        private String prductCd;
 
         /**
          * 제품 명

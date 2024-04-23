@@ -23,7 +23,6 @@ import cokr.xit.adds.core.Constants;
 import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import cokr.xit.adds.core.util.ApiUtil;
 import cokr.xit.adds.inf.nims.model.Aar;
-import cokr.xit.adds.inf.nims.model.NimsAarResult;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import cokr.xit.adds.inf.nims.model.NimsApiDto.BsshInfoSt;
 import cokr.xit.adds.inf.nims.model.NimsApiDto.ProductInfoKd;
@@ -120,8 +119,24 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return list;
 	}
 
+	/**
+	 * <pre>
+	 * 폐기보고서 정보 조회
+	 * 데이타 필터링 (보고유형코드 0인 데이타 제거) - API 서버에서 필터링을 하지 않은 경우
+	 * 1. 취소 skip : 보고유형코드(rptTyCd)가 1-취소인 경우, refUsrRptIdNo에 해당 되는 데이타
+	 * 2. 변경  데이타 적용 : 보고유형코드(rptTyCd)가 2-변경인 경우
+	 * -> refUsrRptIdNo에 해당 되는  데이타
+	 * @param dto
+	 * @return
+	 * </pre>
+	 */
 	@Override
 	public List<NimsApiDto.DsuseRpt> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto) {
+		/*
+		데이타 필터링 (보고유형코드 0인 데이타 제거) - API 서버에서 필터링을 하지 않은 경우
+		1. 취소 skip : 보고유형코드(rptTyCd)가 1-취소인 경우, refUsrRptIdNo에 해당 되는 데이타
+		2. 변경  데이타 적용 : 보고유형코드(rptTyCd)가 2-변경인 경우
+		*/
 		NimsApiResult.Response<NimsApiDto.DsuseRpt> result = infNimsService.getDsuseRptInfo(dto);
 		return result.getResultOrThrow();
 	}
@@ -130,25 +145,79 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	// NIMS BIZ
 	//------------------------------------------------------------------------------------------------------
 	@Override
-	public BizNimsRequest.DsuseMgt saveDsuseMgt(BizNimsRequest.DsuseMgt dto) {
-		ApiUtil.validate(dto, null, validator);
-		dto.setRgtr(Constants.NIMS_API_USER_ID);
+	public List<BizNimsRequest.DsuseMgt> saveDsuseMgt(List<BizNimsRequest.DsuseMgt> dtos) {
+		for (BizNimsRequest.DsuseMgt dto : dtos) {
+			ApiUtil.validate(dto, null, validator);
+		}
 
-		if(bizNimsMapper.insertDsuseMgt(dto) == 1){
+		// 신규 처리
+		for (BizNimsRequest.DsuseMgt dto : dtos) {
+			dto.setRgtr(Constants.NIMS_API_USER_ID);
+
+			// 신규가 아닌 경우 skip
+			if(!"0".equals(dto.getRptTyCd())) continue;
+
+			createDsuseMgt(dto);
+		}
+
+		// 취소 및 변경 데이타 처리
+		String errMsg = null;
+		for (BizNimsRequest.DsuseMgt dto : dtos) {
+			dto.setRgtr(Constants.NIMS_API_USER_ID);
+
+			// 신규인 경우 skip
+			if("0".equals(dto.getRptTyCd())) continue;
+
+			if(isEmpty(dto.getRefUsrRptIdNo())){
+				throw ApiCustomException.create("데이타 오류[취소 및 변경인 경우 참조사용자식별번호(REF_USR_RPT_ID_NO) 필수]");
+			}
+
+			// 폐기관리 데이타 disable(미사용)
+			updateDsuseMgt(dto);
+
+			// 취소인 경우 데이타 생성 skip
+			if ("1".equals(dto.getRptTyCd())) continue;
+
+			// 변경인 경우 데이타 생성
+			createDsuseMgt(dto);
+		}
+		return dtos;
+	}
+
+	private void updateDsuseMgt(BizNimsRequest.DsuseMgt dto) {
+		String errMsg;
+		if ("1".equals(dto.getRptTyCd())) errMsg = "취소";
+		else errMsg = "변경";
+
+		if (bizNimsMapper.updateCancelDsuseMgt(dto) == 1) {
+			int cnt = bizNimsMapper.updateCancelDsuseMgtDtl(dto);
+			if(cnt == 0) throw ApiCustomException.create(String.format("폐기 관리 상세 %s 실패", errMsg));
+
+			// 변경인 경우 상세 데이타 건수와 일치 하지 않는 경우 오류 처리
+			if ("2".equals(dto.getRptTyCd()) && dto.getRndDtlRptCnt() != cnt) {
+				throw ApiCustomException.create(String.format("폐기 관리 상세 %s 실패", errMsg));
+			}
+
+		} else {
+			throw ApiCustomException.create(String.format("폐기 관리 마스터 %s 실패", errMsg));
+		}
+	}
+
+	private void createDsuseMgt(BizNimsRequest.DsuseMgt dto) {
+		if (bizNimsMapper.insertDsuseMgt(dto) == 1) {
 			int dtlCnt = 0;
 			for (BizNimsRequest.DsuseMgtDtl d : dto.getDsuseMgtDtls()) {
 				d.setDscdmngId(dto.getDscdmngId());
-				d.setDscdmngSn(StringUtils.leftPad(dtlCnt + 1 + "", 3, "0"));
 				d.setRgtr(Constants.NIMS_API_USER_ID);
 				dtlCnt = dtlCnt + bizNimsMapper.insertDsuseMgtDtl(d);
 			}
-			if(dto.getDsuseMgtDtls().size() != dtlCnt) throw ApiCustomException.create("폐기 관리 상세 등록 실패");
+			if (dto.getDsuseMgtDtls().size() != dtlCnt)
+				throw ApiCustomException.create("폐기 관리 상세 등록 실패");
 		} else {
 			throw ApiCustomException.create("폐기 관리 마스터 등록 실패");
 		}
-		return dto;
 	}
-
+/*
 	@Override
 	public BizNimsAarDto.AarHeader getTgtDsuseRptData(BizNimsRequest.DsuseMgt dto) {
 		ApiUtil.validate(dto, null, validator);
@@ -182,27 +251,27 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 		return dto;
 	}
-
-	@Override
-	public NimsAarResult createReportDsuse() {
-		String xml = toXml();
-		log.info(xml);
-		return NimsAarResult.builder().build();
-	}
-
-	@Override
-	public NimsAarResult updateReportDsuse() {
-		String xml = toXml();
-		log.info(xml);
-		return NimsAarResult.builder().build();
-	}
-
-	@Override
-	public NimsAarResult cancelReportDsuse() {
-		String xml = toXml();
-		log.info(xml);
-		return NimsAarResult.builder().build();
-	}
+*/
+	// @Override
+	// public NimsAarResult createReportDsuse() {
+	// 	String xml = toXml();
+	// 	log.info(xml);
+	// 	return NimsAarResult.builder().build();
+	// }
+	//
+	// @Override
+	// public NimsAarResult updateReportDsuse() {
+	// 	String xml = toXml();
+	// 	log.info(xml);
+	// 	return NimsAarResult.builder().build();
+	// }
+	//
+	// @Override
+	// public NimsAarResult cancelReportDsuse() {
+	// 	String xml = toXml();
+	// 	log.info(xml);
+	// 	return NimsAarResult.builder().build();
+	// }
 
 
 

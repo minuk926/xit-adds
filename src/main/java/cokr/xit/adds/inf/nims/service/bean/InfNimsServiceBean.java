@@ -155,9 +155,9 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 	private NimsApiResult.Response<NimsApiDto.DsuseRpt> getDsuseRptResponse() {
 		NimsApiDto.DsuseRptDtl dtl1 = NimsApiDto.DsuseRptDtl.builder()
-			.usrRptIdNo("usrRptIdNo")
-			.usrRptLnIdNo("dsuseRptDtlIdNo")
-			.prdctCd("상품코드")
+			.usrRptIdNo("usrRptIdNo1111")
+			.usrRptLnIdNo("dsuseRptDtlIdNo11")
+			.prductCd("상품코드")
 			.prductNm("제품명")
 			.minDistbQy(1)
 			.pceQy(0)
@@ -170,9 +170,9 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			.dsuseQy(30)
 			.build();
 		NimsApiDto.DsuseRptDtl dtl2 = NimsApiDto.DsuseRptDtl.builder()
-			.usrRptIdNo("usrRptIdNo")
-			.usrRptLnIdNo("dsuseRptDtlIdNo1")
-			.prdctCd("상품코드1")
+			.usrRptIdNo("usrRptIdNo1111")
+			.usrRptLnIdNo("dsuseRptDtlIdNo22")
+			.prductCd("상품코드1")
 			.prductNm("제품명1")
 			.minDistbQy(1)
 			.pceQy(0)
@@ -187,7 +187,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 		NimsApiDto.DsuseRpt dsuseRpt = NimsApiDto.DsuseRpt.builder()
 			.bsshCd("bsshCd")
-			.usrRptIdNo("usrRptIdNo")
+			.usrRptIdNo("usrRptIdNo1111")
 			.rptTyCd("0")
 			.rndDtlRptCnt(2)
 			.hdrDe("20240401")
@@ -197,7 +197,23 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			.dsuseMthCd("1")
 			.dsuseLoc("보건소")
 			.status("0")
-			.rptPgrSttsCd("0")
+			.rptPrgSttsCd("0")
+			.dsuseRptDtls(List.of(dtl1, dtl2))
+			.build();
+
+		NimsApiDto.DsuseRpt dsuseRpt2 = NimsApiDto.DsuseRpt.builder()
+			.bsshCd("bsshCd")
+			.usrRptIdNo("usrRptIdNo2222")
+			.rptTyCd("0")
+			.rndDtlRptCnt(2)
+			.hdrDe("20240401")
+			.rptDe("20240401")
+			.dsuseSeCd("1")
+			.dsusePrvCd("01")
+			.dsuseMthCd("1")
+			.dsuseLoc("보건소")
+			.status("0")
+			.rptPrgSttsCd("0")
 			.dsuseRptDtls(List.of(dtl1, dtl2))
 			.build();
 
@@ -210,7 +226,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			)
 			.body(
 				NimsApiResult.Body.<NimsApiDto.DsuseRpt>builder()
-					.list(List.of(dsuseRpt))
+					.list(List.of(dsuseRpt, dsuseRpt2))
 					.isEndYn("Y")
 					.nRecord(2)
 					.totalCount(2)
