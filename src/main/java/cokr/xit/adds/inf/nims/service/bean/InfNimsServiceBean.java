@@ -155,6 +155,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 	private NimsApiResult.Response<NimsApiDto.DsuseRpt> getDsuseRptResponse() {
 		NimsApiDto.DsuseRptDtl dtl1 = NimsApiDto.DsuseRptDtl.builder()
+			.usrRptIdNo("usrRptIdNo")
 			.usrRptLnIdNo("dsuseRptDtlIdNo")
 			.prdctCd("상품코드")
 			.prductNm("제품명")
@@ -169,6 +170,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			.dsuseQy(30)
 			.build();
 		NimsApiDto.DsuseRptDtl dtl2 = NimsApiDto.DsuseRptDtl.builder()
+			.usrRptIdNo("usrRptIdNo")
 			.usrRptLnIdNo("dsuseRptDtlIdNo1")
 			.prdctCd("상품코드1")
 			.prductNm("제품명1")

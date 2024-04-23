@@ -164,13 +164,11 @@ public class CustomExceptionHandler {
     }
 
     private ResponseEntity<ApiBaseResponse<?>> makeEntity(final Integer code, final String message, final HttpStatus status) {
-        ApiBaseResponse<Object> build = ApiBaseResponse.builder()
+        ApiBaseResponse<?> build = ApiBaseResponse.builder()
             .success(false)
             .code(code)
             .message(message)
-            //.data(message)
             .build();
-
 		// HttpHeaders headers = new HttpHeaders();
 		// headers.setContentType(MediaType.APPLICATION_JSON);
 

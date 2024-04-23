@@ -54,11 +54,12 @@ CREATE TABLE tb_cmm_refresh_token
 CREATE TABLE tb_dsuse_mgt
 (
   dscdmng_id      varchar(10)  NOT NULL COMMENT '폐기관리_id',
+  usr_rpt_id_no   varchar(30)  NOT NULL COMMENT '사용자_보고_식별_번호',
+  ref_usr_rpt_id_no varchar(30)  NULL COMMENT '참조_사용자_보고_식별_번호',
   user_id         varchar(10)  NULL     COMMENT '사용자_아이디',
   bssh_cd         varchar(10)  NOT NULL COMMENT '마약류취급자식별_번호',
   prgrs_stts_cd   varchar(10)  NULL     COMMENT '진행_상태_코드',
   rpt_rcept_no    varchar(30)  NULL     COMMENT '보고_접수_번호',
-  usr_rpt_id_no   varchar(30)  NULL     COMMENT '사용자_보고_식별_번호',
   rpt_ty_cd       varchar(1)   NULL     COMMENT '보고_유형_코드(0-신규,1-취소,2-변경)',
   rnd_dtl_rpt_cnt decimal      NULL     COMMENT '수불_상세_보고_수',
   hdr_de          varchar(8)   NULL     COMMENT '취급_일자',
@@ -75,14 +76,14 @@ CREATE TABLE tb_dsuse_mgt
   rgtr            varchar(10)  NOT NULL COMMENT '등록자',
   mdfcn_dt        varchar(14)  NULL     COMMENT '수정_일시',
   mdfr            varchar(10)  NULL     COMMENT '수정자',
-  PRIMARY KEY (dscdmng_id)
+  PRIMARY KEY (dscdmng_id, usr_rpt_id_no)
 ) COMMENT '폐기관리';
 
 CREATE TABLE tb_dsuse_mgt_dtl
 (
   dscdmng_id       varchar(10)  NOT NULL COMMENT '폐기관리_id',
-  dscdmng_sn       varchar(3)   NOT NULL COMMENT '폐기관리_순번',
-  usr_rpt_ln_id_no varchar(35)  NULL     COMMENT '사용자_보고_라인_식별_번호',
+  usr_rpt_id_no   varchar(30)   NOT NULL COMMENT '사용자_보고_식별_번호',
+  usr_rpt_ln_id_no varchar(35)  NOT NULL COMMENT '사용자_보고_라인_식별_번호',
   prdct_cd         varchar(14)  NOT NULL COMMENT '제품_코드',
   prduct_nm        varchar(300) NULL     COMMENT '제품_명',
   min_distb_qy     decimal      NULL     COMMENT '최소_유통단위_수량',
@@ -99,9 +100,9 @@ CREATE TABLE tb_dsuse_mgt_dtl
   rgtr             varchar(10)  NOT NULL COMMENT '등록자',
   mdfcn_dt         varchar(14)  NULL     COMMENT '수정_일시',
   mdfr             varchar(10)  NULL     COMMENT '수정자',
-  PRIMARY KEY (dscdmng_id, dscdmng_sn),
+  PRIMARY KEY (dscdmng_id, usr_rpt_id_no, usr_rpt_ln_id_no),
   constraint fk_dsuse_mgt_to_dtl_dsuse_mgt
-      foreign key (dscdmng_id) references tb_dsuse_mgt (dscdmng_id)
+      foreign key (dscdmng_id, usr_rpt_id_no) references tb_dsuse_mgt (dscdmng_id, usr_rpt_id_no)
 ) COMMENT '폐기관리_상세';
 
 CREATE TABLE tb_jrdt_gov_info

@@ -211,16 +211,23 @@ public class NimsApiDto {
     public static class DsuseRpt {
 
         /**
-         * 마약류취급자식별번호
-         */
-        @JsonProperty(value = "BSSH_CD", required = true)
-        private String bsshCd;
-
-        /**
          * 사용자 보고 식별 번호
          */
         @JsonProperty(value = "USR_RPT_ID_NO", required = true)
         private String usrRptIdNo;
+
+        /**
+         * 참조 사용자 보고 식별 번호
+         * 취소|변경시 필수 - 사용자 보고 식별 번호
+         */
+        @JsonProperty(value = "REF_USR_RPT_ID_NO")
+        private String refUsrRptIdNo;
+
+        /**
+         * 마약류취급자식별번호
+         */
+        @JsonProperty(value = "BSSH_CD", required = true)
+        private String bsshCd;
 
         /**
          * 보고 유형 코드(0-신규,1-취소,2-변경)
@@ -292,6 +299,7 @@ public class NimsApiDto {
         @JsonProperty(value = "RPT_PRG_STTS_CD", required = true)
         private String rptPgrSttsCd;
 
+
         /**
          * 폐기보고상세 목록
          */
@@ -306,6 +314,12 @@ public class NimsApiDto {
     @AllArgsConstructor
     @SuperBuilder
     public static class DsuseRptDtl {
+        /**
+         * 사용자 보고 식별 번호
+         */
+        @JsonProperty(value = "USR_RPT_ID_NO", required = true)
+        private String usrRptIdNo;
+
         /**
          * 사용자 보고 라인 식별 번호
          */
