@@ -78,7 +78,7 @@ public class InfNimsController {
 
 	@Operation(summary = "폐기 보고 정보 조회", description = "폐기 보고 정보 조회")
 	@PostMapping("/getDsuseRptInfo")
-	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.DsuseRpt>> getDsuseRptInfo(
+	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.DsuseRptInfo>> getDsuseRptInfo(
 		@RequestBody NimsApiRequest.DsuseRptInfoRequest dto
 	) {
 		return ApiBaseResponse.of(infNimsService.getDsuseRptInfo(dto));

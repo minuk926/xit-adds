@@ -1,5 +1,6 @@
 package cokr.xit.adds.inf.nims.service.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Validation;
@@ -49,6 +50,12 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 	@Value("${app.inf.nims.api-key}")
 	private String nimsApiKey;
+
+	/**
+	 * 관할관청코드
+	 */
+	@Value("${app.inf.nims.ofCd}")
+	private String ofCd;
 
 	@Value("${app.inf.nims.api.bsshinfoStV1}")
 	private String bsshInfoStV1;
@@ -140,8 +147,9 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 	}
 
 	@Override
-	public NimsApiResult.Response<NimsApiDto.DsuseRpt> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.DsuseRptInfo> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto) {
 		dto.setK(nimsApiKey);
+		dto.setFg4(ofCd);
 		ApiUtil.validate(dto, null, validator);
 		ApiUtil.checkYmdError(dto.getSdt(), "sdt");
 		ApiUtil.checkYmdError(dto.getEdt(), "edt");
@@ -153,71 +161,67 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 		return getDsuseRptResponse();
 	}
 
-	private NimsApiResult.Response<NimsApiDto.DsuseRpt> getDsuseRptResponse() {
-		NimsApiDto.DsuseRptDtl dtl1 = NimsApiDto.DsuseRptDtl.builder()
-			.usrRptIdNo("usrRptIdNo1111")
-			.usrRptLnIdNo("dsuseRptDtlIdNo11")
-			.prductCd("상품코드")
-			.prductNm("제품명")
-			.minDistbQy(1)
-			.pceQy(0)
-			.mnfNo("제조번호")
-			.prdValidDe("20240401")
-			.mnfSeq("-")
-			.storgeNo("저장소번호")
-			.storgeNm("저장소명")
-			.mvmnTyCd("1102")
-			.dsuseQy(30)
-			.build();
-		NimsApiDto.DsuseRptDtl dtl2 = NimsApiDto.DsuseRptDtl.builder()
-			.usrRptIdNo("usrRptIdNo1111")
-			.usrRptLnIdNo("dsuseRptDtlIdNo22")
-			.prductCd("상품코드1")
-			.prductNm("제품명1")
-			.minDistbQy(1)
-			.pceQy(0)
-			.mnfNo("제조번호1")
-			.prdValidDe("20240401")
-			.mnfSeq("-")
-			.storgeNo("저장소번호1")
-			.storgeNm("저장소명1")
-			.mvmnTyCd("1102")
-			.dsuseQy(10)
-			.build();
+	private NimsApiResult.Response<NimsApiDto.DsuseRptInfo> getDsuseRptResponse() {
 
-		NimsApiDto.DsuseRpt dsuseRpt = NimsApiDto.DsuseRpt.builder()
-			.bsshCd("bsshCd")
-			.usrRptIdNo("usrRptIdNo1111")
-			.rptTyCd("0")
-			.rndDtlRptCnt(2)
-			.hdrDe("20240401")
-			.rptDe("20240401")
-			.dsuseSeCd("1")
-			.dsusePrvCd("01")
-			.dsuseMthCd("1")
-			.dsuseLoc("보건소")
-			.status("0")
-			.rptPrgSttsCd("0")
-			.dsuseRptDtls(List.of(dtl1, dtl2))
-			.build();
+		//List<String> usrRptIdNoList = List.of("11111", "22222", "33333", "44444", "55555", "66666");
+		List<String> usrRptIdNoList = List.of("11111", "22222", "33333", "44444", "55555", "66666", "77777");
+		List<String> usrRptLnIdNoList = List.of("111111111", "222222222");
+		//List<String> rptTyCds = List.of("0", "0", "0", "0", "1", "2", "1");
+		List<String> rptTyCds = List.of("0", "0", "0", "0", "1", "2", "2");
+		List<String> refUsrRptIdNos = List.of("11111", "33333", "66666");
+		List<NimsApiDto.DsuseRptInfo> dsuseRpts = new ArrayList<>();
 
-		NimsApiDto.DsuseRpt dsuseRpt2 = NimsApiDto.DsuseRpt.builder()
-			.bsshCd("bsshCd")
-			.usrRptIdNo("usrRptIdNo2222")
-			.rptTyCd("0")
-			.rndDtlRptCnt(2)
-			.hdrDe("20240401")
-			.rptDe("20240401")
-			.dsuseSeCd("1")
-			.dsusePrvCd("01")
-			.dsuseMthCd("1")
-			.dsuseLoc("보건소")
-			.status("0")
-			.rptPrgSttsCd("0")
-			.dsuseRptDtls(List.of(dtl1, dtl2))
-			.build();
+		int refIdx = 0;
+		for(int i = 0; i<usrRptIdNoList.size(); i++){
+			NimsApiDto.DsuseRptInfoDtl dtl1 = NimsApiDto.DsuseRptInfoDtl.builder()
+				.usrRptIdNo(usrRptIdNoList.get(i))
+				.usrRptLnIdNo(usrRptLnIdNoList.get(0)+i)
+				.prductCd("상품코드")
+				.prductNm("제품명")
+				.minDistbQy(1)
+				.pceQy(0)
+				.mnfNo("제조번호")
+				.prdValidDe("20240401")
+				.mnfSeq("-")
+				.mvmnTyCd("1102")
+				.dsuseQy(30)
+				.build();
+			NimsApiDto.DsuseRptInfoDtl dtl2 = NimsApiDto.DsuseRptInfoDtl.builder()
+				.usrRptIdNo(usrRptIdNoList.get(i))
+				.usrRptLnIdNo(usrRptLnIdNoList.get(1)+i)
+				.prductCd("상품코드1")
+				.prductNm("제품명1")
+				.minDistbQy(1)
+				.pceQy(0)
+				.mnfNo("제조번호1")
+				.prdValidDe("20240401")
+				.mnfSeq("-")
+				.mvmnTyCd("1102")
+				.dsuseQy(10)
+				.build();
 
-		return NimsApiResult.Response.<NimsApiDto.DsuseRpt>builder()
+			NimsApiDto.DsuseRptInfo dsuseRpt = NimsApiDto.DsuseRptInfo.builder()
+				.usrRptIdNo(usrRptIdNoList.get(i))
+				.refUsrRptIdNo("0".equals(rptTyCds.get(i))? null : refUsrRptIdNos.get(refIdx++))
+				.bsshCd("H00008333")
+				.bsshNm("수지미래산부인과의원")
+				.indutyNm("마약류취급의료업")
+				.rptTyCd(rptTyCds.get(i))
+				.rndDtlRptCnt("1".equals(rptTyCds.get(i))? 0 : 2)
+				.hdrDe("20240401")
+				.rptDe("20240401")
+				.dsuseSeCd("1")
+				.dsusePrvCd("01")
+				.dsuseMthCd("1")
+				.dsuseLoc("보건소")
+				.status("0")
+				.rptPrgSttsCd("0")
+				.dsuseRptInfoDtls("1".equals(rptTyCds.get(i))? null : List.of(dtl1, dtl2))
+				.build();
+			dsuseRpts.add(dsuseRpt);
+		}
+
+		return NimsApiResult.Response.<NimsApiDto.DsuseRptInfo>builder()
 			.header(
 				NimsApiResult.Header.builder()
 					.resultCd(0)
@@ -225,8 +229,8 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 					.build()
 			)
 			.body(
-				NimsApiResult.Body.<NimsApiDto.DsuseRpt>builder()
-					.list(List.of(dsuseRpt, dsuseRpt2))
+				NimsApiResult.Body.<NimsApiDto.DsuseRptInfo>builder()
+					.list(dsuseRpts)
 					.isEndYn("Y")
 					.nRecord(2)
 					.totalCount(2)

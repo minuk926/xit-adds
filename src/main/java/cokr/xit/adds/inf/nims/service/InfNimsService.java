@@ -30,5 +30,5 @@ public interface InfNimsService {
 
 	NimsApiResult.Response<NimsApiDto.StorageInfo> getStorageInfo(NimsApiRequest.StorageInfoRequest dto);
 
-	NimsApiResult.Response<NimsApiDto.DsuseRpt> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto);
+	NimsApiResult.Response<NimsApiDto.DsuseRptInfo> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto);
 }

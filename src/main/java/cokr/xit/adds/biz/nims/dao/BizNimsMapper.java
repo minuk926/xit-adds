@@ -1,5 +1,7 @@
 package cokr.xit.adds.biz.nims.dao;
 
+import java.util.Map;
+
 import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
 
 import cokr.xit.adds.biz.nims.model.BizNimsRequest;
@@ -33,6 +35,12 @@ public interface BizNimsMapper extends AbstractMapper {
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ
 	//------------------------------------------------------------------------------------------------------
+	int insertDsuseRptInfo(NimsApiDto.DsuseRptInfo dto);
+	int insertDsuseRptInfoDtl(NimsApiDto.DsuseRptInfoDtl dto);
+	int updateCancelDsuseRptInfo(NimsApiDto.DsuseRptInfo dto);
+	int updateCancelDsuseRptInfoDtl(NimsApiDto.DsuseRptInfo dto);
+	Map<String, String> recusiveRefUsrRptIdNo(String refUsrRptIdNo);
+
 	int insertDsuseMgt(BizNimsRequest.DsuseMgt dto);
 	int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
 	int updateCancelDsuseMgt(BizNimsRequest.DsuseMgt dto);

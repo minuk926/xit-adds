@@ -86,12 +86,12 @@ public class BizNimsController {
         return ApiBaseResponse.of(bizNimsService.saveStorageInfo(dto));
     }
 
-    @Operation(summary = "NIMS API - 폐기 보고 정보 조회", description = "폐기 보고 정보 조회<br><br>NIMS API 호출 결과 Return<br>폐기보고관리 화면에서 사용")
+    @Operation(summary = "NIMS API - 폐기 보고 정보 조회", description = "폐기 보고 정보 조회<br><br>NIMS API 호출 결과를 DB에 저장후 Return")
     @PostMapping("/getDsuseRptInfo")
-    public ApiBaseResponse<List<NimsApiDto.DsuseRpt>> getDsuseRptInfo(
+    public ApiBaseResponse<List<NimsApiDto.DsuseRptInfo>> getDsuseRptInfo(
         @RequestBody @Validated NimsApiRequest.DsuseRptInfoRequest dto
     ) {
-        return ApiBaseResponse.of(bizNimsService.getDsuseRptInfo(dto));
+        return ApiBaseResponse.of(bizNimsService.saveDsuseRptInfo(dto));
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -130,7 +130,9 @@ public class BizNimsController {
                         "userId":"userid1",
                         "USR_RPT_ID_NO":"usrRptIdNo1111",
                         "REF_USR_RPT_ID_NO":null,
-                        "BSSH_CD":"bsshCd",
+                        "BSSH_CD":"H00008333",
+                        "BSSH_NM":"수지미래산부인과의원",
+                        "INDUTY_NM":"마약류취급의료업",
                         "RPT_TY_CD":"0",
                         "RND_DTL_RPT_CNT":2,
                         "HDR_DE":"20240401",
@@ -179,7 +181,9 @@ public class BizNimsController {
                         "userId":"userid1",
                         "USR_RPT_ID_NO":"usrRptIdNo2222",
                         "REF_USR_RPT_ID_NO":null,
-                        "BSSH_CD":"bsshCd",
+                        "BSSH_CD":"H00008333",
+                        "BSSH_NM":"수지미래산부인과의원",
+                        "INDUTY_NM":"마약류취급의료업",
                         "RPT_TY_CD":"0",
                         "RND_DTL_RPT_CNT":2,
                         "HDR_DE":"20240401",
@@ -228,7 +232,9 @@ public class BizNimsController {
                         "userId":"userid1",
                         "USR_RPT_ID_NO":"usrRptIdNo3333",
                         "REF_USR_RPT_ID_NO":"usrRptIdNo1111",
-                        "BSSH_CD":"bsshCd",
+                        "BSSH_CD":"H00008333",
+                        "BSSH_NM":"수지미래산부인과의원",
+                        "INDUTY_NM":"마약류취급의료업",
                         "RPT_TY_CD":"2",
                         "RND_DTL_RPT_CNT":2,
                         "HDR_DE":"20240401",
@@ -277,7 +283,9 @@ public class BizNimsController {
                         "userId":"userid1",
                         "USR_RPT_ID_NO":"usrRptIdNo4444",
                         "REF_USR_RPT_ID_NO":"usrRptIdNo2222",
-                        "BSSH_CD":"bsshCd",
+                        "BSSH_CD":"H00008333",
+                        "BSSH_NM":"수지미래산부인과의원",
+                        "INDUTY_NM":"마약류취급의료업",
                         "RPT_TY_CD":"1",
                         "RND_DTL_RPT_CNT":0,
                         "HDR_DE":"20240401",

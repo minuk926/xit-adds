@@ -45,7 +45,7 @@ public class BizNimsRequest {
 	@AllArgsConstructor
 	@SuperBuilder
 	@EqualsAndHashCode(callSuper = false)
-	public static class DsuseMgt extends NimsApiDto.DsuseRpt {
+	public static class DsuseMgt extends NimsApiDto.DsuseRptInfo {
 		@Schema(requiredMode = AUTO, title = "폐기 관리 ID", example = " ")
 		private String dscdmngId;
 
@@ -71,9 +71,6 @@ public class BizNimsRequest {
 		@Schema(requiredMode = REQUIRED, title = "진행 상태 코드", example = " ", allowableValues = {"01", "02", "11", "22", "31", "41", "42", "99"})
 		@Pattern(regexp = "01|02|11|22|31|41|42|99", message = "진행 상태 코드는 필수 입니다")
 		private String prgrsSttsCd = "01";
-
-		@Schema(requiredMode = AUTO, title = "보고 접수 번호", example = " ")
-		private String rptRceptNo;
 
 		@Schema(requiredMode = REQUIRED)
 		@Builder.Default
@@ -108,7 +105,7 @@ public class BizNimsRequest {
 	@AllArgsConstructor
 	@SuperBuilder
 	@EqualsAndHashCode(callSuper = false)
-	public static class DsuseMgtDtl extends NimsApiDto.DsuseRptDtl {
+	public static class DsuseMgtDtl extends NimsApiDto.DsuseRptInfoDtl {
 		@Schema(requiredMode = AUTO, title = "폐기 관리 ID", example = " ")
 		private String dscdmngId;
 

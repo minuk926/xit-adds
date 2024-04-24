@@ -208,7 +208,7 @@ public class NimsApiDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @SuperBuilder
-    public static class DsuseRpt {
+    public static class DsuseRptInfo extends AuditDto {
 
         /**
          * 사용자 보고 식별 번호
@@ -228,6 +228,18 @@ public class NimsApiDto {
          */
         @JsonProperty(value = "BSSH_CD", required = true)
         private String bsshCd;
+
+        /**
+         * 마약류취급자명업체명
+         */
+        @JsonProperty(value = "BSSH_NM", required = true)
+        private String bsshNm;
+
+        /**
+         * 업종명
+         */
+        @JsonProperty(value = "INDUTY_NM", required = true)
+        private String indutyNm;
 
         /**
          * 보고 유형 코드(0-신규,1-취소,2-변경)
@@ -299,13 +311,18 @@ public class NimsApiDto {
         @JsonProperty(value = "RPT_PRG_STTS_CD", required = true)
         private String rptPrgSttsCd;
 
+        /**
+         * 원사용자보고식별번호
+         */
+        //@JsonProperty(value = "USR_RPT_ID_NO", required = true)
+        private String orgUsrRptIdNo;
 
         /**
          * 폐기보고상세 목록
          */
         @Builder.Default
         @Valid
-        private List<DsuseRptDtl> dsuseRptDtls = new ArrayList<>();
+        private List<DsuseRptInfoDtl> dsuseRptInfoDtls = new ArrayList<>();
     }
 
     @Getter
@@ -313,7 +330,7 @@ public class NimsApiDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @SuperBuilder
-    public static class DsuseRptDtl {
+    public static class DsuseRptInfoDtl extends AuditDto {
         /**
          * 사용자 보고 식별 번호
          */
@@ -367,18 +384,6 @@ public class NimsApiDto {
          */
         @JsonProperty(value = "MNF_SEQ")
         private String mnfSeq;
-
-        /**
-         * 저장소 번호
-         */
-        @JsonProperty(value = "STORGE_NO", required = true)
-        private String storgeNo;
-
-        /**
-         * 저장소명
-         */
-        @JsonProperty(value = "STORGE_NM", required = true)
-        private String storgeNm;
 
         /**
          * 이동 유형 코드

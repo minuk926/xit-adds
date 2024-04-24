@@ -279,6 +279,14 @@ public class NimsApiRequest {
         @Schema(title = "폐기 보고 진행 상태", description = "폐기 보고 진행 상태", example = " ", allowableValues = {"0", "1", "2", "3"})
         String ps;
 
+        /**
+         * FIXME : 속성명 확정 필요
+         * 4050149 - 수지구보건소
+         */
+        @Schema(title = "관할관청기관코드", description = "관할관청기관코드", example = "4050149")
+        @NotEmpty(message = "관할 관청 기관 코드는 필수 입니다")
+        String fg4;
+
     }
 
         /**

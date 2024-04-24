@@ -82,3 +82,38 @@ select tdm.dscdmng_id                       /* 폐기관리ID */
     on tdm.bssh_cd = tsi.bssh_cd
  where tdm.dscdmng_id = '2024040001';
 
+select *
+from tb_dsuse_rpt_info
+where use_yn = 'Y';
+
+
+
+WITH RECURSIVE temp (
+    usr_rpt_id_no, rpt_ty_cd, ref_usr_rpt_id_no, depth, path
+) AS (select usr_rpt_id_no
+           , rpt_ty_cd
+           , ref_usr_rpt_id_no
+           , 0
+           , usr_rpt_id_no
+      from tb_dsuse_rpt_info
+      where 1=1
+        -- and use_yn = 'Y'
+        and ref_usr_rpt_id_no is null
+      UNION ALL
+      select tdri.usr_rpt_id_no
+           , tdri.rpt_ty_cd
+           , tdri.ref_usr_rpt_id_no
+           , tgt.depth + 1
+           , concat(tgt.path, ',', tdri.usr_rpt_id_no)
+      from tb_dsuse_rpt_info tdri
+               INNER JOIN temp tgt
+                          ON tdri.ref_usr_rpt_id_no = tgt.usr_rpt_id_no
+    )
+     select usr_rpt_id_no
+           , rpt_ty_cd
+           , ref_usr_rpt_id_no
+     , depth
+     , path
+from temp
+order by temp.path;
+
