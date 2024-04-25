@@ -86,6 +86,22 @@ select *
 from tb_dsuse_rpt_info
 where use_yn = 'Y';
 
+select tdm.dscdmng_id
+     , tdm.user_id
+     , tdri.*
+     , tbi.rprsntv_nm
+     , tbi.prmisn_no
+  from tb_dsuse_mgt tdm
+  join tb_dsuse_rpt_info tdri
+    on (tdm.org_usr_rpt_id_no = tdri.org_usr_rpt_id_no
+   and tdm.usr_rpt_id_no = tdri.usr_rpt_id_no)
+  left outer join tb_bssh_info tbi
+    on tdri.bssh_cd = tbi.bssh_cd
+
+
+
+
+
 
 
 WITH RECURSIVE temp (
