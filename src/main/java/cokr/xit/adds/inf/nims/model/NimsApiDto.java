@@ -208,7 +208,7 @@ public class NimsApiDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @SuperBuilder
-    public static class DsuseRptInfo extends AuditDto {
+    public static class DsuseRptInfo extends AuditDto implements Cloneable {
 
         /**
          * 사용자 보고 식별 번호
@@ -322,6 +322,16 @@ public class NimsApiDto {
         @Builder.Default
         @Valid
         private List<DsuseRptInfoDtl> dsuseRptInfoDtls = new ArrayList<>();
+
+        // clone 메소드 추가
+        @Override
+        public DsuseRptInfo clone() {
+            try {
+                return (DsuseRptInfo) super.clone();
+            } catch (CloneNotSupportedException e) {
+                throw ApiCustomException.create("NIMS 폐기보고 정보 복제 중 오류가 발생 하였습니다.");
+            }
+        }
     }
 
     @Getter

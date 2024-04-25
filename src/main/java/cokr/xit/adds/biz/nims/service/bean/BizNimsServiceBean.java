@@ -1,5 +1,7 @@
 package cokr.xit.adds.biz.nims.service.bean;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,6 +21,7 @@ import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import cokr.xit.adds.biz.nims.dao.BizNimsMapper;
 import cokr.xit.adds.biz.nims.model.BizNimsAarDto;
 import cokr.xit.adds.biz.nims.model.BizNimsRequest;
+import cokr.xit.adds.biz.nims.model.BizNimsResponse;
 import cokr.xit.adds.biz.nims.service.BizNimsService;
 import cokr.xit.adds.core.Constants;
 import cokr.xit.adds.core.spring.exception.ApiCustomException;
@@ -126,12 +129,18 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * 변경 이력 관리 등을 위해 orgUsrRptIdNo(원사용자보고식별번호)를 추가 하여 저장
 	 *
 	 * 데이타 필터링 적용을 위해 아래 순서로 진행
+	 * 0. 조회(저장)한 데이타 대상 에서 제외 (usrRptIdNo가 DB에 저장된 경우)
 	 * 1. 신규(rptTyCd : 0) 저장 - tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 생성
 	 *    - orgUsrRptIdNo(원사용자보고식별번호) = 사용자보고식별번호(usrRptIdNo)
 	 * 2. 신규 외의 경우(rptTyCd : 1 - 취소, 2 - 변경)
 	 *   2-1. refUsrRptIdNo 필수 체크
-	 *   2-2. tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 사용여부 'N' update
-	 *   3-3. tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 생성
+	 *   2-2. 폐기보고정보, 폐기관리 변경
+	 *      1) tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 사용여부 'N' update
+	 *      2) tb_dsuse_mgt 변경
+	 *         조건 : 사용자보고식별번호 = 참조사용자보고식별번호
+	 *          => usr_rpt_id_no -> refUsrRptIdNo update
+	 *          => 취소인 경우 use_yn = 'N' update
+	 *   2-3. tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 생성
 	 *        => 취소인 경우는 tb_dsuse_rpt_info의 사용 여부 'N'으로 생성
 	 * @param reqDto NimsApiRequest.DsuseRptInfoRequest
 	 * @return List<NimsApiDto.DsuseRptInfo>
@@ -139,13 +148,19 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 */
 	@Override
 	public List<NimsApiDto.DsuseRptInfo> saveDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest reqDto) {
-		/*
-		데이타 필터링 (보고유형코드 0인 데이타 제거) - API 서버에서 필터링을 하지 않은 경우
-		1. 취소 skip : 보고유형코드(rptTyCd)가 1-취소인 경우, refUsrRptIdNo에 해당 되는 데이타
-		2. 변경  데이타 적용 : 보고유형코드(rptTyCd)가 2-변경인 경우
-		*/
+
 		NimsApiResult.Response<NimsApiDto.DsuseRptInfo> result = infNimsService.getDsuseRptInfo(reqDto);
-		List<NimsApiDto.DsuseRptInfo> list = result.getResultOrThrow();
+		List<NimsApiDto.DsuseRptInfo> rsltList = result.getResultOrThrow();
+
+		// 0. 조회(저장)한 데이타 대상 에서 제외 (usrRptIdNo가 DB에 저장된 경우)
+		List<NimsApiDto.DsuseRptInfo> list = new ArrayList<>();
+		for (NimsApiDto.DsuseRptInfo dto : rsltList) {
+			Map<String, String> map = new HashMap<>();
+			map.put("usrRptIdNo", dto.getUsrRptIdNo());
+			if(isEmpty(bizNimsMapper.selectDsuseRptInfoByUsrRptIdNo(map))){
+				list.add(dto);
+			};
+		}
 
 		// 1. 신규(rptTyCd : 0) 저장 - tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 생성
 		for (NimsApiDto.DsuseRptInfo dto : list) {
@@ -171,10 +186,15 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 				throw ApiCustomException.create("데이타 오류[취소 및 변경인 경우 참조사용자식별번호(REF_USR_RPT_ID_NO) 필수]");
 			}
 
-			// 2-2. tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 사용여부 'N' update
+			// 2-2. 폐기보고정보, 폐기관리 변경
+			//   1) tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 사용여부 'N' update
+			//   2) tb_dsuse_mgt 변경
+			//      조건 : 사용자보고식별번호 = 참조사용자보고식별번호
+			//         => usr_rpt_id_no -> refUsrRptIdNo update
+			//         => 취소인 경우 use_yn = 'N' update
 			updateDsuseRpt(dto);
 
-			// 3-3. tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 생성 (취소인 경우는 tb_dsuse_rpt_info의 사용 여부 'N'으로 생성)
+			// 2-3. tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 생성 (취소인 경우는 tb_dsuse_rpt_info의 사용 여부 'N'으로 생성)
 			createDsuseRpt(dto, false);
 		}
 
@@ -185,72 +205,53 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return list;
 	}
 
-	/**
-	 * <pre>
-	 * 폐기보고서 정보 조회
-	 * 데이타 필터링 (보고유형코드 0인 데이타 제거) - API 서버에서 필터링을 하지 않은 경우
-	 * 1. 취소 skip : 보고유형코드(rptTyCd)가 1-취소인 경우, refUsrRptIdNo에 해당 되는 데이타
-	 * 2. 변경  데이타 적용 : 보고유형코드(rptTyCd)가 2-변경인 경우
-	 *    => refUsrRptIdNo에 해당 되는  데이타
-	 * @param dto
-	 * @return
-	 * </pre>
-	 */
-	@Override
-	public List<NimsApiDto.DsuseRptInfo> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto) {
-		/*
-		데이타 필터링 (보고유형코드 0인 데이타 제거) - API 서버에서 필터링을 하지 않은 경우
-		1. 취소 skip : 보고유형코드(rptTyCd)가 1-취소인 경우, refUsrRptIdNo에 해당 되는 데이타
-		2. 변경  데이타 적용 : 보고유형코드(rptTyCd)가 2-변경인 경우
-		*/
-		NimsApiResult.Response<NimsApiDto.DsuseRptInfo> result = infNimsService.getDsuseRptInfo(dto);
-		return result.getResultOrThrow();
-	}
-
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ
 	//------------------------------------------------------------------------------------------------------
+	/**
+	 * <pre>
+	 * 폐기관리정보 저장
+	 *
+	 * @param dtos List<BizNimsRequest.DsuseMgt>
+	 * @return List<BizNimsResponse.DsuseMgtResponse>
+	 * </pre>
+	 */
 	@Override
-	public List<BizNimsRequest.DsuseMgt> saveDsuseMgt(List<BizNimsRequest.DsuseMgt> dtos) {
+	public List<BizNimsResponse.DsuseMgtResponse> saveDsuseMgt(List<BizNimsRequest.DsuseMgt> dtos) {
 		for (BizNimsRequest.DsuseMgt dto : dtos) {
 			ApiUtil.validate(dto, null, validator);
 		}
 
-		// 신규 처리
-		for (BizNimsRequest.DsuseMgt dto : dtos) {
-			dto.setOrgUsrRptIdNo(dto.getUsrRptIdNo());
-			dto.setRgtr(Constants.NIMS_API_USER_ID);
-
-			// 신규가 아닌 경우 skip
-			if(!"0".equals(dto.getRptTyCd())) continue;
-
-			createDsuseMgt(dto);
-		}
-
-		// 취소 및 변경 데이타 처리
-		String errMsg = null;
+		final List<String> dscdmngIds = new ArrayList<>();
 		for (BizNimsRequest.DsuseMgt dto : dtos) {
 			dto.setRgtr(Constants.NIMS_API_USER_ID);
 
-			// 신규인 경우 skip
-			if("0".equals(dto.getRptTyCd())) continue;
-
-			if(isEmpty(dto.getRefUsrRptIdNo())){
-				throw ApiCustomException.create("데이타 오류[취소 및 변경인 경우 참조사용자식별번호(REF_USR_RPT_ID_NO) 필수]");
-			}
-
-			// 폐기관리 데이타 disable(미사용)
-			updateDsuseMgt(dto);
-
-			createDsuseMgt(dto);
+			bizNimsMapper.insertDsuseMgt(dto);
+			dscdmngIds.add(dto.getDscdmngId());
 		}
-		return dtos;
+		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectDsuseMgt(dscdmngIds);
+
+		// 마약류취급업체의 허가번호(prmisnNo), 대표자명(rprsntvNm) set
+		setAddBsshInfo(resList);
+
+		return resList;
 	}
 
+
+
+	//------------------------------------------------------------------------------------------------------
+	// private method
+	//------------------------------------------------------------------------------------------------------
+
 	/**
+	 * <pre>
 	 * tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 사용여부 'N' update
-	 *
+	 * tb_dsuse_mgt
+	 * 조건 : 사용자보고식별번호 = 참조사용자보고식별번호
+	 *      => usr_rpt_id_no -> refUsrRptIdNo update
+	 *      => 취소인 경우 use_yn = 'N' update
 	 * @param dto NimsApiDto.DsuseRptInfo
+	 * </pre>
 	 */
 	private void updateDsuseRpt(NimsApiDto.DsuseRptInfo dto) {
 		String errMsg;
@@ -258,6 +259,14 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		else errMsg = "변경";
 
 		if (bizNimsMapper.updateCancelDsuseRptInfo(dto) == 1) {
+			// tb_dsuse_mgt
+			// 조건 : 사용자보고식별번호 = 참조사용자보고식별번호
+			//      => usr_rpt_id_no -> refUsrRptIdNo update
+			//      => 취소인 경우 use_yn = 'N' update
+			if(bizNimsMapper.updateCancelDsuseMgt(dto) == 0){
+				throw ApiCustomException.create("폐기보고정보 변경 적용 실패\n[폐기관리테이블에 사용자보고식별번호 = 참조사용자보고식별번호에 해당하는 데이타 미존재]");
+			}
+
 			int cnt = bizNimsMapper.updateCancelDsuseRptInfoDtl(dto);
 			if(cnt == 0) throw ApiCustomException.create(String.format("폐기 정보 상세 %s 실패", errMsg));
 
@@ -332,39 +341,43 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		}
 	}
 
-	private void updateDsuseMgt(BizNimsRequest.DsuseMgt dto) {
-		String errMsg;
-		if ("1".equals(dto.getRptTyCd())) errMsg = "취소";
-		else errMsg = "변경";
-
-		if (bizNimsMapper.updateCancelDsuseMgt(dto) == 1) {
-			int cnt = bizNimsMapper.updateCancelDsuseMgtDtl(dto);
-			if(cnt == 0) throw ApiCustomException.create(String.format("폐기 관리 상세 %s 실패", errMsg));
-
-			// 변경인 경우 상세 데이타 건수와 일치 하지 않는 경우 오류 처리
-			if ("2".equals(dto.getRptTyCd()) && dto.getRndDtlRptCnt() != cnt) {
-				throw ApiCustomException.create(String.format("폐기 관리 상세 %s 실패", errMsg));
+	/**
+	 * <pre>
+	 * 마약류 취급자 업체 추가 정보 set
+	 * 허가번호(prmisnNo), 대표자명(rprsntvNm) set
+	 * @param resList List<BizNimsResponse.DsuseMgtResponse>
+	 * </pre>
+	 */
+	private void setAddBsshInfo(List<BizNimsResponse.DsuseMgtResponse> resList) {
+		resList.forEach(r -> {
+			if(isEmpty(r.getPrmisnNo())){
+				List<BsshInfoSt> list = saveBsshInfoSt(
+					BsshInfoRequest.builder()
+						.fg("1")
+						.pg("1")
+						.bc(r.getBsshCd())
+						.build()
+				);
+				if(list.isEmpty()) throw ApiCustomException.create("데이타 오류[마약류취급자식별번호에 해당하는 데이타가 없습니다.]");
+				r.setPrmisnNo(list.get(0).getPrmisnNo());
+				r.setRprsntvNm(list.get(0).getRprsntvNm());
 			}
-
-		} else {
-			throw ApiCustomException.create(String.format("폐기 관리 마스터 %s 실패", errMsg));
-		}
+		});
 	}
 
-	private void createDsuseMgt(BizNimsRequest.DsuseMgt dto) {
-		if (bizNimsMapper.insertDsuseMgt(dto) == 1) {
-			int dtlCnt = 0;
-			for (BizNimsRequest.DsuseMgtDtl d : dto.getDsuseMgtDtls()) {
-				d.setDscdmngId(dto.getDscdmngId());
-				d.setRgtr(Constants.NIMS_API_USER_ID);
-				dtlCnt = dtlCnt + bizNimsMapper.insertDsuseMgtDtl(d);
-			}
-			if (dto.getDsuseMgtDtls().size() != dtlCnt)
-				throw ApiCustomException.create("폐기 관리 상세 등록 실패");
-		} else {
-			throw ApiCustomException.create("폐기 관리 마스터 등록 실패");
-		}
-	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 	@Override
 	public BizNimsAarDto.AarHeader getTgtDsuseRptData(BizNimsRequest.DsuseMgt dto) {

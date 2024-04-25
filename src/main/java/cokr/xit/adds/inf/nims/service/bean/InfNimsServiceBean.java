@@ -163,12 +163,12 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 	private NimsApiResult.Response<NimsApiDto.DsuseRptInfo> getDsuseRptResponse() {
 
-		//List<String> usrRptIdNoList = List.of("11111", "22222", "33333", "44444", "55555", "66666");
+		//List<String> usrRptIdNoList = List.of("11111", "22222", "33333", "44444");
 		List<String> usrRptIdNoList = List.of("11111", "22222", "33333", "44444", "55555", "66666", "77777");
 		List<String> usrRptLnIdNoList = List.of("111111111", "222222222");
-		//List<String> rptTyCds = List.of("0", "0", "0", "0", "1", "2", "1");
-		List<String> rptTyCds = List.of("0", "0", "0", "0", "1", "2", "2");
-		List<String> refUsrRptIdNos = List.of("11111", "33333", "66666");
+		//List<String> rptTyCds = List.of("0", "0", "0", "0");
+		List<String> rptTyCds = List.of("0", "0", "1", "2", "0", "0", "2");
+		List<String> refUsrRptIdNos = List.of("11111", "22222", "44444");
 		List<NimsApiDto.DsuseRptInfo> dsuseRpts = new ArrayList<>();
 
 		int refIdx = 0;

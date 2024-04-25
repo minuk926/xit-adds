@@ -1,10 +1,12 @@
 package cokr.xit.adds.biz.nims.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
 
 import cokr.xit.adds.biz.nims.model.BizNimsRequest;
+import cokr.xit.adds.biz.nims.model.BizNimsResponse;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import cokr.xit.foundation.component.AbstractMapper;
 
@@ -39,12 +41,15 @@ public interface BizNimsMapper extends AbstractMapper {
 	int insertDsuseRptInfoDtl(NimsApiDto.DsuseRptInfoDtl dto);
 	int updateCancelDsuseRptInfo(NimsApiDto.DsuseRptInfo dto);
 	int updateCancelDsuseRptInfoDtl(NimsApiDto.DsuseRptInfo dto);
+	int updateCancelDsuseMgt(NimsApiDto.DsuseRptInfo dto);
+
 	Map<String, String> recusiveRefUsrRptIdNo(String refUsrRptIdNo);
 
 	int insertDsuseMgt(BizNimsRequest.DsuseMgt dto);
-	int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
-	int updateCancelDsuseMgt(BizNimsRequest.DsuseMgt dto);
-	int updateCancelDsuseMgtDtl(BizNimsRequest.DsuseMgt dto);
+	NimsApiDto.DsuseRptInfo selectDsuseRptInfoByUsrRptIdNo(Map<String, String> map);
+	List<BizNimsResponse.DsuseMgtResponse> selectDsuseMgt(List<String> dsuseMgtIds);
+	// int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
+	// int updateCancelDsuseMgtDtl(BizNimsRequest.DsuseMgt dto);
 
 	// BizNimsAarDto.AarHeader selectTgtAarHeader(BizNimsRequest.DsuseMgt dto);
 	// List<BizNimsAarDto.AarDetail> selectTgtAarDetails(BizNimsRequest.DsuseMgt dto);

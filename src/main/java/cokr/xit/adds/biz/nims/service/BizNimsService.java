@@ -3,6 +3,7 @@ package cokr.xit.adds.biz.nims.service;
 import java.util.List;
 
 import cokr.xit.adds.biz.nims.model.BizNimsRequest;
+import cokr.xit.adds.biz.nims.model.BizNimsResponse;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import cokr.xit.adds.inf.nims.model.NimsApiRequest;
 
@@ -49,7 +50,6 @@ public interface BizNimsService {
 	 * </pre>
 	 */
 	List<NimsApiDto.DsuseRptInfo> saveDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto);
-	List<NimsApiDto.DsuseRptInfo> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto);
 
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ
@@ -58,7 +58,7 @@ public interface BizNimsService {
 	// NimsAarResult updateReportDsuse();
 	// NimsAarResult cancelReportDsuse();
 
-	List<BizNimsRequest.DsuseMgt> saveDsuseMgt(List<BizNimsRequest.DsuseMgt> dtos);
+	List<BizNimsResponse.DsuseMgtResponse> saveDsuseMgt(List<BizNimsRequest.DsuseMgt> dtos);
 
 	// BizNimsAarDto.AarHeader getTgtDsuseRptData(BizNimsRequest.DsuseMgt dto);
 	// BizNimsAarDto.AarHeader createTgtDsuseRptData(BizNimsAarDto.AarHeader dto);

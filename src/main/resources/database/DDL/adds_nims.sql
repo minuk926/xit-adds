@@ -1,26 +1,35 @@
-
-CREATE TABLE tb_bssh_info
+create or replace table tb_dsuse_mgt
 (
-  bssh_cd      varchar(10)  NOT NULL COMMENT '마약류취급자식별_번호',
-  bssh_nm      varchar(120) NULL     COMMENT '업체_명',
-  induty_nm    varchar(200) NULL     COMMENT '업종_명',
-  hdnt_cd      varchar(10)  NULL     COMMENT '의료업자_구분',
-  hdnt_nm      varchar(200) NULL     COMMENT '의료업자구분_명',
-  bizrno       varchar(10)  NULL     COMMENT '사업자등록번호',
-  rprsntv_nm   varchar(60)  NULL     COMMENT '대표자_명',
-  chrg_nm      varchar(60)  NULL     COMMENT '담당자_명',
-  hptl_no      varchar(20)  NULL     COMMENT '요양기관_기호',
-  join_yn      varchar(200) NULL     COMMENT '회원가입_여부',
-  bssh_stts_nm varchar(200) NULL     COMMENT '상태',
-  prmisn_no    varchar(40)  NULL     COMMENT '허가_번호',
-  use_yn       varchar(1)   NOT NULL COMMENT '사용_여부',
-  reg_dt       varchar(14)  NOT NULL COMMENT '등록_일시',
-  rgtr         varchar(10)  NOT NULL COMMENT '등록자',
-  mdfcn_dt     varchar(14)  NULL     COMMENT '수정_일시',
-  mdfr         varchar(10)  NULL     COMMENT '수정자',
-  PRIMARY KEY (bssh_cd)
+    dscdmng_id    varchar(10) not null comment '폐기관리_id'
+        primary key,
+    user_id       varchar(10) null comment '사용자_아이디',
+    usr_rpt_id_no varchar(30) NOT NULL COMMENT '사용자_보고_식별_번호',
+    org_usr_rpt_id_no varchar(30) NOT NULL COMMENT '원_사용자_보고_식별_번호',
+    bssh_cd       varchar(10) null comment '마약류취급자식별_번호',
+    prgrs_stts_cd varchar(10) null comment '진행_상태_코드',
+    use_yn        varchar(1)  not null comment '사용_여부',
+    reg_dt        varchar(14) not null comment '등록_일시',
+    rgtr          varchar(10) not null comment '등록자',
+    mdfcn_dt      varchar(14) null comment '수정_일시',
+    mdfr          varchar(10) null comment '수정자',
+    constraint idx_tb_dsuse_mgt_01
+        unique (org_usr_rpt_id_no, usr_rpt_id_no)
+)
+    comment '폐기관리';
 
-) COMMENT '취급자_정보';
+CREATE TABLE tb_dsuse_mgt
+(
+    dscdmng_id      varchar(10)  NOT NULL COMMENT '폐기관리_id',
+    usr_rpt_id_no   varchar(30)  NOT NULL COMMENT '사용자_보고_식별_번호',
+    user_id         varchar(10)  NULL     COMMENT '사용자_아이디',
+    prgrs_stts_cd   varchar(10)  NULL     COMMENT '진행_상태_코드',
+    use_yn          varchar(1)   NOT NULL COMMENT '사용_여부',
+    reg_dt          varchar(14)  NOT NULL COMMENT '등록_일시',
+    rgtr            varchar(10)  NOT NULL COMMENT '등록자',
+    mdfcn_dt        varchar(14)  NULL     COMMENT '수정_일시',
+    mdfr            varchar(10)  NULL     COMMENT '수정자',
+    PRIMARY KEY (dscdmng_id, usr_rpt_id_no)
+) COMMENT '폐기관리';
 
 CREATE TABLE tb_dsuse_rpt_info
 (
@@ -40,7 +49,7 @@ CREATE TABLE tb_dsuse_rpt_info
     dsuse_de        varchar(80)  NULL     COMMENT '폐기_일자',
     status          varchar(1)   NULL     COMMENT '처리상태(0-정상,1-취소,2-변경)',
     rpt_prg_stts_cd varchar(10)  NULL     COMMENT '보고_진행_상태_코드',
-    org_usr_rpt_id_no varchar(30)  null comment '원_사용자_보고_식별_번호'
+    org_usr_rpt_id_no varchar(30)  null comment '원_사용자_보고_식별_번호',
     use_yn          varchar(1)   NOT NULL COMMENT '사용_여부',
     reg_dt          varchar(14)  NOT NULL COMMENT '등록_일시',
     rgtr            varchar(10)  NOT NULL COMMENT '등록자',
@@ -49,8 +58,7 @@ CREATE TABLE tb_dsuse_rpt_info
     PRIMARY KEY (usr_rpt_id_no)
 ) COMMENT '폐기_보고_정보';
 create or replace index idx_tb_dsuse_rpt_info_01
-    on adds.tb_dsuse_rpt_info (org_usr_rpt_id_no)
-    comment '원_사용자_보고_식별_번호 인덱스';
+    on tb_dsuse_rpt_info (org_usr_rpt_id_no);
 
 CREATE TABLE tb_dsuse_rpt_info_dtl
 (
@@ -75,19 +83,51 @@ CREATE TABLE tb_dsuse_rpt_info_dtl
         foreign key (usr_rpt_id_no) references tb_dsuse_mgt (usr_rpt_id_no)
 ) COMMENT '폐기_보고_정보_상세';
 
-CREATE TABLE tb_dsuse_mgt
+CREATE TABLE tb_bssh_info
 (
-  dscdmng_id      varchar(10)  NOT NULL COMMENT '폐기관리_id',
-  usr_rpt_id_no   varchar(30)  NOT NULL COMMENT '사용자_보고_식별_번호',
-  user_id         varchar(10)  NULL     COMMENT '사용자_아이디',
-  prgrs_stts_cd   varchar(10)  NULL     COMMENT '진행_상태_코드',
-  use_yn          varchar(1)   NOT NULL COMMENT '사용_여부',
-  reg_dt          varchar(14)  NOT NULL COMMENT '등록_일시',
-  rgtr            varchar(10)  NOT NULL COMMENT '등록자',
-  mdfcn_dt        varchar(14)  NULL     COMMENT '수정_일시',
-  mdfr            varchar(10)  NULL     COMMENT '수정자',
-  PRIMARY KEY (dscdmng_id, usr_rpt_id_no)
-) COMMENT '폐기관리';
+    bssh_cd      varchar(10)  NOT NULL COMMENT '마약류취급자식별_번호',
+    bssh_nm      varchar(120) NULL     COMMENT '업체_명',
+    induty_nm    varchar(200) NULL     COMMENT '업종_명',
+    hdnt_cd      varchar(10)  NULL     COMMENT '의료업자_구분',
+    hdnt_nm      varchar(200) NULL     COMMENT '의료업자구분_명',
+    bizrno       varchar(10)  NULL     COMMENT '사업자등록번호',
+    rprsntv_nm   varchar(60)  NULL     COMMENT '대표자_명',
+    chrg_nm      varchar(60)  NULL     COMMENT '담당자_명',
+    hptl_no      varchar(20)  NULL     COMMENT '요양기관_기호',
+    join_yn      varchar(200) NULL     COMMENT '회원가입_여부',
+    bssh_stts_nm varchar(200) NULL     COMMENT '상태',
+    prmisn_no    varchar(40)  NULL     COMMENT '허가_번호',
+    use_yn       varchar(1)   NOT NULL COMMENT '사용_여부',
+    reg_dt       varchar(14)  NOT NULL COMMENT '등록_일시',
+    rgtr         varchar(10)  NOT NULL COMMENT '등록자',
+    mdfcn_dt     varchar(14)  NULL     COMMENT '수정_일시',
+    mdfr         varchar(10)  NULL     COMMENT '수정자',
+    PRIMARY KEY (bssh_cd)
+
+) COMMENT '취급자_정보';
+
+
+CREATE TABLE tb_prduct_info
+(
+    prduct_cd          varchar(14)  NOT NULL COMMENT '제품_코드',
+    prdlst_mst_cd      varchar(14)  NULL     COMMENT '제품_대표_코드',
+    prduct_nm          varchar(300) NULL     COMMENT '품목_명',
+    nrcd_se_nm         varchar(50)  NULL     COMMENT '마약/항정_구분_명',
+    prtm_se_nm         varchar(200) NULL     COMMENT '중점/일반_구분',
+    prd_min_distb_qy   int          NULL     COMMENT '제품_최소_유통단위_수량',
+    std_packng_stle_nm varchar(200) NULL     COMMENT '제품_최소_유통단위',
+    prd_tot_pce_qy     int          NULL     COMMENT '제품_총_낱개단위_수량',
+    pce_co_unit_nm     varchar(200) NULL     COMMENT '제품_낱개_단위_명',
+    bssh_cd            varchar(10)  NULL     COMMENT '마약류취급자식별_번호',
+    rgs_dt             date         NULL     COMMENT '등록_일',
+    upd_dt             date         NULL     COMMENT '변경_일',
+    use_yn             varchar(1)   NOT NULL COMMENT '사용_여부',
+    reg_dt             varchar(14)  NOT NULL COMMENT '등록_일시',
+    rgtr               varchar(10)  NOT NULL COMMENT '등록자',
+    mdfcn_dt           varchar(14)  NULL     COMMENT '수정_일시',
+    mdfr               varchar(10)  NULL     COMMENT '수정자',
+    PRIMARY KEY (prduct_cd)
+) COMMENT '품목_정보';
 
 CREATE TABLE tb_storge_info
 (
@@ -123,28 +163,6 @@ CREATE TABLE tb_jrdt_gov_info
   mdfr           varchar(10)  NULL     COMMENT '수정자',
   PRIMARY KEY (bssh_cd)
 ) COMMENT '관할_관청_정보';
-
-CREATE TABLE tb_prduct_info
-(
-  prduct_cd          varchar(14)  NOT NULL COMMENT '제품_코드',
-  prdlst_mst_cd      varchar(14)  NULL     COMMENT '제품_대표_코드',
-  prduct_nm          varchar(300) NULL     COMMENT '품목_명',
-  nrcd_se_nm         varchar(50)  NULL     COMMENT '마약/항정_구분_명',
-  prtm_se_nm         varchar(200) NULL     COMMENT '중점/일반_구분',
-  prd_min_distb_qy   int          NULL     COMMENT '제품_최소_유통단위_수량',
-  std_packng_stle_nm varchar(200) NULL     COMMENT '제품_최소_유통단위',
-  prd_tot_pce_qy     int          NULL     COMMENT '제품_총_낱개단위_수량',
-  pce_co_unit_nm     varchar(200) NULL     COMMENT '제품_낱개_단위_명',
-  bssh_cd            varchar(10)  NULL     COMMENT '마약류취급자식별_번호',
-  rgs_dt             date         NULL     COMMENT '등록_일',
-  upd_dt             date         NULL     COMMENT '변경_일',
-  use_yn             varchar(1)   NOT NULL COMMENT '사용_여부',
-  reg_dt             varchar(14)  NOT NULL COMMENT '등록_일시',
-  rgtr               varchar(10)  NOT NULL COMMENT '등록자',
-  mdfcn_dt           varchar(14)  NULL     COMMENT '수정_일시',
-  mdfr               varchar(10)  NULL     COMMENT '수정자',
-  PRIMARY KEY (prduct_cd)
-) COMMENT '품목_정보';
 
 CREATE TABLE tb_cmm_api_log
 (
