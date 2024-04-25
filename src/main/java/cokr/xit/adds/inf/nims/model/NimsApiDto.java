@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -48,73 +48,73 @@ public class NimsApiDto {
         /**
          * 마약류취급자식별번호
          */
-        @JsonProperty(value = "BSSH_CD", required = true)
+        @JsonAlias("BSSH_CD")
         private String bsshCd;
 
         /**
          * 업체명
          */
-        @JsonProperty(value = "BSSH_NM", required = true)
+        @JsonAlias(value = "BSSH_NM")
         private String bsshNm;
 
         /**
          * 업종명
          */
-        @JsonProperty(value = "INDUTY_NM", required = true)
+        @JsonAlias("INDUTY_NM")
         private String indutyNm;
 
         /**
          * 의료업자구분
          */
-        @JsonProperty(value = "HDNT_CD", required = true)
+        @JsonAlias("HDNT_CD")
         private String hdntCd;
 
         /**
          * 의료업자구분명
          */
-        @JsonProperty(value = "HDNT_NM", required = true)
+        @JsonAlias("HDNT_NM")
         private String hdntNm;
 
         /**
          * 사업자등록번호
          */
-        @JsonProperty(value = "BIZRNO", required = true)
+        @JsonAlias("BIZRNO")
         private String bizrno;
 
         /**
          * 대표자명
          */
-        @JsonProperty(value = "RPRSNTV_NM", required = true)
+        @JsonAlias("RPRSNTV_NM")
         private String rprsntvNm;
 
         /**
          * 담당자명
          */
-        @JsonProperty(value = "CHRG_NM", required = true)
+        @JsonAlias("CHRG_NM")
         private String chrgNm;
 
         /**
          * 요양기관번호
          */
-        @JsonProperty(value = "HPTL_NO", required = true)
+        @JsonAlias("HPTL_NO")
         private String hptlNo;
 
         /**
          * 회원가입여부 가입|미가입|탈퇴
          */
-        @JsonProperty(value = "JOIN_YN", required = true)
+        @JsonAlias("JOIN_YN")
         private String joinYn;
 
         /**
          * 상태
          */
-        @JsonProperty(value = "BSSH_STTUS_NM", required = true)
+        @JsonAlias("BSSH_STTUS_NM")
         private String bsshSttusNm;
 
         /**
          * 허가번호
          */
-        @JsonProperty(value = "PRMISN_NO", required = true)
+        @JsonAlias("PRMISN_NO")
         private String prmisnNo;
     }
 
@@ -129,74 +129,74 @@ public class NimsApiDto {
         /**
          * 품목코드
          */
-        @JsonProperty(value = "PRDUCT_CD", required = true)
+        @JsonAlias("PRDUCT_CD")
         private String prductCd;
 
         /**
          * 제품대표코드
          */
-        @JsonProperty(value = "PRDLST_MST_CD")
+        @JsonAlias("PRDLST_MST_CD")
         private String prdlstMstCd;
 
         /**
          * 제품명
          */
-        @JsonProperty(value = "PRDUCT_NM", required = true)
+        @JsonAlias("PRDUCT_NM")
         private String prductNm;
 
         /**
          * 마약/항정 구분명
          */
-        @JsonProperty(value = "NRCD_SE_NM", required = true)
+        @JsonAlias("NRCD_SE_NM")
         private String nrcdSeNm;
 
         /**
          * 중점/일반 구분
          */
-        @JsonProperty(value = "PRTM_SE_NM", required = true)
+        @JsonAlias("PRTM_SE_NM")
         private String prtmSeNm;
 
         /**
          * 제품최소유통단위수량
          * 제품규격정보(고정값 = 1)
          */
-        @JsonProperty(value = "PRD_MIN_DISTB_QY", required = true)
+        @JsonAlias("PRD_MIN_DISTB_QY")
         private Integer prdMinDistbQy;
 
         /**
          * 제품최소유통단위
          */
-        @JsonProperty(value = "STD_PACKNG_STLE_NM", required = true)
+        @JsonAlias("STD_PACKNG_STLE_NM")
         private String stdPackngStleNm;
 
         /**
          * 제품총낱개단위수량
          */
-        @JsonProperty(value = "PRD_TOT_PCE_QY", required = true)
+        @JsonAlias("PRD_TOT_PCE_QY")
         private Integer prdTotPceQy;
 
         /**
          * 제품낱개단위
          */
-        @JsonProperty(value = "PCE_CO_UNIT_NM", required = true)
+        @JsonAlias("PCE_CO_UNIT_NM")
         private String pceCoUnitNm;
 
         /**
          * 마약류취급자식별번호
          */
-        @JsonProperty(value = "BSSH_CD", required = true)
+        @JsonAlias("BSSH_CD")
         private String bsshCd;
 
         /**
          * 등록일
          */
-        @JsonProperty(value = "RGS_DT")
+        @JsonAlias("RGS_DT")
         private String rgsDt;
 
         /**
          * 변경일
          */
-        @JsonProperty(value = "UPD_DT")
+        @JsonAlias("UPD_DT")
         private String updDt;
     }
 
@@ -213,108 +213,107 @@ public class NimsApiDto {
         /**
          * 사용자 보고 식별 번호
          */
-        @JsonProperty(value = "USR_RPT_ID_NO", required = true)
+        @JsonAlias("USR_RPT_ID_NO")
         private String usrRptIdNo;
 
         /**
          * 참조 사용자 보고 식별 번호
          * 취소|변경시 필수 - 사용자 보고 식별 번호
          */
-        @JsonProperty(value = "REF_USR_RPT_ID_NO")
+        @JsonAlias("REF_USR_RPT_ID_NO")
         private String refUsrRptIdNo;
 
         /**
          * 마약류취급자식별번호
          */
-        @JsonProperty(value = "BSSH_CD", required = true)
+        @JsonAlias("BSSH_CD")
         private String bsshCd;
 
         /**
          * 마약류취급자명업체명
          */
-        @JsonProperty(value = "BSSH_NM", required = true)
+        @JsonAlias("BSSH_NM")
         private String bsshNm;
 
         /**
          * 업종명
          */
-        @JsonProperty(value = "INDUTY_NM", required = true)
+        @JsonAlias("INDUTY_NM")
         private String indutyNm;
 
         /**
          * 보고 유형 코드(0-신규,1-취소,2-변경)
          */
-        @JsonProperty(value = "RPT_TY_CD", required = true)
+        @JsonAlias("RPT_TY_CD")
         private String rptTyCd;
 
         /**
          * 수불 상세 보고 수
          */
-        @JsonProperty(value = "RND_DTL_RPT_CNT", required = true)
+        @JsonAlias("RND_DTL_RPT_CNT")
         private Integer rndDtlRptCnt;
 
         /**
          * 취급 일자
          */
-        @JsonProperty(value = "HDR_DE", required = true)
+        @JsonAlias("HDR_DE")
         private String hdrDe;
 
         /**
          * 보고 일자
          */
-        @JsonProperty(value = "RPT_DE", required = true)
+        @JsonAlias("RPT_DE")
         private String rptDe;
 
         /**
          * 폐기 구분 코드
          * 1-보건소폐기, 2-공무원임회, 4-도난/분실/재해 발생 사고마약류
          */
-        @JsonProperty(value = "DSUSE_SE_CD", required = true)
+        @JsonAlias("DSUSE_SE_CD")
         private String dsuseSeCd;
 
         /**
          * 폐기 사유 코드
          * 01~05, 07~09, 12
          */
-        @JsonProperty(value = "DSUSE_PRV_CD", required = true)
+        @JsonAlias("DSUSE_PRV_CD")
         private String dsusePrvCd;
 
         /**
          * 폐기 방법 코드
          * 1 ~ 9
          */
-        @JsonProperty(value = "DSUSE_MTH_CD", required = true)
+        @JsonAlias("DSUSE_MTH_CD")
         private String dsuseMthCd;
 
         /**
          * 폐기 장소
          */
-        @JsonProperty(value = "DSUSE_LOC", required = true)
+        @JsonAlias("DSUSE_LOC")
         private String dsuseLoc;
 
         /**
          * 폐기 일자
          */
-        @JsonProperty(value = "DSUSE_DE", required = true)
+        @JsonAlias("DSUSE_DE")
         private String dsuseDe;
 
         /**
          * 처리 상태 코드(0-정상,1-취소,2-변경)
          */
-        @JsonProperty(value = "STATUS", required = true)
+        @JsonAlias("STATUS")
         private String status;
 
         /**
          * FIXME: 속성명 확정 필요
          * 보고 진행 상태 코드(0-정상,1-취소,2-변경)
          */
-        @JsonProperty(value = "RPT_PRG_STTS_CD", required = true)
+        @JsonAlias("RPT_PRG_STTS_CD")
         private String rptPrgSttsCd;
 
         /**
          * 원사용자보고식별번호
          */
-        //@JsonProperty(value = "USR_RPT_ID_NO", required = true)
         private String orgUsrRptIdNo;
 
         /**
@@ -334,68 +333,68 @@ public class NimsApiDto {
         /**
          * 사용자 보고 식별 번호
          */
-        @JsonProperty(value = "USR_RPT_ID_NO", required = true)
+        @JsonAlias("USR_RPT_ID_NO")
         private String usrRptIdNo;
 
         /**
          * 사용자 보고 라인 식별 번호
          */
-        @JsonProperty(value = "USR_RPT_LN_ID_NO", required = true)
+        @JsonAlias("USR_RPT_LN_ID_NO")
         private String usrRptLnIdNo;
 
         /**
          * 제품 코드
          */
-        @JsonProperty(value = "PRDUCT_CD", required = true)
+        @JsonAlias("PRDUCT_CD")
         private String prductCd;
 
         /**
          * 제품 명
          */
-        @JsonProperty(value = "PRDCT_NM", required = true)
+        @JsonAlias("PRDCT_NM")
         private String prductNm;
 
         /**
          * 최소 유통 단위 수량
          */
-        @JsonProperty(value = "MIN_DISTB_QY", required = true)
+        @JsonAlias("MIN_DISTB_QY")
         private Integer minDistbQy;
 
         /**
          * 낱개 단위 수량
          */
-        @JsonProperty(value = "PCE_QY", required = true)
+        @JsonAlias("PCE_QY")
         private Integer pceQy;
 
         /**
          * 제조 번호
          */
-        @JsonProperty(value = "MNF_NO", required = true)
+        @JsonAlias("MNF_NO")
         private String mnfNo;
 
         /**
          * 제품 유효기한 일자
          */
-        @JsonProperty(value = "PRD_VALID_DE", required = true)
+        @JsonAlias("PRD_VALID_DE")
         private String prdValidDe;
 
         /**
          * 제조 일련번호
          */
-        @JsonProperty(value = "MNF_SEQ")
+        @JsonAlias("MNF_SEQ")
         private String mnfSeq;
 
         /**
          * 이동 유형 코드
          * 1102: 재고차감, 1170: 재고미차감
          */
-        @JsonProperty(value = "MVMN_TY_CD", required = true)
+        @JsonAlias("MVMN_TY_CD")
         private String mvmnTyCd;
 
         /**
          * 폐기 수량
          */
-        @JsonProperty(value = "DSUSE_QY", required = true)
+        @JsonAlias("DSUSE_QY")
         private Integer dsuseQy;
     }
 
@@ -411,31 +410,31 @@ public class NimsApiDto {
         /**
          * 제품코드
          */
-        @JsonProperty(value = "PRDUCT_CD", required = true)
+        @JsonAlias("PRDUCT_CD")
         private String prductCd;
 
         /**
          * 제품명
          */
-        @JsonProperty(value = "PRDUCT_NM", required = true)
+        @JsonAlias("PRDUCT_NM")
         private String prductNm;
 
         /**
          * 제조번호
          */
-        @JsonProperty(value = "MNF_NO", required = true)
+        @JsonAlias("MNF_NO")
         private String mnfNo;
 
         /**
          * 일련번호
          */
-        @JsonProperty(value = "MNF_SEQ", required = true)
+        @JsonAlias("MNF_SEQ")
         private String mnfSeq;
 
         /**
          * 유효기간
          */
-        @JsonProperty(value = "PRD_VALID_DE", required = true)
+        @JsonAlias("PRD_VALID_DE")
         private String prdValidDe;
     }
 
@@ -450,37 +449,37 @@ public class NimsApiDto {
         /**
          * 기관코드
          */
-        @JsonProperty(value = "OF_CD", required = true)
+        @JsonAlias("OF_CD")
         private String ofCd;
 
         /**
          * 기관명
          */
-        @JsonProperty(value = "OF_NM", required = true)
+        @JsonAlias("OF_NM")
         private String ofNm;
 
         /**
          * 상위 기관명
          */
-        @JsonProperty(value = "UP_OF_NM", required = true)
+        @JsonAlias("UP_OF_NM")
         private String upOfNm;
 
         /**
          * 최상위 기관명
          */
-        @JsonProperty(value = "TOP_OF_NM", required = true)
+        @JsonAlias("TOP_OF_NM")
         private String topOfNm;
 
         /**
          * 기본 주소
          */
-        @JsonProperty(value = "BASS_ADRES", required = true)
+        @JsonAlias("BASS_ADRES")
         private String bassAdres;
 
         /**
          * 상세 주소
          */
-        @JsonProperty(value = "BASS_DTL_ADRES", required = true)
+        @JsonAlias("BASS_DTL_ADRES")
         private String bassDtlAdres;
     }
 
@@ -495,49 +494,49 @@ public class NimsApiDto {
         /**
          * 마약류취급자식별번호
          */
-        @JsonProperty(value = "BSSH_CD", required = true)
+        @JsonAlias("BSSH_CD")
         private String bsshCd;
 
         /**
          * 업체명
          */
-        @JsonProperty(value = "BSSH_NM", required = true)
+        @JsonAlias("BSSH_NM")
         private String bsshNm;
 
         /**
          * 저장소 번호
          */
-        @JsonProperty(value = "STORGE_NO", required = true)
+        @JsonAlias("STORGE_NO")
         private String storgeNo;
 
         /**
          * 저장소명
          */
-        @JsonProperty(value = "STORGE_NM", required = true)
+        @JsonAlias("STORGE_NM")
         private String storgeNm;
 
         /**
          * 저장소 유형
          */
-        @JsonProperty(value = "STORGE_SE_NM", required = true)
+        @JsonAlias("STORGE_SE_NM")
         private String storgeSeNm;
 
         /**
          * 기본 주소
          */
-        @JsonProperty(value = "BASS_ADRES", required = true)
+        @JsonAlias("BASS_ADRES")
         private String bassAdres;
 
         /**
          * 상세 주소
          */
-        @JsonProperty(value = "BASS_DTL_ADRES", required = true)
+        @JsonAlias("BASS_DTL_ADRES")
         private String bassDtlAdres;
 
         /**
          * 사용 유무
          */
-        @JsonProperty(value = "USE_AT", required = true)
+        @JsonAlias("USE_AT")
         private String useAt;
     }
 
