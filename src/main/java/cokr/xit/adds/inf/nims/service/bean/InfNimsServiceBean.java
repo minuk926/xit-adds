@@ -90,61 +90,61 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 		return result.getResponse();
 	}
 
-	@Override
-	@TraceLogging
-	public NimsApiResult.Response<NimsApiDto.ProductInfoKd> getProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
-		dto.setK(nimsApiKey);
-		ApiUtil.validate(dto, null, validator);
-		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
-
-		String rslt = ApiUtil.callNimsApi(nimsUrl + productinfoKd, dto);
-		NimsApiResult<NimsApiDto.ProductInfoKd> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.ProductInfoKd>>() {});
-		return result.getResponse();
-	}
-
-	@Override
-	@TraceLogging
-	public NimsApiResult.Response<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
-		dto.setK(nimsApiKey);
-		ApiUtil.validate(dto, null, validator);
-		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
-
-		String rslt = ApiUtil.callNimsApi(nimsUrl + seqinfo, dto);
-		NimsApiResult<NimsApiDto.MnfSeqInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.MnfSeqInfo>>() {});
-		return result.getResponse();
-	}
-
-	@Override
-	@TraceLogging
-	public NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(
-		NimsApiRequest.JurisdictionGovInfoRequest dto) {
-		dto.setK(nimsApiKey);
-		ApiUtil.validate(dto, null, validator);
-		if(isEmpty(dto.getOcd()) && isEmpty(dto.getOnm()) && isEmpty(dto.getAdr())) {
-			throw ApiCustomException.create("필수 파라메터 에러(ocd-기관 코드, onm-기관명, adr-주소 중 하나는 필수)");
-		}
-
-		String rslt = ApiUtil.callNimsApi(nimsUrl + officeinfo, dto);
-		NimsApiResult<NimsApiDto.JurisdictionGovInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.JurisdictionGovInfo>>() {});
-		return result.getResponse();
-	}
-
-	@Override
-	@TraceLogging
-	public NimsApiResult.Response<NimsApiDto.StorageInfo> getStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
-		dto.setK(nimsApiKey);
-		ApiUtil.validate(dto, null, validator);
-		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
-		if(!isEmpty(dto.getFg()) && dto.getFg().equals("1")) {
-			if(isEmpty(dto.getBc())){
-				throw ApiCustomException.create("조회 범위를 특정업체(fg=1)로 조회할 경우 취급자식별번호(bc)는 필수입니다");
-			}
-		}
-
-		String rslt = ApiUtil.callNimsApi(nimsUrl + placeinfoV1, dto);
-		NimsApiResult<NimsApiDto.StorageInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.StorageInfo>>() {});
-		return result.getResponse();
-	}
+	// @Override
+	// @TraceLogging
+	// public NimsApiResult.Response<NimsApiDto.ProductInfoKd> getProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
+	// 	dto.setK(nimsApiKey);
+	// 	ApiUtil.validate(dto, null, validator);
+	// 	if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
+	//
+	// 	String rslt = ApiUtil.callNimsApi(nimsUrl + productinfoKd, dto);
+	// 	NimsApiResult<NimsApiDto.ProductInfoKd> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.ProductInfoKd>>() {});
+	// 	return result.getResponse();
+	// }
+	//
+	// @Override
+	// @TraceLogging
+	// public NimsApiResult.Response<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
+	// 	dto.setK(nimsApiKey);
+	// 	ApiUtil.validate(dto, null, validator);
+	// 	if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
+	//
+	// 	String rslt = ApiUtil.callNimsApi(nimsUrl + seqinfo, dto);
+	// 	NimsApiResult<NimsApiDto.MnfSeqInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.MnfSeqInfo>>() {});
+	// 	return result.getResponse();
+	// }
+	//
+	// @Override
+	// @TraceLogging
+	// public NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(
+	// 	NimsApiRequest.JurisdictionGovInfoRequest dto) {
+	// 	dto.setK(nimsApiKey);
+	// 	ApiUtil.validate(dto, null, validator);
+	// 	if(isEmpty(dto.getOcd()) && isEmpty(dto.getOnm()) && isEmpty(dto.getAdr())) {
+	// 		throw ApiCustomException.create("필수 파라메터 에러(ocd-기관 코드, onm-기관명, adr-주소 중 하나는 필수)");
+	// 	}
+	//
+	// 	String rslt = ApiUtil.callNimsApi(nimsUrl + officeinfo, dto);
+	// 	NimsApiResult<NimsApiDto.JurisdictionGovInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.JurisdictionGovInfo>>() {});
+	// 	return result.getResponse();
+	// }
+	//
+	// @Override
+	// @TraceLogging
+	// public NimsApiResult.Response<NimsApiDto.StorageInfo> getStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
+	// 	dto.setK(nimsApiKey);
+	// 	ApiUtil.validate(dto, null, validator);
+	// 	if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
+	// 	if(!isEmpty(dto.getFg()) && dto.getFg().equals("1")) {
+	// 		if(isEmpty(dto.getBc())){
+	// 			throw ApiCustomException.create("조회 범위를 특정업체(fg=1)로 조회할 경우 취급자식별번호(bc)는 필수입니다");
+	// 		}
+	// 	}
+	//
+	// 	String rslt = ApiUtil.callNimsApi(nimsUrl + placeinfoV1, dto);
+	// 	NimsApiResult<NimsApiDto.StorageInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.StorageInfo>>() {});
+	// 	return result.getResponse();
+	// }
 
 	@Override
 	public NimsApiResult.Response<NimsApiDto.DsuseRptInfo> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto) {

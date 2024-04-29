@@ -4,35 +4,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
-
 import cokr.xit.adds.biz.nims.dao.BizNimsMapper;
-import cokr.xit.adds.biz.nims.model.BizNimsAarDto;
 import cokr.xit.adds.biz.nims.model.BizNimsRequest;
 import cokr.xit.adds.biz.nims.model.BizNimsResponse;
 import cokr.xit.adds.biz.nims.service.BizNimsService;
 import cokr.xit.adds.core.Constants;
 import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import cokr.xit.adds.core.util.ApiUtil;
-import cokr.xit.adds.inf.nims.model.Aar;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import cokr.xit.adds.inf.nims.model.NimsApiDto.BsshInfoSt;
-import cokr.xit.adds.inf.nims.model.NimsApiDto.ProductInfoKd;
 import cokr.xit.adds.inf.nims.model.NimsApiRequest;
 import cokr.xit.adds.inf.nims.model.NimsApiRequest.BsshInfoRequest;
-import cokr.xit.adds.inf.nims.model.NimsApiRequest.ProductInfoRequest;
 import cokr.xit.adds.inf.nims.model.NimsApiResult;
 import cokr.xit.adds.inf.nims.service.InfNimsService;
 import cokr.xit.foundation.component.AbstractServiceBean;
@@ -86,42 +75,42 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return list;
 	}
 
-	@Override
-	public List<ProductInfoKd> saveProductInfoKd(ProductInfoRequest dto) {
-		NimsApiResult.Response<ProductInfoKd> result = infNimsService.getProductInfoKd(dto);
-		List<ProductInfoKd> list = result.getResultOrThrow();
-
-		for (ProductInfoKd d : list) {
-			d.setRgtr(Constants.NIMS_API_USER_ID);
-			bizNimsMapper.mergeProductInfoKd(d);
-		}
-		return list;
-	}
-
-	@Override
-	public List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
-		NimsApiResult.Response<NimsApiDto.MnfSeqInfo> response = infNimsService.getMnfSeqInfo(dto);
-
-		return response.getResultOrThrow();
-	}
-
-	@Override
-	public List<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(NimsApiRequest.JurisdictionGovInfoRequest dto) {
-		NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> result = infNimsService.getJurisdictionGovInfo(dto);
-		return result.getResultOrThrow();
-	}
-
-	@Override
-	public List<NimsApiDto.StorageInfo> saveStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
-		NimsApiResult.Response<NimsApiDto.StorageInfo> result = infNimsService.getStorageInfo(dto);
-		List<NimsApiDto.StorageInfo> list = result.getResultOrThrow();
-
-		for (NimsApiDto.StorageInfo d : list) {
-			d.setRgtr(Constants.NIMS_API_USER_ID);
-			bizNimsMapper.mergeStorgeInfo(d);
-		}
-		return list;
-	}
+	// @Override
+	// public List<ProductInfoKd> saveProductInfoKd(ProductInfoRequest dto) {
+	// 	NimsApiResult.Response<ProductInfoKd> result = infNimsService.getProductInfoKd(dto);
+	// 	List<ProductInfoKd> list = result.getResultOrThrow();
+	//
+	// 	for (ProductInfoKd d : list) {
+	// 		d.setRgtr(Constants.NIMS_API_USER_ID);
+	// 		bizNimsMapper.mergeProductInfoKd(d);
+	// 	}
+	// 	return list;
+	// }
+	//
+	// @Override
+	// public List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
+	// 	NimsApiResult.Response<NimsApiDto.MnfSeqInfo> response = infNimsService.getMnfSeqInfo(dto);
+	//
+	// 	return response.getResultOrThrow();
+	// }
+	//
+	// @Override
+	// public List<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(NimsApiRequest.JurisdictionGovInfoRequest dto) {
+	// 	NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> result = infNimsService.getJurisdictionGovInfo(dto);
+	// 	return result.getResultOrThrow();
+	// }
+	//
+	// @Override
+	// public List<NimsApiDto.StorageInfo> saveStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
+	// 	NimsApiResult.Response<NimsApiDto.StorageInfo> result = infNimsService.getStorageInfo(dto);
+	// 	List<NimsApiDto.StorageInfo> list = result.getResultOrThrow();
+	//
+	// 	for (NimsApiDto.StorageInfo d : list) {
+	// 		d.setRgtr(Constants.NIMS_API_USER_ID);
+	// 		bizNimsMapper.mergeStorgeInfo(d);
+	// 	}
+	// 	return list;
+	// }
 
 	/**
 	 * <pre>
@@ -436,157 +425,157 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 
 
-	private String toXml() {
-		Aar dto = getAar();
-
-		XmlMapper mapper = new XmlMapper();
-		mapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true);
-		mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-		String xmlString = null;
-		try {
-			xmlString = mapper.writeValueAsString(dto);
-		} catch (JsonProcessingException e) {
-			throw ApiCustomException.create(e.getMessage());
-		}
-		xmlString = xmlString.replaceFirst("nims\">",
-			"nims\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
-		return xmlString.replaceFirst(" xmlns=\"\"", StringUtils.EMPTY);
-	}
-
-	private Aar getAar() {
-		Aar.ReportSet reportSet = Aar.ReportSet.builder()
-			.header(List.of(getHeader()))
-			.build();
-
-		return Aar.builder()
-			.reportSet(reportSet)
-			.build();
-	}
-
-	private Aar.Header getHeader() {
-		return Aar.Header.builder()
-			.hdrDe("20240326")
-			.bsshCd("123456789")
-			.lines(getLines())
-			.atchFileCo("2")
-			.atchFiles(getAtchFiles())
-			.build();
-	}
-
-	private Aar.Lines getLines() {
-
-		return Aar.Lines.builder()
-			.line(getLineList())
-			.build();
-	}
-
-	private Aar.AtchFiles getAtchFiles() {
-		return Aar.AtchFiles.builder()
-			.atchFileNm(List.of("file-1.txt","file-2.txt"))
-			.build();
-	}
-
-	private List<Aar.Line> getLineList(){
-		Aar.Line line = Aar.Line.builder()
-			.usrRptIdNo("123456789")
-			.usrRptLnIdNo("123456789")
-			.storgeNo("123456789")
-			.mvmnTyCd("123456789")
-			.prductCd("123456789")
-			.build();
-		Aar.Line line2 = Aar.Line.builder()
-			.usrRptIdNo("123456789-1")
-			.usrRptLnIdNo("123456789-1")
-			.storgeNo("123456789-1")
-			.mvmnTyCd("123456789-1")
-			.prductCd("123456789-1")
-			.build();
-
-		return List.of(line, line2);
-	}
-
-
-	private void setStorgeNo(BizNimsAarDto.AarHeader aarHeader, List<BizNimsAarDto.AarDetail> aarDetails) {
-
-		if(isEmpty(aarDetails.get(0).getStorgeNo())){
-			try {
-				List<NimsApiDto.StorageInfo> storageInfos = saveStorageInfo(
-					NimsApiRequest.StorageInfoRequest.builder()
-						.fg("1")
-						.pg("1")
-						.bc(aarHeader.getBsshCd())
-						.build()
-				);
-				aarDetails.forEach(d -> d.setStorgeNo(storageInfos.get(0).getStorgeNo()));
-
-			}catch (Exception e){
-				if( e instanceof ApiCustomException){
-					aarDetails.forEach(d -> d.setStorgeNo("S0001"));
-					return;
-				}
-				throw ApiCustomException.create(e.getMessage());
-			}
-		}
-	}
-
-	private void setDsuseInsttCd(BizNimsAarDto.AarHeader aarHeader) {
-
-		try {
-			List<NimsApiDto.JurisdictionGovInfo> list = getJurisdictionGovInfo(
-				NimsApiRequest.JurisdictionGovInfoRequest.builder()
-					.fg("1")
-					.pg("1")
-					.onm(onm)
-					.build()
-			);
-			aarHeader.setDsuseInsttCd(list.get(0).getOfCd());
-
-		}catch (Exception e){
-			if( e instanceof ApiCustomException){
-				throw ApiCustomException.create(String.format("[%s]의 관할 행정 기관 코드를 찾을수 없습니다.", onm));
-			}
-			throw ApiCustomException.create(e.getMessage());
-		}
-	}
-
-	private void setMnfSeqs(List<BizNimsAarDto.AarDetail> aarDetails) {
-		AtomicReference<String> productCd = new AtomicReference<>("");
-
-		try {
-
-			aarDetails.forEach(d -> {
-				productCd.set(d.getPrductCd());
-
-				List<NimsApiDto.MnfSeqInfo> list = getMnfSeqInfo(
-					NimsApiRequest.MnfSeqInfoRequest.builder()
-						.fg("1")
-						.pg("1")
-						.p(d.getPrductCd())
-						.build()
-				);
-
-				// FIXME: 내림 차순 정렬
-				list.sort((a, b) -> {
-					if(isEmpty(a.getPrdValidDe()) && isEmpty(b.getPrdValidDe())) return 0;
-					if(isEmpty(a.getPrdValidDe())) return 1;
-					if(isEmpty(b.getPrdValidDe())) return -1;
-					return b.getPrdValidDe().compareTo(a.getPrdValidDe());
-				});
-
-				// FIXME: default list 1st value??
-				d.setMnfNo(list.get(0).getMnfNo());
-				d.setMnfSeq(list.get(0).getMnfSeq());
-				d.setPrdValidDe(list.get(0).getPrdValidDe());
-
-				d.getMnfSeqInfos().addAll(list);
-			});
-
-		}catch (Exception e){
-			if( e instanceof ApiCustomException){
-				throw ApiCustomException.create(String.format("[%s]의 제조번호 정보를 찾을수 없습니다.", productCd.get()));
-			}
-			throw ApiCustomException.create(e.getMessage());
-		}
-	}
+	// private String toXml() {
+	// 	Aar dto = getAar();
+	//
+	// 	XmlMapper mapper = new XmlMapper();
+	// 	mapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true);
+	// 	mapper.enable(SerializationFeature.INDENT_OUTPUT);
+	//
+	// 	String xmlString = null;
+	// 	try {
+	// 		xmlString = mapper.writeValueAsString(dto);
+	// 	} catch (JsonProcessingException e) {
+	// 		throw ApiCustomException.create(e.getMessage());
+	// 	}
+	// 	xmlString = xmlString.replaceFirst("nims\">",
+	// 		"nims\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+	// 	return xmlString.replaceFirst(" xmlns=\"\"", StringUtils.EMPTY);
+	// }
+	//
+	// private Aar getAar() {
+	// 	Aar.ReportSet reportSet = Aar.ReportSet.builder()
+	// 		.header(List.of(getHeader()))
+	// 		.build();
+	//
+	// 	return Aar.builder()
+	// 		.reportSet(reportSet)
+	// 		.build();
+	// }
+	//
+	// private Aar.Header getHeader() {
+	// 	return Aar.Header.builder()
+	// 		.hdrDe("20240326")
+	// 		.bsshCd("123456789")
+	// 		.lines(getLines())
+	// 		.atchFileCo("2")
+	// 		.atchFiles(getAtchFiles())
+	// 		.build();
+	// }
+	//
+	// private Aar.Lines getLines() {
+	//
+	// 	return Aar.Lines.builder()
+	// 		.line(getLineList())
+	// 		.build();
+	// }
+	//
+	// private Aar.AtchFiles getAtchFiles() {
+	// 	return Aar.AtchFiles.builder()
+	// 		.atchFileNm(List.of("file-1.txt","file-2.txt"))
+	// 		.build();
+	// }
+	//
+	// private List<Aar.Line> getLineList(){
+	// 	Aar.Line line = Aar.Line.builder()
+	// 		.usrRptIdNo("123456789")
+	// 		.usrRptLnIdNo("123456789")
+	// 		.storgeNo("123456789")
+	// 		.mvmnTyCd("123456789")
+	// 		.prductCd("123456789")
+	// 		.build();
+	// 	Aar.Line line2 = Aar.Line.builder()
+	// 		.usrRptIdNo("123456789-1")
+	// 		.usrRptLnIdNo("123456789-1")
+	// 		.storgeNo("123456789-1")
+	// 		.mvmnTyCd("123456789-1")
+	// 		.prductCd("123456789-1")
+	// 		.build();
+	//
+	// 	return List.of(line, line2);
+	// }
+	//
+	//
+	// private void setStorgeNo(BizNimsAarDto.AarHeader aarHeader, List<BizNimsAarDto.AarDetail> aarDetails) {
+	//
+	// 	if(isEmpty(aarDetails.get(0).getStorgeNo())){
+	// 		try {
+	// 			List<NimsApiDto.StorageInfo> storageInfos = saveStorageInfo(
+	// 				NimsApiRequest.StorageInfoRequest.builder()
+	// 					.fg("1")
+	// 					.pg("1")
+	// 					.bc(aarHeader.getBsshCd())
+	// 					.build()
+	// 			);
+	// 			aarDetails.forEach(d -> d.setStorgeNo(storageInfos.get(0).getStorgeNo()));
+	//
+	// 		}catch (Exception e){
+	// 			if( e instanceof ApiCustomException){
+	// 				aarDetails.forEach(d -> d.setStorgeNo("S0001"));
+	// 				return;
+	// 			}
+	// 			throw ApiCustomException.create(e.getMessage());
+	// 		}
+	// 	}
+	// }
+	//
+	// private void setDsuseInsttCd(BizNimsAarDto.AarHeader aarHeader) {
+	//
+	// 	try {
+	// 		List<NimsApiDto.JurisdictionGovInfo> list = getJurisdictionGovInfo(
+	// 			NimsApiRequest.JurisdictionGovInfoRequest.builder()
+	// 				.fg("1")
+	// 				.pg("1")
+	// 				.onm(onm)
+	// 				.build()
+	// 		);
+	// 		aarHeader.setDsuseInsttCd(list.get(0).getOfCd());
+	//
+	// 	}catch (Exception e){
+	// 		if( e instanceof ApiCustomException){
+	// 			throw ApiCustomException.create(String.format("[%s]의 관할 행정 기관 코드를 찾을수 없습니다.", onm));
+	// 		}
+	// 		throw ApiCustomException.create(e.getMessage());
+	// 	}
+	// }
+	//
+	// private void setMnfSeqs(List<BizNimsAarDto.AarDetail> aarDetails) {
+	// 	AtomicReference<String> productCd = new AtomicReference<>("");
+	//
+	// 	try {
+	//
+	// 		aarDetails.forEach(d -> {
+	// 			productCd.set(d.getPrductCd());
+	//
+	// 			List<NimsApiDto.MnfSeqInfo> list = getMnfSeqInfo(
+	// 				NimsApiRequest.MnfSeqInfoRequest.builder()
+	// 					.fg("1")
+	// 					.pg("1")
+	// 					.p(d.getPrductCd())
+	// 					.build()
+	// 			);
+	//
+	// 			// FIXME: 내림 차순 정렬
+	// 			list.sort((a, b) -> {
+	// 				if(isEmpty(a.getPrdValidDe()) && isEmpty(b.getPrdValidDe())) return 0;
+	// 				if(isEmpty(a.getPrdValidDe())) return 1;
+	// 				if(isEmpty(b.getPrdValidDe())) return -1;
+	// 				return b.getPrdValidDe().compareTo(a.getPrdValidDe());
+	// 			});
+	//
+	// 			// FIXME: default list 1st value??
+	// 			d.setMnfNo(list.get(0).getMnfNo());
+	// 			d.setMnfSeq(list.get(0).getMnfSeq());
+	// 			d.setPrdValidDe(list.get(0).getPrdValidDe());
+	//
+	// 			d.getMnfSeqInfos().addAll(list);
+	// 		});
+	//
+	// 	}catch (Exception e){
+	// 		if( e instanceof ApiCustomException){
+	// 			throw ApiCustomException.create(String.format("[%s]의 제조번호 정보를 찾을수 없습니다.", productCd.get()));
+	// 		}
+	// 		throw ApiCustomException.create(e.getMessage());
+	// 	}
+	// }
 }

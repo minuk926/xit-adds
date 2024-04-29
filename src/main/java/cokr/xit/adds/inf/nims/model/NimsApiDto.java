@@ -1,18 +1,13 @@
 package cokr.xit.adds.inf.nims.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 
 import cokr.xit.adds.core.model.AuditDto;
-import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -118,87 +113,87 @@ public class NimsApiDto {
         private String prmisnNo;
     }
 
-    /**
-     * 상품 정보 조회 response
-     */
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @SuperBuilder
-    public static class ProductInfoKd extends AuditDto {
-        /**
-         * 품목코드
-         */
-        @JsonAlias("PRDUCT_CD")
-        private String prductCd;
-
-        /**
-         * 제품대표코드
-         */
-        @JsonAlias("PRDLST_MST_CD")
-        private String prdlstMstCd;
-
-        /**
-         * 제품명
-         */
-        @JsonAlias("PRDUCT_NM")
-        private String prductNm;
-
-        /**
-         * 마약/항정 구분명
-         */
-        @JsonAlias("NRCD_SE_NM")
-        private String nrcdSeNm;
-
-        /**
-         * 중점/일반 구분
-         */
-        @JsonAlias("PRTM_SE_NM")
-        private String prtmSeNm;
-
-        /**
-         * 제품최소유통단위수량
-         * 제품규격정보(고정값 = 1)
-         */
-        @JsonAlias("PRD_MIN_DISTB_QY")
-        private Integer prdMinDistbQy;
-
-        /**
-         * 제품최소유통단위
-         */
-        @JsonAlias("STD_PACKNG_STLE_NM")
-        private String stdPackngStleNm;
-
-        /**
-         * 제품총낱개단위수량
-         */
-        @JsonAlias("PRD_TOT_PCE_QY")
-        private Integer prdTotPceQy;
-
-        /**
-         * 제품낱개단위
-         */
-        @JsonAlias("PCE_CO_UNIT_NM")
-        private String pceCoUnitNm;
-
-        /**
-         * 마약류취급자식별번호
-         */
-        @JsonAlias("BSSH_CD")
-        private String bsshCd;
-
-        /**
-         * 등록일
-         */
-        @JsonAlias("RGS_DT")
-        private String rgsDt;
-
-        /**
-         * 변경일
-         */
-        @JsonAlias("UPD_DT")
-        private String updDt;
-    }
+    // /**
+    //  * 상품 정보 조회 response
+    //  */
+    // @Getter
+    // @NoArgsConstructor
+    // @AllArgsConstructor
+    // @SuperBuilder
+    // public static class ProductInfoKd extends AuditDto {
+    //     /**
+    //      * 품목코드
+    //      */
+    //     @JsonAlias("PRDUCT_CD")
+    //     private String prductCd;
+    //
+    //     /**
+    //      * 제품대표코드
+    //      */
+    //     @JsonAlias("PRDLST_MST_CD")
+    //     private String prdlstMstCd;
+    //
+    //     /**
+    //      * 제품명
+    //      */
+    //     @JsonAlias("PRDUCT_NM")
+    //     private String prductNm;
+    //
+    //     /**
+    //      * 마약/항정 구분명
+    //      */
+    //     @JsonAlias("NRCD_SE_NM")
+    //     private String nrcdSeNm;
+    //
+    //     /**
+    //      * 중점/일반 구분
+    //      */
+    //     @JsonAlias("PRTM_SE_NM")
+    //     private String prtmSeNm;
+    //
+    //     /**
+    //      * 제품최소유통단위수량
+    //      * 제품규격정보(고정값 = 1)
+    //      */
+    //     @JsonAlias("PRD_MIN_DISTB_QY")
+    //     private Integer prdMinDistbQy;
+    //
+    //     /**
+    //      * 제품최소유통단위
+    //      */
+    //     @JsonAlias("STD_PACKNG_STLE_NM")
+    //     private String stdPackngStleNm;
+    //
+    //     /**
+    //      * 제품총낱개단위수량
+    //      */
+    //     @JsonAlias("PRD_TOT_PCE_QY")
+    //     private Integer prdTotPceQy;
+    //
+    //     /**
+    //      * 제품낱개단위
+    //      */
+    //     @JsonAlias("PCE_CO_UNIT_NM")
+    //     private String pceCoUnitNm;
+    //
+    //     /**
+    //      * 마약류취급자식별번호
+    //      */
+    //     @JsonAlias("BSSH_CD")
+    //     private String bsshCd;
+    //
+    //     /**
+    //      * 등록일
+    //      */
+    //     @JsonAlias("RGS_DT")
+    //     private String rgsDt;
+    //
+    //     /**
+    //      * 변경일
+    //      */
+    //     @JsonAlias("UPD_DT")
+    //     private String updDt;
+    // }
 
     /**
      * 폐기보고 response
@@ -322,16 +317,6 @@ public class NimsApiDto {
         @Builder.Default
         @Valid
         private List<DsuseRptInfoDtl> dsuseRptInfoDtls = new ArrayList<>();
-
-        // clone 메소드 추가
-        @Override
-        public DsuseRptInfo clone() {
-            try {
-                return (DsuseRptInfo) super.clone();
-            } catch (CloneNotSupportedException e) {
-                throw ApiCustomException.create("NIMS 폐기보고 정보 복제 중 오류가 발생 하였습니다.");
-            }
-        }
     }
 
     @Getter
@@ -408,175 +393,175 @@ public class NimsApiDto {
         private Integer dsuseQy;
     }
 
-    /**
-     * 제품 제조 일련 번호 정보 조회 response
-     */
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @SuperBuilder
-    public static class MnfSeqInfo extends AuditDto {
-        /**
-         * 제품코드
-         */
-        @JsonAlias("PRDUCT_CD")
-        private String prductCd;
-
-        /**
-         * 제품명
-         */
-        @JsonAlias("PRDUCT_NM")
-        private String prductNm;
-
-        /**
-         * 제조번호
-         */
-        @JsonAlias("MNF_NO")
-        private String mnfNo;
-
-        /**
-         * 일련번호
-         */
-        @JsonAlias("MNF_SEQ")
-        private String mnfSeq;
-
-        /**
-         * 유효기간
-         */
-        @JsonAlias("PRD_VALID_DE")
-        private String prdValidDe;
-    }
-
-    /**
-     * 관할 허가 관청 정보 조회 response
-     */
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @SuperBuilder
-    public static class JurisdictionGovInfo extends AuditDto {
-        /**
-         * 기관코드
-         */
-        @JsonAlias("OF_CD")
-        private String ofCd;
-
-        /**
-         * 기관명
-         */
-        @JsonAlias("OF_NM")
-        private String ofNm;
-
-        /**
-         * 상위 기관명
-         */
-        @JsonAlias("UP_OF_NM")
-        private String upOfNm;
-
-        /**
-         * 최상위 기관명
-         */
-        @JsonAlias("TOP_OF_NM")
-        private String topOfNm;
-
-        /**
-         * 기본 주소
-         */
-        @JsonAlias("BASS_ADRES")
-        private String bassAdres;
-
-        /**
-         * 상세 주소
-         */
-        @JsonAlias("BASS_DTL_ADRES")
-        private String bassDtlAdres;
-    }
-
-    /**
-     * 저장소 정보 조회 response
-     */
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @SuperBuilder
-    public static class StorageInfo extends AuditDto {
-        /**
-         * 마약류취급자식별번호
-         */
-        @JsonAlias("BSSH_CD")
-        private String bsshCd;
-
-        /**
-         * 업체명
-         */
-        @JsonAlias("BSSH_NM")
-        private String bsshNm;
-
-        /**
-         * 저장소 번호
-         */
-        @JsonAlias("STORGE_NO")
-        private String storgeNo;
-
-        /**
-         * 저장소명
-         */
-        @JsonAlias("STORGE_NM")
-        private String storgeNm;
-
-        /**
-         * 저장소 유형
-         */
-        @JsonAlias("STORGE_SE_NM")
-        private String storgeSeNm;
-
-        /**
-         * 기본 주소
-         */
-        @JsonAlias("BASS_ADRES")
-        private String bassAdres;
-
-        /**
-         * 상세 주소
-         */
-        @JsonAlias("BASS_DTL_ADRES")
-        private String bassDtlAdres;
-
-        /**
-         * 사용 유무
-         */
-        @JsonAlias("USE_AT")
-        private String useAt;
-    }
-
-    /**
-     * <pre>
-     * 제품 제조 일련 번호 정보 조회 response Serializer
-     * 제품 제조 일련 번호 정보 조회시 (json "PRODUCT_CD" -> "prductCd") 직렬화를 위한 Serializer
-     * @uses @JsonSerialize(using = MnfSeqInfoSerializer.class)
-     * </pre>
-     */
-    public static class MnfSeqInfoSerializer extends JsonSerializer<List<MnfSeqInfo>> {
-        @Override
-        public void serialize(List<NimsApiDto.MnfSeqInfo> mnfSeqInfos, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
-
-            try {
-                jsonGenerator.writeStartArray();
-                for(MnfSeqInfo mnfSeqInfo : mnfSeqInfos) {
-                    jsonGenerator.writeStartObject();
-                    jsonGenerator.writeStringField("prductCd", mnfSeqInfo.getPrductCd());
-                    jsonGenerator.writeStringField("prductNm", mnfSeqInfo.getPrductNm());
-                    jsonGenerator.writeStringField("mnfNo", mnfSeqInfo.getMnfNo());
-                    jsonGenerator.writeStringField("mnfSeq", mnfSeqInfo.getMnfSeq());
-                    jsonGenerator.writeStringField("prdValidDe", mnfSeqInfo.getPrdValidDe());
-                    jsonGenerator.writeEndObject();
-                }
-                jsonGenerator.writeEndArray();
-            } catch (IOException e) {
-                throw ApiCustomException.create("NIMS 제조 일련 번호 조회 API 호출 결과 직렬화 중 오류가 발생 하였습니다.");
-            }
-        }
-    }
+    // /**
+    //  * 제품 제조 일련 번호 정보 조회 response
+    //  */
+    // @Getter
+    // @Setter
+    // @NoArgsConstructor
+    // @AllArgsConstructor
+    // @SuperBuilder
+    // public static class MnfSeqInfo extends AuditDto {
+    //     /**
+    //      * 제품코드
+    //      */
+    //     @JsonAlias("PRDUCT_CD")
+    //     private String prductCd;
+    //
+    //     /**
+    //      * 제품명
+    //      */
+    //     @JsonAlias("PRDUCT_NM")
+    //     private String prductNm;
+    //
+    //     /**
+    //      * 제조번호
+    //      */
+    //     @JsonAlias("MNF_NO")
+    //     private String mnfNo;
+    //
+    //     /**
+    //      * 일련번호
+    //      */
+    //     @JsonAlias("MNF_SEQ")
+    //     private String mnfSeq;
+    //
+    //     /**
+    //      * 유효기간
+    //      */
+    //     @JsonAlias("PRD_VALID_DE")
+    //     private String prdValidDe;
+    // }
+    //
+    // /**
+    //  * 관할 허가 관청 정보 조회 response
+    //  */
+    // @Getter
+    // @NoArgsConstructor
+    // @AllArgsConstructor
+    // @SuperBuilder
+    // public static class JurisdictionGovInfo extends AuditDto {
+    //     /**
+    //      * 기관코드
+    //      */
+    //     @JsonAlias("OF_CD")
+    //     private String ofCd;
+    //
+    //     /**
+    //      * 기관명
+    //      */
+    //     @JsonAlias("OF_NM")
+    //     private String ofNm;
+    //
+    //     /**
+    //      * 상위 기관명
+    //      */
+    //     @JsonAlias("UP_OF_NM")
+    //     private String upOfNm;
+    //
+    //     /**
+    //      * 최상위 기관명
+    //      */
+    //     @JsonAlias("TOP_OF_NM")
+    //     private String topOfNm;
+    //
+    //     /**
+    //      * 기본 주소
+    //      */
+    //     @JsonAlias("BASS_ADRES")
+    //     private String bassAdres;
+    //
+    //     /**
+    //      * 상세 주소
+    //      */
+    //     @JsonAlias("BASS_DTL_ADRES")
+    //     private String bassDtlAdres;
+    // }
+    //
+    // /**
+    //  * 저장소 정보 조회 response
+    //  */
+    // @Getter
+    // @NoArgsConstructor
+    // @AllArgsConstructor
+    // @SuperBuilder
+    // public static class StorageInfo extends AuditDto {
+    //     /**
+    //      * 마약류취급자식별번호
+    //      */
+    //     @JsonAlias("BSSH_CD")
+    //     private String bsshCd;
+    //
+    //     /**
+    //      * 업체명
+    //      */
+    //     @JsonAlias("BSSH_NM")
+    //     private String bsshNm;
+    //
+    //     /**
+    //      * 저장소 번호
+    //      */
+    //     @JsonAlias("STORGE_NO")
+    //     private String storgeNo;
+    //
+    //     /**
+    //      * 저장소명
+    //      */
+    //     @JsonAlias("STORGE_NM")
+    //     private String storgeNm;
+    //
+    //     /**
+    //      * 저장소 유형
+    //      */
+    //     @JsonAlias("STORGE_SE_NM")
+    //     private String storgeSeNm;
+    //
+    //     /**
+    //      * 기본 주소
+    //      */
+    //     @JsonAlias("BASS_ADRES")
+    //     private String bassAdres;
+    //
+    //     /**
+    //      * 상세 주소
+    //      */
+    //     @JsonAlias("BASS_DTL_ADRES")
+    //     private String bassDtlAdres;
+    //
+    //     /**
+    //      * 사용 유무
+    //      */
+    //     @JsonAlias("USE_AT")
+    //     private String useAt;
+    // }
+    //
+    // /**
+    //  * <pre>
+    //  * 제품 제조 일련 번호 정보 조회 response Serializer
+    //  * 제품 제조 일련 번호 정보 조회시 (json "PRODUCT_CD" -> "prductCd") 직렬화를 위한 Serializer
+    //  * @uses @JsonSerialize(using = MnfSeqInfoSerializer.class)
+    //  * </pre>
+    //  */
+    // public static class MnfSeqInfoSerializer extends JsonSerializer<List<MnfSeqInfo>> {
+    //     @Override
+    //     public void serialize(List<NimsApiDto.MnfSeqInfo> mnfSeqInfos, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
+    //
+    //         try {
+    //             jsonGenerator.writeStartArray();
+    //             for(MnfSeqInfo mnfSeqInfo : mnfSeqInfos) {
+    //                 jsonGenerator.writeStartObject();
+    //                 jsonGenerator.writeStringField("prductCd", mnfSeqInfo.getPrductCd());
+    //                 jsonGenerator.writeStringField("prductNm", mnfSeqInfo.getPrductNm());
+    //                 jsonGenerator.writeStringField("mnfNo", mnfSeqInfo.getMnfNo());
+    //                 jsonGenerator.writeStringField("mnfSeq", mnfSeqInfo.getMnfSeq());
+    //                 jsonGenerator.writeStringField("prdValidDe", mnfSeqInfo.getPrdValidDe());
+    //                 jsonGenerator.writeEndObject();
+    //             }
+    //             jsonGenerator.writeEndArray();
+    //         } catch (IOException e) {
+    //             throw ApiCustomException.create("NIMS 제조 일련 번호 조회 API 호출 결과 직렬화 중 오류가 발생 하였습니다.");
+    //         }
+    //     }
+    // }
 }
 

@@ -57,6 +57,96 @@
             mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
             mdfr = #{rgtr}
     </insert>
+
+    <insert id="mergeProductInfoKd" parameterType="cokr.xit.adds.inf.nims.model.NimsApiDto$ProductInfoKd">
+        /** nims-mysql-mapper|mergeProductInfoKd-상품정보 생성|julim  */
+        INSERT INTO tb_prduct_info(
+            prduct_cd,
+            prdlst_mst_cd,
+            prduct_nm,
+            nrcd_se_nm,
+            prtm_se_nm,
+            prd_min_distb_qy,
+            std_packng_stle_nm,
+            prd_tot_pce_qy,
+            pce_co_unit_nm,
+            bssh_cd,
+            rgs_dt,
+            upd_dt,
+            use_yn,
+            reg_dt,
+            rgtr
+        ) VALUES (
+            #{prductCd},
+            #{prdlstMstCd},
+            #{prductNm},
+            #{nrcdSeNm},
+            #{prtmSeNm},
+            #{prdMinDistbQy},
+            #{stdPackngStleNm},
+            #{prdTotPceQy},
+            #{pceCoUnitNm},
+            #{bsshCd},
+            #{rgsDt},
+            #{updDt},
+            'Y',
+            DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
+            #{rgtr}
+        )
+        ON DUPLICATE KEY UPDATE
+            prdlst_mst_cd = #{prdlstMstCd},
+            prduct_nm = #{prductNm},
+            nrcd_se_nm = #{nrcdSeNm},
+            prtm_se_nm = #{prtmSeNm},
+            prd_min_distb_qy = #{prdMinDistbQy},
+            std_packng_stle_nm = #{stdPackngStleNm},
+            prd_tot_pce_qy = #{prdTotPceQy},
+            pce_co_unit_nm = #{pceCoUnitNm},
+            bssh_cd = #{bsshCd},
+            rgs_dt = #{rgsDt},
+            upd_dt = #{updDt},
+            mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
+            mdfr = #{rgtr}
+    </insert>
+
+    <insert id="mergeStorgeInfo" parameterType="cokr.xit.adds.inf.nims.model.NimsApiDto$StorageInfo">
+        /** nims-mysql-mapper|mergeStorgeInfo-저장소 정보 생성|julim  */
+        INSERT INTO tb_storge_info(
+            bssh_cd,
+            bssh_nm,
+            use_at,
+            storge_se_nm,
+            storge_no,
+            storge_nm,
+            bass_adres,
+            bass_dtl_adres,
+            use_yn,
+            reg_dt,
+            rgtr
+        ) VALUES (
+            #{bsshCd},
+            #{bsshNm},
+            #{useAt},
+            #{storgeSeNm},
+            #{storgeNo},
+            #{storgeNm},
+            #{bassAdres},
+            #{bassDtlAdres},
+             'Y',
+             DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
+             #{rgtr}
+        )
+        ON DUPLICATE KEY UPDATE
+            bssh_nm = #{bsshNm},
+            use_at = #{useAt},
+            storge_se_nm = #{storgeSeNm},
+            storge_no = #{storgeNo},
+            storge_nm = #{storgeNm},
+            bass_adres = #{bassAdres},
+            bass_dtl_adres = #{bassDtlAdres},
+            mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
+            mdfr = #{rgtr}
+    </insert>
     <!-- **************************************************************************** -->
     <!-- NIMS API end -->
     <!-- **************************************************************************** -->
@@ -284,4 +374,85 @@
     <!-- **************************************************************************** -->
     <!-- ADDS BIZ end -->
     <!-- **************************************************************************** -->
+
+
+
+
+
+
+
+
+
+
+
+    <select id="selectTgtAarHeader" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgt" resultType="cokr.xit.adds.biz.nims.model.BizNimsAarDto$AarHeader">
+        /** nims-mysql-mapper|selectTgtAarHeader-폐기 보고 대상 헤더 조회|julim  */
+        SELECT tdm.dscdmng_id                       /* 폐기관리ID */
+             , '' AS uid                            /* 보고자식별ID */
+             , '' AS rndRmk                         /* 수불비고 */
+             , #{bsshCd} AS bsshCd                  /* 마약류취급자식별번호 */
+             -- , '' AS rptSeCd                /* 보고구분코드 : AAR-폐기 */
+             , CONCAT(tdm.dscdmng_id, '_00001') AS usrRptIdNo         /* 사용자보고식별번호 */
+             , '' AS refUsrRptIdNo                  /* 참조사용자식별번호 */
+             , '0' AS rptTyCd                       /* 보고유형코드 : 0-신규, 1-취소, 2-변형 */
+             , '' AS rmk                            /* 비고 : 취소 및 변경시 사유 필수 기재 */
+             , '' AS rptrNm                         /* 보고자명 : NIMS 등록 */
+             , tbi.bssh_nm AS rptrEntrpsNm          /* 보고업체명 : NIMS 등록 */
+             , tbi.chrg_nm AS chrgNm                /* 담당자명 : 없는 경우 보고자명 */
+             , '' AS chrgTelNo                      /* 담당자전화번호 */
+             , '' AS chrgMpNo                       /* 담당자휴대폰번호 - 암호화 */
+             , '' AS rndDtlRptCnt                   /* 수불상세보고수 */
+             , '1' AS dsuseSeCd                     /* 폐기구분코드 */
+             , '' AS dsusePrvCd                     /* 폐기사유코드 */
+             , '3' AS dsuseMthCd                    /* 폐기방법코드 */
+             , '' AS dsuseLoc                       /* 폐기장소 */
+             , '' AS dsuseDe                        /* 폐기일자 */
+             , '' AS dsuseInsttCd                   /* 폐기관할기관코드 */
+             , '0' AS atchFileCo                    /* 첨부파일수 */
+             , '' AS registerId                     /* 등록자ID - NIMS 등록 */
+             , '' AS fileCreatDt                    /* 파일생성일시 */
+             , 'Y' AS useYn
+             , 'nims-api' AS rgtr
+        FROM tb_dsuse_mgt tdm
+        JOIN tb_bssh_info tbi
+          ON tdm.bssh_cd = tbi.bssh_cd
+       WHERE tdm.dscdmng_id = #{dscdmngId}
+         AND tdm.use_yn = 'Y'
+    </select>
+
+    <select id="selectTgtAarDetails" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgt" resultType="cokr.xit.adds.biz.nims.model.BizNimsAarDto$AarDetail">
+        /** nims-mysql-mapper|selectTgtAarDetails-폐기 보고 대상 상세 조회|julim  */
+        SELECT tdm.dscdmng_id                       /* 폐기관리ID */
+             , '' AS uid                            /* 보고자식별ID */
+             , tdmd.dscdmng_sn                      /* 폐기관리순번 */
+             , '' AS usrRptLnIdNo                   /* 사용자보고라인식별번호 */
+             , tsi.storge_no AS storgeNo            /* 저장소번호 */
+             , '1102' AS mvmnTyCd                   /* 이동유형코드 */
+             , tpi.prduct_cd                        /* 제품코드 */
+             , '' AS mnfNo                          /* 제조번호 */
+             , '' AS mnfSeq                         /* 제품일련번호 */
+             , '' AS minDistbQy                     /* 제품유통단위수량 */
+             , '' AS prdMinDistbUnit                /* 제품최소유통단위 */
+             , '' AS pceQy                          /* 낱개단위수량 */
+             , '' AS prdPceUnit                     /* 제품낱개단위 */
+             , tpi.prduct_nm                        /* 제품명 */
+             , '' AS prdSgtin                       /* 제품바코드(RFID) */
+             , tpi.prd_min_distb_qy                 /* 제품최소유통단위수량 */
+             , tpi.prd_tot_pce_qy                   /* 제품총낱개단위수량 */
+             , '' AS prdValidDe                     /* 제품유효기한일자 */
+             , '' AS fileCreatDt                    /* 파일생성일시 */
+             , 'Y' AS useYn
+             , 'nims-api' AS rgtr
+        FROM tb_dsuse_mgt tdm
+        JOIN tb_dsuse_mgt_dtl tdmd
+          ON tdm.dscdmng_id = tdmd.dscdmng_id
+        JOIN tb_prduct_info tpi
+          ON tdmd.prduct_cd = tpi.prduct_cd
+        LEFT OUTER JOIN tb_storge_info tsi
+          ON tdm.bssh_cd = tsi.bssh_cd
+       WHERE tdm.dscdmng_id = #{dscdmngId}
+         AND tdm.use_yn = 'Y'
+         AND tdmd.use_yn = 'Y'
+    </select>
+
 </mapper>

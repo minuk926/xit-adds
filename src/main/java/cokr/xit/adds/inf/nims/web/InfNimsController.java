@@ -44,37 +44,37 @@ public class InfNimsController {
 		return ApiBaseResponse.of(infNimsService.getBsshInfoSt(dto));
 	}
 
-	@Operation(summary = "마약류 상품 정보 조회", description = "마약류 상품정보 조회")
-	@PostMapping("/getProductInfoKd")
-	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.ProductInfoKd>> getProductInfoKd(
-		@RequestBody NimsApiRequest.ProductInfoRequest dto
-	) {
-		return ApiBaseResponse.of(infNimsService.getProductInfoKd(dto));
-	}
-
-	@Operation(summary = "제조 일련 번호 정보 조회", description = "제조 일련 번호 정보 조회")
-	@PostMapping("/getMnfSeqInfo")
-	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.MnfSeqInfo>> getMnfSeqInfo(
-		@RequestBody NimsApiRequest.MnfSeqInfoRequest dto
-	) {
-		return ApiBaseResponse.of(infNimsService.getMnfSeqInfo(dto));
-	}
-
-	@Operation(summary = "관할 허가 관청 정보 조회", description = "관할 허가 관청 정보 조회")
-	@PostMapping("/getJurisdictionGovInfo")
-	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo>> getJurisdictionGovInfo(
-		@RequestBody NimsApiRequest.JurisdictionGovInfoRequest dto
-	) {
-		return ApiBaseResponse.of(infNimsService.getJurisdictionGovInfo(dto));
-	}
-
-	@Operation(summary = "저장소 정보 조회", description = "저장소 정보 조회")
-	@PostMapping("/getStorageInfo")
-	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.StorageInfo>> getStorageInfo(
-		@RequestBody NimsApiRequest.StorageInfoRequest dto
-	) {
-		return ApiBaseResponse.of(infNimsService.getStorageInfo(dto));
-	}
+	// @Operation(summary = "마약류 상품 정보 조회", description = "마약류 상품정보 조회")
+	// @PostMapping("/getProductInfoKd")
+	// public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.ProductInfoKd>> getProductInfoKd(
+	// 	@RequestBody NimsApiRequest.ProductInfoRequest dto
+	// ) {
+	// 	return ApiBaseResponse.of(infNimsService.getProductInfoKd(dto));
+	// }
+	//
+	// @Operation(summary = "제조 일련 번호 정보 조회", description = "제조 일련 번호 정보 조회")
+	// @PostMapping("/getMnfSeqInfo")
+	// public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.MnfSeqInfo>> getMnfSeqInfo(
+	// 	@RequestBody NimsApiRequest.MnfSeqInfoRequest dto
+	// ) {
+	// 	return ApiBaseResponse.of(infNimsService.getMnfSeqInfo(dto));
+	// }
+	//
+	// @Operation(summary = "관할 허가 관청 정보 조회", description = "관할 허가 관청 정보 조회")
+	// @PostMapping("/getJurisdictionGovInfo")
+	// public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo>> getJurisdictionGovInfo(
+	// 	@RequestBody NimsApiRequest.JurisdictionGovInfoRequest dto
+	// ) {
+	// 	return ApiBaseResponse.of(infNimsService.getJurisdictionGovInfo(dto));
+	// }
+	//
+	// @Operation(summary = "저장소 정보 조회", description = "저장소 정보 조회")
+	// @PostMapping("/getStorageInfo")
+	// public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.StorageInfo>> getStorageInfo(
+	// 	@RequestBody NimsApiRequest.StorageInfoRequest dto
+	// ) {
+	// 	return ApiBaseResponse.of(infNimsService.getStorageInfo(dto));
+	// }
 
 	@Operation(summary = "폐기 보고 정보 조회", description = "폐기 보고 정보 조회")
 	@PostMapping("/getDsuseRptInfo")

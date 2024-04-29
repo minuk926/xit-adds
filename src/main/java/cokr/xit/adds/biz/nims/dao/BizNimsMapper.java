@@ -31,8 +31,8 @@ public interface BizNimsMapper extends AbstractMapper {
 	// NIMS API CALL
 	//------------------------------------------------------------------------------------------------------
 	int mergeBsshInfoSt(NimsApiDto.BsshInfoSt dto);
-	int mergeProductInfoKd(NimsApiDto.ProductInfoKd dto);
-	int mergeStorgeInfo(NimsApiDto.StorageInfo dto);
+	// int mergeProductInfoKd(NimsApiDto.ProductInfoKd dto);
+	// int mergeStorgeInfo(NimsApiDto.StorageInfo dto);
 
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ
