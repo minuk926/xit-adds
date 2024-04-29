@@ -14,7 +14,6 @@ import cokr.xit.adds.biz.nims.service.BizNimsService;
 import cokr.xit.adds.core.model.ApiBaseResponse;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import cokr.xit.adds.inf.nims.model.NimsApiRequest;
-import cokr.xit.adds.inf.nims.service.InfNimsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -42,7 +41,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/biz/nims/v1")
 public class BizNimsController {
     private final BizNimsService bizNimsService;
-    private final InfNimsService infNimsService;
 
     //------------------------------------------------------------------------------------------------------
     // NIMS API CALL

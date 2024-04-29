@@ -1,7 +1,6 @@
 package cokr.xit.adds.inf.iros.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 /**
  * <pre>
@@ -18,31 +17,78 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * </pre>
  */
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+//@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record DrugPrdtMcpnDtl(
-    @JsonProperty("ENTRPS_PRMISN_NO")
+    /**
+     * 업체 허가 번호
+     */
+    @JsonAlias("ENTRPS_PRMISN_NO")
     String entrpsPrmisnNo,
-    @JsonProperty("ENTRPS")
+
+    /**
+     * 제품명
+     */
+    @JsonAlias("ENTRPS")
     String entrps,
-    @JsonProperty("PRDUCT")
+
+    /**
+     * 제품명(한글)
+     */
+    @JsonAlias("PRDUCT")
     String prduct,
-    @JsonProperty("MTRAL_SN")
+
+    /**
+     * 일련 번호
+     */
+    @JsonAlias("MTRAL_SN")
     String mtralSn,
-    @JsonProperty("MTRAL_CODE")
+
+    /**
+     * 원료 코드
+     */
+    @JsonAlias("MTRAL_CODE")
     String mtralCode,
-    @JsonProperty("MTRAL_NM")
+
+    /**
+     * 원료명
+     */
+    @JsonAlias("MTRAL_NM")
     String mtralNm,
-    @JsonProperty("QNT")
+
+    /**
+     * 분량
+     */
+    @JsonAlias("QNT")
     String qnt,
-    @JsonProperty("INGD_UNIT_CD")
+
+    /**
+     * 분량 단위 정보
+     */
+    @JsonAlias("INGD_UNIT_CD")
     String ingdUnitCd,
-    @JsonProperty("ITEM_SEQ")
+
+    /**
+     * 품목 기준 코드
+     */
+    @JsonAlias("ITEM_SEQ")
     String itemSeq,
-    @JsonProperty("MAIN_INGR_ENG")
+
+    /**
+     * 영문 성분명
+     */
+    @JsonAlias("MAIN_INGR_ENG")
     String mainIngrEng,
-    @JsonProperty("BIZRNO")
+
+    /**
+     * 사업자 등록 번호
+     */
+    @JsonAlias("BIZRNO")
     String bizrno,
-    @JsonProperty("CPNT_CTNT_CONT")
+
+    /**
+     * 세부 구성 항목
+     */
+    @JsonAlias("CPNT_CTNT_CONT")
     String cpntCtntCont
 ) {
 }

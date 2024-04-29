@@ -15,3 +15,8 @@ app:
         officeinfo: /api/officeinfo.do
         placeinfoV1: /api/placeinfo_v1.do
         reportinfo: /api/reportinfo_ggg.do
+    iros:
+      url: https://apis.data.go.kr
+      api-key: 0fTkYnZU6XjaAPAp6GzKW9Q6fYq8iaoSH9wKUZwz2PBjRXGM04aUgtO3a61xYGjL8nFZn4fjLGS9XErhMSXq%2Bw%3D%3D
+      api:
+        drugPrdtMcpnDtlInq: /1471000/DrugPrdtPrmsnInfoService05/getDrugPrdtMcpnDtlInq04

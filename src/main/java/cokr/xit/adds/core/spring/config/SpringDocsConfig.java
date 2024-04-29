@@ -94,7 +94,8 @@ public class SpringDocsConfig {
         return GroupedOpenApi.builder()
             .group("2. BIZ API interface")
             .pathsToMatch(
-                "/api/biz/nims/**"
+                "/api/biz/nims/**",
+                "/api/biz/iros/**"
             )
             .build();
     }
@@ -104,7 +105,8 @@ public class SpringDocsConfig {
         return GroupedOpenApi.builder()
             .group("3. Interface API")
             .pathsToMatch(
-                "/api/inf/nims/**"
+                "/api/inf/nims/**",
+                "/api/inf/iros/**"
             )
             .build();
     }

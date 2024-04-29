@@ -13,7 +13,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -96,7 +98,7 @@ public class ApiUtil {
 	}
 
 	public static String getUtf8UrlEncoding(final String str) {
-		if(!org.springframework.util.StringUtils.hasText(str)) return str;
+		if(!org.springframework.util.StringUtils.hasText(str)) return StringUtils.EMPTY;
 
 		try {
 			return URLEncoder.encode(
@@ -120,6 +122,21 @@ public class ApiUtil {
 			request.contentType(WebClient.Request.ContentType.FORM);
 			request.uri(uri);
 			toData(request, cls);
+		});
+		return rslt.body();
+	}
+
+	/**
+	 * irosApi 호출 - x-www-form-urlencoded 방식
+	 * @param uri String
+	 * @param param String
+	 * @return String
+	 */
+	public static String callIrosApi(String uri, String param) {
+		HttpResponse<String> rslt = new WebClient().get(request -> {
+			request.header(HttpHeaders.CONTENT_TYPE, "application/json");
+			request.contentType(WebClient.Request.ContentType.FORM);
+			request.uri(uri + param);
 		});
 		return rslt.body();
 	}

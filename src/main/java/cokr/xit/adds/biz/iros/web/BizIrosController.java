@@ -1,15 +1,16 @@
-package cokr.xit.adds.inf.iros.web;
+package cokr.xit.adds.biz.iros.web;
+
+import java.util.List;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cokr.xit.adds.biz.iros.service.BizIrosService;
 import cokr.xit.adds.core.model.ApiBaseResponse;
 import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtl;
 import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlRequest;
-import cokr.xit.adds.inf.iros.model.IrosResponse;
-import cokr.xit.adds.inf.iros.service.InfIrosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,30 +18,29 @@ import lombok.RequiredArgsConstructor;
 /**
  * <pre>
  * description : 
- *
- * packageName : cokr.xit.adds.inf.iros.web
- * fileName    : InfIrosController
+ * packageName : cokr.xit.adds.biz.iros.web
+ * fileName    : BizIrosController
  * author      : limju
- * date        : 2024-04-19
+ * date        : 2024-04-29
  * ======================================================================
  * 변경일         변경자        변경 내용
  * ----------------------------------------------------------------------
- * 2024-04-19    limju       최초 생성
+ * 2024-04-29   limju       최초 생성
  *
  * </pre>
  */
-@Tag(name = "InfIrosController", description = "공공데이타포탈 Interface API - Api Interface call Test(테스트용)")
+@Tag(name = "BizIrosController", description = "공공데이타포탈 업무 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/inf/iros/v1")
-public class InfIrosController {
-    private final InfIrosService infIrosService;
+@RequestMapping("/api/biz/iros/v1")
+public class BizIrosController {
+    private final BizIrosService bizIrosService;
 
     @Operation(summary = "의약 제품 주성분 상세 정보 조회", description = "의약 제품 주성분 상세 정보 조회")
     @PostMapping("/getDrugPrdtMcpnDtls")
-    public ApiBaseResponse<IrosResponse<DrugPrdtMcpnDtl>> getDrugPrdtMcpnDtls(
+    public ApiBaseResponse<List<DrugPrdtMcpnDtl>> getDrugPrdtMcpnDtls(
         @RequestBody DrugPrdtMcpnDtlRequest dto
     ) {
-        return ApiBaseResponse.of(infIrosService.getDrugPrdtMcpnDtls(dto));
+        return ApiBaseResponse.of(bizIrosService.getDrugPrdtMcpnDtls(dto));
     }
 }
