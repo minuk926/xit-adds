@@ -285,6 +285,11 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * </pre>
 	 */
 	private void createDsuseRpt(NimsApiDto.DsuseRptInfo dto, boolean isNew) {
+		dto.setRptTyCdNm(Constants.RPT_TY_CD.getName(dto.getRptTyCd()));
+		dto.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(dto.getDsuseSeCd()));
+		dto.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(dto.getDsusePrvCd()));
+		dto.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(dto.getDsuseMthCd()));
+
 		if(!isNew){
 
 			String refUsrRptIdNo = dto.getRefUsrRptIdNo();

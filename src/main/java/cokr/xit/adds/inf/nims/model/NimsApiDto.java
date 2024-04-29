@@ -242,6 +242,8 @@ public class NimsApiDto {
         @JsonAlias("RPT_TY_CD")
         private String rptTyCd;
 
+        private String rptTyCdNm;
+
         /**
          * 수불 상세 보고 수
          */
@@ -267,6 +269,8 @@ public class NimsApiDto {
         @JsonAlias("DSUSE_SE_CD")
         private String dsuseSeCd;
 
+        private String dsuseSeCdNm;
+
         /**
          * 폐기 사유 코드
          * 01~05, 07~09, 12
@@ -274,12 +278,16 @@ public class NimsApiDto {
         @JsonAlias("DSUSE_PRV_CD")
         private String dsusePrvCd;
 
+        private String dsusePrvCdNm;
+
         /**
          * 폐기 방법 코드
          * 1 ~ 9
          */
         @JsonAlias("DSUSE_MTH_CD")
         private String dsuseMthCd;
+
+        private String dsuseMthCdNm;
 
         /**
          * 폐기 장소
