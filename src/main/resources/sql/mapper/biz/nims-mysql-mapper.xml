@@ -166,11 +166,15 @@
                tdrid.reg_dt,
                tdrid.rgtr,
                tpi.nrcd_se_nm,           /* 마약항정구분 */
-               tpi.prtm_se_nm            /* 중점일반구분 */
+               tpi.prtm_se_nm,           /* 중점일반구분 */
+               tpi.bssh_cd,              /* 제조수입자 */
+               tbi.bssh_nm               /* 제조수입자명 */
           FROM tb_dsuse_rpt_info_dtl tdrid
           LEFT JOIN tb_prduct_info tpi
             ON (tdrid.prduct_cd = tpi.prduct_cd)
             --    AND tdrid.use_yn = 'Y')
+          LEFT JOIN tb_bssh_info tbi
+            ON (tpi.bssh_cd = tbi.bssh_cd)
          WHERE tdrid.usr_rpt_id_no = #{usrRptIdNo}
            <if test="usrRptLnIdNo != null">
            AND tdrid.usr_rpt_ln_id_no = #{usrRptLnIdNo}

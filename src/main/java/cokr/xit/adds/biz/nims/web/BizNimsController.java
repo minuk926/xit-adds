@@ -127,7 +127,7 @@ public class BizNimsController {
         return ApiBaseResponse.of(bizNimsService.saveDsuseMgt(dtos));
     }
 
-    @Operation(summary = "사고 마약류 폐기 관리 목록 조회", description = "사고 마약류 폐기 관리 목록 조회")
+    @Operation(summary = "사고 마약류 폐기 관리 목록 조회", description = "사고 마약류 폐기 관리 목록 조회<br><br>사고마약류 관리대장, 결과통보서, 폐기현황등에 필요한 내용 조회")
     @PostMapping(value = "/getDsuseMgts")
     public ApiBaseResponse<List<BizNimsResponse.DsuseMgtResponse>> getDsuseMgts(
         @RequestBody BizNimsRequest.DsuseMgtInq dto

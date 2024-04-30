@@ -234,20 +234,20 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	public List<BizNimsResponse.DsuseMgtResponse> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto) {
 		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectDsuseMgts(dto);
 
-		resList.forEach(r -> {
-			r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
-			r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
-			r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
-			r.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(r.getDsuseMthCd()));
+        for (BizNimsResponse.DsuseMgtResponse r : resList) {
+            r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
+            r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
+            r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
+            r.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(r.getDsuseMthCd()));
 
-			Map<String, String> map = new HashMap<>();
-			map.put("usrRptIdNo", r.getUsrRptIdNo());
-			List<NimsApiDto.DsuseRptInfoDtl> dsuseRptInfoDtls = bizNimsMapper.selectDsuseRptInfoDtls(map);
-			setAddProductInfo(dsuseRptInfoDtls);
-			r.getDsuseRptInfoDtls().addAll(bizNimsMapper.selectDsuseRptInfoDtls(map));
-		});
+            Map<String, String> map = new HashMap<>();
+            map.put("usrRptIdNo", r.getUsrRptIdNo());
+            List<NimsApiDto.DsuseRptInfoDtl> dsuseRptInfoDtls = bizNimsMapper.selectDsuseRptInfoDtls(map);
+            setAddProductInfo(dsuseRptInfoDtls);
+            r.getDsuseRptInfoDtls().addAll(dsuseRptInfoDtls);
+        }
 
-		return resList;
+        return resList;
 	}
 
 	//------------------------------------------------------------------------------------------------------
@@ -365,13 +365,63 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * </pre>
 	 */
 	private void setAddBsshInfo(List<BizNimsResponse.DsuseMgtResponse> resList) {
-		resList.forEach(r -> {
-			r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
-			r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
-			r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
-			r.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(r.getDsuseMthCd()));
+        for (BizNimsResponse.DsuseMgtResponse r : resList) {
+            r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
+            r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
+            r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
+            r.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(r.getDsuseMthCd()));
 
-			if(isEmpty(r.getPrmisnNo())){
+            if (isEmpty(r.getPrmisnNo())) {
+                List<BsshInfoSt> list = saveBsshInfoSt(
+                    BsshInfoRequest.builder()
+                        .fg("1")
+                        .pg("1")
+                        .bc(r.getBsshCd())
+                        .build()
+                );
+                if (isEmpty(list)) {
+                    // FIXME : 데이타 정상 흐름 확인후 comment 제거
+                    continue;
+                    //throw ApiCustomException.create(String.format("데이타 오류(마약류취급자식별번호[%s]에 해당하는 데이타가 없습니다)", r.getBsshCd()));
+                }
+                r.setPrmisnNo(list.get(0).getPrmisnNo());
+                r.setRprsntvNm(list.get(0).getRprsntvNm());
+            }
+        }
+    }
+
+	/**
+	 * <pre>
+	 * 제품 추가 정보 set
+	 * 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm), 제조수입자명(bsshNm) set
+	 * @param dtlList <NimsApiDto.DsuseRptInfoDtl>
+	 * </pre>
+	 */
+	private void setAddProductInfo(List<NimsApiDto.DsuseRptInfoDtl> dtlList) {
+
+        for (NimsApiDto.DsuseRptInfoDtl r : dtlList) {//if()
+            // 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm)
+			// if (isEmpty(r.getNrcdSeNm()) || isEmpty(r.getPrtmSeNm())) {
+            //     //NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(
+			//
+            //     List<NimsApiDto.ProductInfoKd> list = saveProductInfoKd(
+            //         NimsApiRequest.ProductInfoRequest.builder()
+            //             .fg("1")
+            //             .pg("1")
+            //             .p(r.getPrductCd())
+            //             .build()
+            //     );
+            //     if (isEmpty(list)) {
+            //         // FIXME : 데이타 정상 흐름 확인후 comment 제거
+            //         continue;
+            //         //throw ApiCustomException.create(String.format("데이타 오류(제품코드[%s]에 해당하는 데이타가 없습니다)", r.getPrductCd()));
+            //     }
+            //     r.setNrcdSeNm(list.get(0).getNrcdSeNm());
+            //     r.setPrtmSeNm(list.get(0).getPrtmSeNm());
+            // }
+
+			// 제조수입자명(bsshNm)
+			if (isEmpty(r.getBsshNm()) && !isEmpty(r.getBsshCd())) {
 				List<BsshInfoSt> list = saveBsshInfoSt(
 					BsshInfoRequest.builder()
 						.fg("1")
@@ -379,48 +429,15 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 						.bc(r.getBsshCd())
 						.build()
 				);
-				if(isEmpty(list)){
+				if (isEmpty(list)) {
 					// FIXME : 데이타 정상 흐름 확인후 comment 제거
-					return;
+					continue;
 					//throw ApiCustomException.create(String.format("데이타 오류(마약류취급자식별번호[%s]에 해당하는 데이타가 없습니다)", r.getBsshCd()));
 				}
-				r.setPrmisnNo(list.get(0).getPrmisnNo());
-				r.setRprsntvNm(list.get(0).getRprsntvNm());
+				r.setBsshNm(list.get(0).getBsshNm());
 			}
-		});
-	}
-
-	/**
-	 * <pre>
-	 * 제품 추가 정보 set
-	 * 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm) set
-	 * @param dtlList <NimsApiDto.DsuseRptInfoDtl>
-	 * </pre>
-	 */
-	private void setAddProductInfo(List<NimsApiDto.DsuseRptInfoDtl> dtlList) {
-
-		dtlList.forEach(r -> {
-			//if()
-			if(isEmpty(r.getNrcdSeNm()) || isEmpty(r.getPrtmSeNm())){
-				//NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(
-
-				List<NimsApiDto.ProductInfoKd> list = saveProductInfoKd(
-					NimsApiRequest.ProductInfoRequest.builder()
-						.fg("1")
-						.pg("1")
-						.p(r.getPrductCd())
-						.build()
-				);
-				if(isEmpty(list)){
-					// FIXME : 데이타 정상 흐름 확인후 comment 제거
-					return;
-					//throw ApiCustomException.create(String.format("데이타 오류(제품코드[%s]에 해당하는 데이타가 없습니다)", r.getPrductCd()));
-				}
-				r.setNrcdSeNm(list.get(0).getNrcdSeNm());
-				r.setPrtmSeNm(list.get(0).getPrtmSeNm());
-			}
-		});
-	}
+        }
+    }
 
 
 

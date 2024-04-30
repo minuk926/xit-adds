@@ -409,6 +409,16 @@ public class NimsApiDto {
          * 중점/일반 구분
          */
         private String prtmSeNm;
+
+        /**
+         * 제조 수입자
+         */
+        private String bsshCd;
+
+        /**
+         * 제조 수입자명
+         */
+        private String bsshNm;
     }
 
     // /**
