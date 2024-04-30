@@ -91,6 +91,11 @@ public class NimsApiResult<T> {
             }
             throw Objects.requireNonNull(ApiCustomException.of(header));
         }
+
+        @JsonIgnore
+        public boolean isEndYn() {
+            return "Y".equals(body.isEndYn);
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

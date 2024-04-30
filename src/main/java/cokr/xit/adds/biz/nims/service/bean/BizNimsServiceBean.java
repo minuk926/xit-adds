@@ -65,28 +65,46 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	//------------------------------------------------------------------------------------------------------
 	@Override
 	public List<BsshInfoSt> saveBsshInfoSt(BsshInfoRequest dto) {
-		NimsApiResult.Response<BsshInfoSt> result = infNimsService.getBsshInfoSt(dto);
-		List<BsshInfoSt> list = result.getResult();
+		List<BsshInfoSt> list = new ArrayList<>();
+		while(true) {
+			// 마약류취급자식별번호로 마약류취급자정보 조회
+			NimsApiResult.Response<BsshInfoSt> rslt = infNimsService.getBsshInfoSt(dto);
+			List<BsshInfoSt> curList = rslt.getResult();
 
-		if(isEmpty(list)) return list;
+			if(isEmpty(curList)) break;
 
-		for (BsshInfoSt d : list) {
-			d.setRgtr(Constants.NIMS_API_USER_ID);
-			bizNimsMapper.mergeBsshInfoSt(d);
+			for (BsshInfoSt d : curList) {
+				d.setRgtr(Constants.NIMS_API_USER_ID);
+				bizNimsMapper.mergeBsshInfoSt(d);
+			}
+			list.addAll(curList);
+
+			if(rslt.isEndYn()) break;
+			dto.setPg(String.valueOf(Integer.parseInt(dto.getPg()) + 1));
+
 		}
 		return list;
 	}
 
 	@Override
 	public List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
-		NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(dto);
-		List<NimsApiDto.ProductInfoKd> list = result.getResult();
+		List<NimsApiDto.ProductInfoKd> list = new ArrayList<>();
 
-		if(isEmpty(list)) return list;
+		while(true) {
+			// 제품코드로 제품정보 조회
+			NimsApiResult.Response<NimsApiDto.ProductInfoKd> rslt = infNimsService.getProductInfoKd(dto);
+			List<NimsApiDto.ProductInfoKd> curList = rslt.getResult();
 
-		for (NimsApiDto.ProductInfoKd d : list) {
-			d.setRgtr(Constants.NIMS_API_USER_ID);
-			bizNimsMapper.mergeProductInfoKd(d);
+			if(isEmpty(curList))	break;
+
+			for (NimsApiDto.ProductInfoKd d : curList) {
+				d.setRgtr(Constants.NIMS_API_USER_ID);
+				bizNimsMapper.mergeProductInfoKd(d);
+			}
+			list.addAll(curList);
+
+			if(rslt.isEndYn()) break;
+			dto.setPg(String.valueOf(Integer.parseInt(dto.getPg()) + 1));
 		}
 		return list;
 	}
@@ -141,10 +159,19 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 */
 	@Override
 	public List<NimsApiDto.DsuseRptInfo> saveDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest reqDto) {
+		List<NimsApiDto.DsuseRptInfo> rsltList = new ArrayList<>();
 
-		NimsApiResult.Response<NimsApiDto.DsuseRptInfo> result = infNimsService.getDsuseRptInfo(reqDto);
-		List<NimsApiDto.DsuseRptInfo> rsltList = result.getResultOrThrow();
+		while(true) {
+			NimsApiResult.Response<NimsApiDto.DsuseRptInfo> rslt = infNimsService.getDsuseRptInfo(reqDto);
+			List<NimsApiDto.DsuseRptInfo> curList = rslt.getResultOrThrow();
 
+			if(isEmpty(curList)) break;
+
+			rsltList.addAll(curList);
+
+			if(rslt.isEndYn()) break;
+			reqDto.setPg(String.valueOf(Integer.parseInt(reqDto.getPg()) + 1));
+		}
 		// 0. 조회(저장)한 데이타 대상 에서 제외 (usrRptIdNo가 DB에 저장된 경우)
 		List<NimsApiDto.DsuseRptInfo> list = new ArrayList<>();
 		for (NimsApiDto.DsuseRptInfo dto : rsltList) {
