@@ -68,9 +68,11 @@ public class NimsApiResult<T> {
          */
         @JsonIgnore
         public List<T> getResultOrThrow() {
-            if(!ObjectUtils.isEmpty(getResult())) return getResult();
             if(header.resultCd == 0 || header.resultCd == 8){
-                throw ApiCustomException.create(ResultCode.NO_CONTENT);
+                if(ObjectUtils.isEmpty(body.list)) {
+                    throw ApiCustomException.create(ResultCode.NO_CONTENT);
+                }
+                return body.list;
             }
             throw Objects.requireNonNull(ApiCustomException.of(header));
         }
@@ -82,15 +84,12 @@ public class NimsApiResult<T> {
          * @return List<T> or null
          */
         @JsonIgnore
-        public List<T> getResultOrNull() {
-            return getResult();
-        }
-
-        private List<T> getResult() {
+        public List<T> getResult() {
+            //return getResult();
             if(header.resultCd == 0 || header.resultCd == 8) {
                 return body.list;
             }
-            return null;
+            throw Objects.requireNonNull(ApiCustomException.of(header));
         }
     }
 

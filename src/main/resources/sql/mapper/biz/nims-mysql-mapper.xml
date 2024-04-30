@@ -10,18 +10,18 @@
     <insert id="mergeBsshInfoSt" parameterType="cokr.xit.adds.inf.nims.model.NimsApiDto$BsshInfoSt">
         /** nims-mysql-mapper|mergeBsshInfoSt-마약류취급자정보 생성/변경|julim  */
         INSERT INTO tb_bssh_info(
-            bssh_cd,
-            bssh_nm,
-            induty_nm,
-            hdnt_cd,
-            hdnt_nm,
-            bizrno,
-            rprsntv_nm,
-            chrg_nm,
-            hptl_no,
-            join_yn,
-            bssh_stts_nm,
-            prmisn_no,
+            bssh_cd,        /* 마약류취급자식별번호 */
+            bssh_nm,        /* 마약류취급자명 */
+            induty_nm,      /* 업종명 */
+            hdnt_cd,        /* 의료업자구분 */
+            hdnt_nm,        /* 의료업자구분명 */
+            bizrno,         /* 사업자등록번호 */
+            rprsntv_nm,     /* 대표자명 */
+            chrg_nm,        /* 담당자명 */
+            hptl_no,        /* 요양기관번호 */
+            join_yn,        /* 회원가입여부 */
+            bssh_stts_nm,   /* 마약류취급자상태명 */
+            prmisn_no,      /* 허가번호 */
             use_yn,
             reg_dt,
             rgtr
@@ -43,20 +43,72 @@
             #{rgtr}
         )
         ON DUPLICATE KEY UPDATE
-            bssh_nm = #{bsshNm},
-            induty_nm = #{indutyNm},
-            hdnt_cd = #{hdntCd},
-            hdnt_nm = #{hdntNm},
-            bizrno = #{bizrno},
-            rprsntv_nm = #{rprsntvNm},
-            chrg_nm = #{chrgNm},
-            hptl_no = #{hptlNo},
-            join_yn = #{joinYn},
-            bssh_stts_nm = #{bsshSttusNm},
-            prmisn_no = #{prmisnNo},
+            bssh_nm = #{bsshNm},            /* 마약류취급자명 */
+            induty_nm = #{indutyNm},        /* 업종명 */
+            hdnt_cd = #{hdntCd},            /* 의료업자구분 */
+            hdnt_nm = #{hdntNm},            /* 의료업자구분명 */
+            bizrno = #{bizrno},             /* 사업자등록번호 */
+            rprsntv_nm = #{rprsntvNm},      /* 대표자명 */
+            chrg_nm = #{chrgNm},            /* 담당자명 */
+            hptl_no = #{hptlNo},            /* 요약기관번호 */
+            join_yn = #{joinYn},            /* 가입여부 */
+            bssh_stts_nm = #{bsshSttusNm},  /* 마약류취급자상태명 */
+            prmisn_no = #{prmisnNo},        /* 허가번호 */
             mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
             mdfr = #{rgtr}
     </insert>
+
+    <insert id="mergeProductInfoKd" parameterType="cokr.xit.adds.inf.nims.model.NimsApiDto$ProductInfoKd">
+        /** nims-mysql-mapper|mergeProductInfoKd-상품정보 생성|julim  */
+        INSERT INTO tb_prduct_info(
+            prduct_cd,              /* 제품코드 */
+            prdlst_mst_cd,          /* 제품대표코드 */
+            prduct_nm,              /* 제품명 */
+            nrcd_se_nm,             /* 마약항정구분 */
+            prtm_se_nm,             /* 중점일반구분 */
+            prd_min_distb_qy,       /* 최소유통단위수량 - 제품규격정보(고정값=1) */
+            std_packng_stle_nm,     /* 제품최소유통단위 */
+            prd_tot_pce_qy,         /* 제품총낱개단위수량 */
+            pce_co_unit_nm,         /* 제품낱개단위 */
+            bssh_cd,                /* 마약류취급자식별번호 */
+            rgs_dt,                 /* 등록일 */
+            upd_dt,                 /* 변경일 */
+            use_yn,
+            reg_dt,
+            rgtr
+        ) VALUES (
+            #{prductCd},
+            #{prdlstMstCd},
+            #{prductNm},
+            #{nrcdSeNm},
+            #{prtmSeNm},
+            #{prdMinDistbQy},
+            #{stdPackngStleNm},
+            #{prdTotPceQy},
+            #{pceCoUnitNm},
+            #{bsshCd},
+            #{rgsDt},
+            #{updDt},
+            'Y',
+            DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
+            #{rgtr}
+        )
+        ON DUPLICATE KEY UPDATE
+            prdlst_mst_cd = #{prdlstMstCd},             /* 제품대표코드 */
+            prduct_nm = #{prductNm},                    /* 제품명 */
+            nrcd_se_nm = #{nrcdSeNm},                   /* 마약항정구분 */
+            prtm_se_nm = #{prtmSeNm},                   /* 중점일반구분 */
+            prd_min_distb_qy = #{prdMinDistbQy},        /* 최소유통단위수량 - 제품규격정보(고정값=1) */
+            std_packng_stle_nm = #{stdPackngStleNm},    /* 제품최소유통단위 */
+            prd_tot_pce_qy = #{prdTotPceQy},            /* 제품총낱개단위수량 */
+            pce_co_unit_nm = #{pceCoUnitNm},            /* 제품낱개단위 */
+            bssh_cd = #{bsshCd},                        /* 마약류취급자식별번호 */
+            rgs_dt = #{rgsDt},                          /* 등록일 */
+            upd_dt = #{updDt},                          /* 변경일 */
+            mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
+            mdfr = #{rgtr}
+    </insert>
+
     <!-- **************************************************************************** -->
     <!-- NIMS API end -->
     <!-- **************************************************************************** -->
@@ -94,6 +146,40 @@
            </if>
            <if test="userId != null">
            AND userId = #{userId}
+           </if>
+    </select>
+
+    <select id="selectDsuseRptInfoDtls" parameterType="map" resultType="cokr.xit.adds.inf.nims.model.NimsApiDto$DsuseRptInfoDtl">
+        /** nims-mysql-mapper|selectDsuseRptInfoDtls-폐기보고정보 상세 조회|julim  */
+        SELECT tdrid.usr_rpt_id_no,      /* 사용자보고식별번호 */
+               tdrid.usr_rpt_ln_id_no,   /* 사용자보고라인식별번호 */
+               tdrid.prduct_cd,          /* 제품코드 */
+               tdrid.prduct_nm,          /* 제품명 */
+               tdrid.min_distb_qy,       /* 최소유통단위수량 */
+               tdrid.pce_qy,             /* 낱개단위수량 */
+               tdrid.mnf_no,             /* 제조번호 */
+               tdrid.prd_valid_de,       /* 제품유효기한일자 */
+               tdrid.mnf_seq,            /* 제품일련번호 */
+               tdrid.mvmn_ty_cd,         /* 이동유형코드 */
+               tdrid.dsuse_qy,           /* 폐기수량 */
+               tdrid.use_yn,
+               tdrid.reg_dt,
+               tdrid.rgtr,
+               tpi.nrcd_se_nm,           /* 마약항정구분 */
+               tpi.prtm_se_nm            /* 중점일반구분 */
+          FROM tb_dsuse_rpt_info_dtl tdrid
+          LEFT JOIN tb_prduct_info tpi
+            ON (tdrid.prduct_cd = tpi.prduct_cd)
+            --    AND tdrid.use_yn = 'Y')
+         WHERE tdrid.usr_rpt_id_no = #{usrRptIdNo}
+           <if test="usrRptLnIdNo != null">
+           AND tdrid.usr_rpt_ln_id_no = #{usrRptLnIdNo}
+           </if>
+           <if test="useYn != null">
+           AND tdrid.use_yn = #{useYn}
+           </if>
+           <if test="userId != null">
+           AND tdrid.userId = #{userId}
            </if>
     </select>
 
@@ -248,8 +334,25 @@
         )
     </insert>
 
-    <select id="selectDsuseMgt" parameterType="java.util.List" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtResponse">
-        /** nims-mysql-mapper|selectDsuseMgt-폐기관리 조회|julim  */
+    <select id="selectSavedDsuseMgts" parameterType="java.util.List" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtResponse">
+        /** nims-mysql-mapper|selectSavedDsuseMgts-저장 폐기관리목록 조회|julim  */
+        <include refid="sqlDsuseMgt"/>
+         WHERE tdm.dscdmng_id IN
+             <foreach collection="list" item="item" separator="," open="(" close=")">
+               #{item}
+             </foreach>
+    </select>
+
+    <select id="selectDsuseMgts" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgtInq" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtResponse">
+        /** nims-mysql-mapper|selectDsuseMgts-폐기관리목록 조회|julim  */
+        <include refid="sqlDsuseMgt"/>
+        WHERE tdm.dscdmng_id IN
+        <foreach collection="dscdmngIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <sql id="sqlDsuseMgt">
         SELECT tdm.dscdmng_id           /** 폐기관리ID */
              , tdm.user_id              /** 사용자ID */
              , tdm.usr_rpt_id_no        /** 사용자보고식별번호 */
@@ -274,13 +377,10 @@
           JOIN tb_dsuse_rpt_info tdri
             ON (tdm.org_usr_rpt_id_no = tdri.org_usr_rpt_id_no
                 AND tdm.usr_rpt_id_no = tdri.usr_rpt_id_no)
-          LEFT OUTER JOIN tb_bssh_info tbi
+          LEFT JOIN tb_bssh_info tbi
             ON tdri.bssh_cd = tbi.bssh_cd
-         WHERE tdm.dscdmng_id IN
-             <foreach collection="list" item="item" separator="," open="(" close=")">
-               #{item}
-             </foreach>
-    </select>
+    </sql>
+
     <!-- **************************************************************************** -->
     <!-- ADDS BIZ end -->
     <!-- **************************************************************************** -->

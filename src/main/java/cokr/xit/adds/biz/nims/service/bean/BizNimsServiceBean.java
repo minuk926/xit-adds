@@ -66,7 +66,9 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	@Override
 	public List<BsshInfoSt> saveBsshInfoSt(BsshInfoRequest dto) {
 		NimsApiResult.Response<BsshInfoSt> result = infNimsService.getBsshInfoSt(dto);
-		List<BsshInfoSt> list = result.getResultOrThrow();
+		List<BsshInfoSt> list = result.getResult();
+
+		if(isEmpty(list)) return list;
 
 		for (BsshInfoSt d : list) {
 			d.setRgtr(Constants.NIMS_API_USER_ID);
@@ -75,18 +77,20 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return list;
 	}
 
-	// @Override
-	// public List<ProductInfoKd> saveProductInfoKd(ProductInfoRequest dto) {
-	// 	NimsApiResult.Response<ProductInfoKd> result = infNimsService.getProductInfoKd(dto);
-	// 	List<ProductInfoKd> list = result.getResultOrThrow();
-	//
-	// 	for (ProductInfoKd d : list) {
-	// 		d.setRgtr(Constants.NIMS_API_USER_ID);
-	// 		bizNimsMapper.mergeProductInfoKd(d);
-	// 	}
-	// 	return list;
-	// }
-	//
+	@Override
+	public List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
+		NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(dto);
+		List<NimsApiDto.ProductInfoKd> list = result.getResult();
+
+		if(isEmpty(list)) return list;
+
+		for (NimsApiDto.ProductInfoKd d : list) {
+			d.setRgtr(Constants.NIMS_API_USER_ID);
+			bizNimsMapper.mergeProductInfoKd(d);
+		}
+		return list;
+	}
+
 	// @Override
 	// public List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
 	// 	NimsApiResult.Response<NimsApiDto.MnfSeqInfo> response = infNimsService.getMnfSeqInfo(dto);
@@ -218,7 +222,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 			bizNimsMapper.insertDsuseMgt(dto);
 			dscdmngIds.add(dto.getDscdmngId());
 		}
-		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectDsuseMgt(dscdmngIds);
+		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectSavedDsuseMgts(dscdmngIds);
 
 		// 마약류취급업체의 허가번호(prmisnNo), 대표자명(rprsntvNm) set
 		setAddBsshInfo(resList);
@@ -226,7 +230,25 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return resList;
 	}
 
+	@Override
+	public List<BizNimsResponse.DsuseMgtResponse> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto) {
+		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectDsuseMgts(dto);
 
+		resList.forEach(r -> {
+			r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
+			r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
+			r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
+			r.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(r.getDsuseMthCd()));
+
+			Map<String, String> map = new HashMap<>();
+			map.put("usrRptIdNo", r.getUsrRptIdNo());
+			List<NimsApiDto.DsuseRptInfoDtl> dsuseRptInfoDtls = bizNimsMapper.selectDsuseRptInfoDtls(map);
+			setAddProductInfo(dsuseRptInfoDtls);
+			r.getDsuseRptInfoDtls().addAll(bizNimsMapper.selectDsuseRptInfoDtls(map));
+		});
+
+		return resList;
+	}
 
 	//------------------------------------------------------------------------------------------------------
 	// private method
@@ -344,6 +366,11 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 */
 	private void setAddBsshInfo(List<BizNimsResponse.DsuseMgtResponse> resList) {
 		resList.forEach(r -> {
+			r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
+			r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
+			r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
+			r.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(r.getDsuseMthCd()));
+
 			if(isEmpty(r.getPrmisnNo())){
 				List<BsshInfoSt> list = saveBsshInfoSt(
 					BsshInfoRequest.builder()
@@ -352,9 +379,45 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 						.bc(r.getBsshCd())
 						.build()
 				);
-				if(list.isEmpty()) throw ApiCustomException.create("데이타 오류[마약류취급자식별번호에 해당하는 데이타가 없습니다.]");
+				if(isEmpty(list)){
+					// FIXME : 데이타 정상 흐름 확인후 comment 제거
+					return;
+					//throw ApiCustomException.create(String.format("데이타 오류(마약류취급자식별번호[%s]에 해당하는 데이타가 없습니다)", r.getBsshCd()));
+				}
 				r.setPrmisnNo(list.get(0).getPrmisnNo());
 				r.setRprsntvNm(list.get(0).getRprsntvNm());
+			}
+		});
+	}
+
+	/**
+	 * <pre>
+	 * 제품 추가 정보 set
+	 * 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm) set
+	 * @param dtlList <NimsApiDto.DsuseRptInfoDtl>
+	 * </pre>
+	 */
+	private void setAddProductInfo(List<NimsApiDto.DsuseRptInfoDtl> dtlList) {
+
+		dtlList.forEach(r -> {
+			//if()
+			if(isEmpty(r.getNrcdSeNm()) || isEmpty(r.getPrtmSeNm())){
+				//NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(
+
+				List<NimsApiDto.ProductInfoKd> list = saveProductInfoKd(
+					NimsApiRequest.ProductInfoRequest.builder()
+						.fg("1")
+						.pg("1")
+						.p(r.getPrductCd())
+						.build()
+				);
+				if(isEmpty(list)){
+					// FIXME : 데이타 정상 흐름 확인후 comment 제거
+					return;
+					//throw ApiCustomException.create(String.format("데이타 오류(제품코드[%s]에 해당하는 데이타가 없습니다)", r.getPrductCd()));
+				}
+				r.setNrcdSeNm(list.get(0).getNrcdSeNm());
+				r.setPrtmSeNm(list.get(0).getPrtmSeNm());
 			}
 		});
 	}

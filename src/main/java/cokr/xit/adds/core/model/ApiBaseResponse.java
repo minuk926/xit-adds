@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Objects;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -71,9 +73,16 @@ public class ApiBaseResponse<T> {
     }
 
     private ApiBaseResponse(T data) {
-        this.code = ResultCode.SUCCESS.getStatusCode();
-        this.message = ResultCode.findByStatusCode(code).getMessage();
-        this.data = data;
+
+        if(ObjectUtils.isEmpty(data)) {
+            this.code = ResultCode.NO_CONTENT.getStatusCode();
+            this.message = ResultCode.NO_CONTENT.getMessage();
+            this.data = null;
+        }else{
+            this.code = ResultCode.SUCCESS.getStatusCode();
+            this.message = ResultCode.findByStatusCode(code).getMessage();
+            this.data = data;
+        }
     }
 
     private ApiBaseResponse(T data, ResultCode resultCode) {
@@ -101,7 +110,7 @@ public class ApiBaseResponse<T> {
         }else {
 
             if (Collection.class.isAssignableFrom(data.getClass())) {
-                this.totalCount = (((Collection<?>) data).size());
+                this.totalCount = ((Collection<?>) data).size();
 
             } else {
                 this.totalCount =  1;

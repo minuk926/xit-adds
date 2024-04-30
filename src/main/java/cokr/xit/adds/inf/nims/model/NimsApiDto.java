@@ -113,87 +113,87 @@ public class NimsApiDto {
         private String prmisnNo;
     }
 
-    // /**
-    //  * 상품 정보 조회 response
-    //  */
-    // @Getter
-    // @NoArgsConstructor
-    // @AllArgsConstructor
-    // @SuperBuilder
-    // public static class ProductInfoKd extends AuditDto {
-    //     /**
-    //      * 품목코드
-    //      */
-    //     @JsonAlias("PRDUCT_CD")
-    //     private String prductCd;
-    //
-    //     /**
-    //      * 제품대표코드
-    //      */
-    //     @JsonAlias("PRDLST_MST_CD")
-    //     private String prdlstMstCd;
-    //
-    //     /**
-    //      * 제품명
-    //      */
-    //     @JsonAlias("PRDUCT_NM")
-    //     private String prductNm;
-    //
-    //     /**
-    //      * 마약/항정 구분명
-    //      */
-    //     @JsonAlias("NRCD_SE_NM")
-    //     private String nrcdSeNm;
-    //
-    //     /**
-    //      * 중점/일반 구분
-    //      */
-    //     @JsonAlias("PRTM_SE_NM")
-    //     private String prtmSeNm;
-    //
-    //     /**
-    //      * 제품최소유통단위수량
-    //      * 제품규격정보(고정값 = 1)
-    //      */
-    //     @JsonAlias("PRD_MIN_DISTB_QY")
-    //     private Integer prdMinDistbQy;
-    //
-    //     /**
-    //      * 제품최소유통단위
-    //      */
-    //     @JsonAlias("STD_PACKNG_STLE_NM")
-    //     private String stdPackngStleNm;
-    //
-    //     /**
-    //      * 제품총낱개단위수량
-    //      */
-    //     @JsonAlias("PRD_TOT_PCE_QY")
-    //     private Integer prdTotPceQy;
-    //
-    //     /**
-    //      * 제품낱개단위
-    //      */
-    //     @JsonAlias("PCE_CO_UNIT_NM")
-    //     private String pceCoUnitNm;
-    //
-    //     /**
-    //      * 마약류취급자식별번호
-    //      */
-    //     @JsonAlias("BSSH_CD")
-    //     private String bsshCd;
-    //
-    //     /**
-    //      * 등록일
-    //      */
-    //     @JsonAlias("RGS_DT")
-    //     private String rgsDt;
-    //
-    //     /**
-    //      * 변경일
-    //      */
-    //     @JsonAlias("UPD_DT")
-    //     private String updDt;
-    // }
+    /**
+     * 상품 정보 조회 response
+     */
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @SuperBuilder
+    public static class ProductInfoKd extends AuditDto {
+        /**
+         * 품목코드
+         */
+        @JsonAlias("PRDUCT_CD")
+        private String prductCd;
+
+        /**
+         * 제품대표코드
+         */
+        @JsonAlias("PRDLST_MST_CD")
+        private String prdlstMstCd;
+
+        /**
+         * 제품명
+         */
+        @JsonAlias("PRDUCT_NM")
+        private String prductNm;
+
+        /**
+         * 마약/항정 구분명
+         */
+        @JsonAlias("NRCD_SE_NM")
+        private String nrcdSeNm;
+
+        /**
+         * 중점/일반 구분
+         */
+        @JsonAlias("PRTM_SE_NM")
+        private String prtmSeNm;
+
+        /**
+         * 제품최소유통단위수량
+         * 제품규격정보(고정값 = 1)
+         */
+        @JsonAlias("PRD_MIN_DISTB_QY")
+        private Integer prdMinDistbQy;
+
+        /**
+         * 제품최소유통단위
+         */
+        @JsonAlias("STD_PACKNG_STLE_NM")
+        private String stdPackngStleNm;
+
+        /**
+         * 제품총낱개단위수량
+         */
+        @JsonAlias("PRD_TOT_PCE_QY")
+        private Integer prdTotPceQy;
+
+        /**
+         * 제품낱개단위
+         */
+        @JsonAlias("PCE_CO_UNIT_NM")
+        private String pceCoUnitNm;
+
+        /**
+         * 마약류취급자식별번호
+         */
+        @JsonAlias("BSSH_CD")
+        private String bsshCd;
+
+        /**
+         * 등록일
+         */
+        @JsonAlias("RGS_DT")
+        private String rgsDt;
+
+        /**
+         * 변경일
+         */
+        @JsonAlias("UPD_DT")
+        private String updDt;
+    }
 
     /**
      * 폐기보고 response
@@ -203,7 +203,7 @@ public class NimsApiDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @SuperBuilder
-    public static class DsuseRptInfo extends AuditDto implements Cloneable {
+    public static class DsuseRptInfo extends AuditDto {
 
         /**
          * 사용자 보고 식별 번호
@@ -399,6 +399,16 @@ public class NimsApiDto {
          */
         @JsonAlias("DSUSE_QY")
         private Integer dsuseQy;
+
+        /**
+         * 마약/항정 구분
+         */
+        private String nrcdSeNm;
+
+        /**
+         * 중점/일반 구분
+         */
+        private String prtmSeNm;
     }
 
     // /**

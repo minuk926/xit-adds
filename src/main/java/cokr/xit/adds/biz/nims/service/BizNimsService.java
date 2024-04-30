@@ -27,7 +27,7 @@ public interface BizNimsService {
 	// NIMS API CALL
 	//------------------------------------------------------------------------------------------------------
 	List<NimsApiDto.BsshInfoSt> saveBsshInfoSt(NimsApiRequest.BsshInfoRequest dto);
-	// List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoRequest dto);
+	List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoRequest dto);
 	// List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto);
 	// List<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(NimsApiRequest.JurisdictionGovInfoRequest dto);
 	// List<NimsApiDto.StorageInfo> saveStorageInfo(NimsApiRequest.StorageInfoRequest dto);
@@ -59,6 +59,8 @@ public interface BizNimsService {
 	// NimsAarResult cancelReportDsuse();
 
 	List<BizNimsResponse.DsuseMgtResponse> saveDsuseMgt(List<BizNimsRequest.DsuseMgt> dtos);
+
+	List<BizNimsResponse.DsuseMgtResponse> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
 
 	// BizNimsAarDto.AarHeader getTgtDsuseRptData(BizNimsRequest.DsuseMgt dto);
 	// BizNimsAarDto.AarHeader createTgtDsuseRptData(BizNimsAarDto.AarHeader dto);

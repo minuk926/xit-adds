@@ -90,18 +90,18 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 		return result.getResponse();
 	}
 
-	// @Override
-	// @TraceLogging
-	// public NimsApiResult.Response<NimsApiDto.ProductInfoKd> getProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
-	// 	dto.setK(nimsApiKey);
-	// 	ApiUtil.validate(dto, null, validator);
-	// 	if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
-	//
-	// 	String rslt = ApiUtil.callNimsApi(nimsUrl + productinfoKd, dto);
-	// 	NimsApiResult<NimsApiDto.ProductInfoKd> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.ProductInfoKd>>() {});
-	// 	return result.getResponse();
-	// }
-	//
+	@Override
+	@TraceLogging
+	public NimsApiResult.Response<NimsApiDto.ProductInfoKd> getProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
+		dto.setK(nimsApiKey);
+		ApiUtil.validate(dto, null, validator);
+		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
+
+		String rslt = ApiUtil.callNimsApi(nimsUrl + productinfoKd, dto);
+		NimsApiResult<NimsApiDto.ProductInfoKd> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.ProductInfoKd>>() {});
+		return result.getResponse();
+	}
+
 	// @Override
 	// @TraceLogging
 	// public NimsApiResult.Response<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
@@ -176,7 +176,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			NimsApiDto.DsuseRptInfoDtl dtl1 = NimsApiDto.DsuseRptInfoDtl.builder()
 				.usrRptIdNo(usrRptIdNoList.get(i))
 				.usrRptLnIdNo(usrRptLnIdNoList.get(0)+i)
-				.prductCd("상품코드")
+				.prductCd("8806718050823")
 				.prductNm("제품명")
 				.minDistbQy(1)
 				.pceQy(0)
@@ -189,7 +189,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			NimsApiDto.DsuseRptInfoDtl dtl2 = NimsApiDto.DsuseRptInfoDtl.builder()
 				.usrRptIdNo(usrRptIdNoList.get(i))
 				.usrRptLnIdNo(usrRptLnIdNoList.get(1)+i)
-				.prductCd("상품코드1")
+				.prductCd("8806718050822")
 				.prductNm("제품명1")
 				.minDistbQy(1)
 				.pceQy(0)

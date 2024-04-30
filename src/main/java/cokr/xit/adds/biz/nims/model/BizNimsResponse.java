@@ -64,5 +64,19 @@ public class BizNimsResponse {
 		 * 허가번호
 		 */
 		private String prmisnNo;
+
+		// /**
+		//  * <pre>
+		//  * 업체명
+		//  * </pre>
+		//  */
+		// private String nrcdSeNm;
+		//
+		// /**
+		//  * <pre>
+		//  * 업체구분명
+		//  * </pre>
+		//  */
+		// private String prtmSeNm;
 	}
 }

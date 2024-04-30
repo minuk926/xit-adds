@@ -31,7 +31,7 @@ public interface BizNimsMapper extends AbstractMapper {
 	// NIMS API CALL
 	//------------------------------------------------------------------------------------------------------
 	int mergeBsshInfoSt(NimsApiDto.BsshInfoSt dto);
-	// int mergeProductInfoKd(NimsApiDto.ProductInfoKd dto);
+	int mergeProductInfoKd(NimsApiDto.ProductInfoKd dto);
 	// int mergeStorgeInfo(NimsApiDto.StorageInfo dto);
 
 	//------------------------------------------------------------------------------------------------------
@@ -47,7 +47,11 @@ public interface BizNimsMapper extends AbstractMapper {
 
 	int insertDsuseMgt(BizNimsRequest.DsuseMgt dto);
 	NimsApiDto.DsuseRptInfo selectDsuseRptInfoByUsrRptIdNo(Map<String, String> map);
-	List<BizNimsResponse.DsuseMgtResponse> selectDsuseMgt(List<String> dsuseMgtIds);
+	List<NimsApiDto.DsuseRptInfoDtl> selectDsuseRptInfoDtls(Map<String, String> map);
+
+
+	List<BizNimsResponse.DsuseMgtResponse> selectSavedDsuseMgts(List<String> dsuseMgtIds);
+	List<BizNimsResponse.DsuseMgtResponse> selectDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
 	// int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
 	// int updateCancelDsuseMgtDtl(BizNimsRequest.DsuseMgt dto);
 

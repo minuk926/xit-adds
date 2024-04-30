@@ -2,6 +2,8 @@ package cokr.xit.adds.biz.nims.model;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 
+import java.util.List;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
@@ -97,6 +99,40 @@ public class BizNimsRequest {
 		private String prgrsSttsCd = "01";
 	}
 
+	/**
+	 * 마약류 폐기 관리 조회 request
+	 */
+	@Schema(name = "DsuseMgtInq", description = "마약류 폐기 관리 조회 DTO")
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@SuperBuilder
+	@EqualsAndHashCode(callSuper = false)
+	public static class DsuseMgtInq {
+		@Schema(requiredMode = AUTO, title = "폐기 관리 ID 목록", example = "[\"2024040001\", \"2024040002\"]")
+		private List<String> dscdmngIds;
+
+		@Schema(requiredMode = REQUIRED, title = "사용자 ID", example = " ")
+		@NotEmpty(message = "사용자 ID는 필수 입니다")
+		private String userId;
+
+		/**
+		 * <pre>
+		 * 진행상태
+		 *
+		 * 01-폐기보고 접수
+		 * 02-폐기보고 확인
+		 * 11-민원수령처리(전자결재)
+		 * 21-폐기결과통보서 작성
+		 * 22-폐기결과보고서 작성
+		 * 31-기안 및 발송
+		 * 41-폐기보고
+		 * 99-종료
+		 * </pre>
+		 */
+		@Schema(requiredMode = REQUIRED, title = "진행 상태 코드", example = " ", allowableValues = {"01", "02", "11", "22", "31", "41", "99"})
+		private String prgrsSttsCd = "01";
+	}
 	/**
 	 * 마약류 폐기 관리 상세 request
 	 */

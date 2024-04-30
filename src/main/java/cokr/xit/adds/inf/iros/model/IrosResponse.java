@@ -45,9 +45,11 @@ public class IrosResponse<T> {
      */
     @JsonIgnore
     public List<T> getResultOrThrow() {
-        if(!ObjectUtils.isEmpty(getResult())) return getResult();
         if("00".equals(header.resultCode)){
-            throw ApiCustomException.create(ResultCode.NO_CONTENT);
+            if(ObjectUtils.isEmpty(body.items)) {
+                throw ApiCustomException.create(ResultCode.NO_CONTENT);
+            }
+            return body.items;
         }
         throw Objects.requireNonNull(ApiCustomException.of(header.resultCode, header.resultMsg));
     }
@@ -59,15 +61,11 @@ public class IrosResponse<T> {
      * @return List<T> or null
      */
     @JsonIgnore
-    public List<T> getResultOrNull() {
-        return getResult();
-    }
-
-    private List<T> getResult() {
+    public List<T> getResult() {
         if("00".equals(header.resultCode)) {
             return body.items;
         }
-        return null;
+        throw Objects.requireNonNull(ApiCustomException.of(header.resultCode, header.resultMsg));
     }
 
     @Getter
