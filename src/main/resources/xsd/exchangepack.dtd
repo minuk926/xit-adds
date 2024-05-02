@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!--
+filename:         exchangepack.dtd
+ Typical usage:
+         <?XML version="1.0" encoding="euc-kr" ?>
+         <!DOCTYPE exchangepack SYSTEM "exchangepack.dtd">
+         <pack> ... </pack>
+-->
+<!ELEMENT exchangepack (header, contents?)>
+<!ATTLIST exchangepack
+	filename CDATA #REQUIRED 
+>
+<!ELEMENT header (server, sender, receiver, sendersystemname, exchangetype, doctype,  date, administrativenum, title, addenda?)>
+<!ELEMENT server (sendserverid, receiveserverid)>
+	<!ELEMENT sendserverid (#PCDATA)>
+	<!ELEMENT receiveserverid (#PCDATA)>
+<!ELEMENT sender (organ, sendkey, username?, userposition?, email?)>
+<!ELEMENT receiver (organ, recvkey, username?, userposition?, email?)>
+	<!ELEMENT organ (orgname, deptname)>
+		<!ELEMENT orgname (#PCDATA)>
+			<!ATTLIST orgname
+				orgcode CDATA #REQUIRED>
+		<!ELEMENT deptname (#PCDATA)>
+			<!ATTLIST deptname
+				deptcode CDATA #REQUIRED
+			>
+	<!ELEMENT sendkey (#PCDATA)>
+	<!ELEMENT recvkey (#PCDATA)>
+	<!ELEMENT username (#PCDATA)>
+	<!ELEMENT userposition (#PCDATA)>
+	<!ELEMENT email (#PCDATA)>
+<!ELEMENT sendersystemname (#PCDATA)>
+<!ELEMENT exchangetype (maintype, subtype?)>
+	<!ELEMENT maintype (#PCDATA)>
+	<!ELEMENT subtype (#PCDATA)>
+<!ELEMENT doctype (#PCDATA)>
+<!ELEMENT date (#PCDATA)>
+<!ELEMENT administrativenum (#PCDATA)>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT addenda (addendum*)>
+	<!ELEMENT addendum (#PCDATA)>
+		<!ATTLIST addendum
+			Name CDATA #REQUIRED
+			comment CDATA #REQUIRED>
+
+<!ELEMENT contents (content)*>
+<!ELEMENT content (#PCDATA)>
+<!ATTLIST content
+	content-role CDATA #REQUIRED
+	sub-role CDATA "content"
+	content-transfer-encoding CDATA "base64"
+	filename CDATA #REQUIRED
+	content-type CDATA #IMPLIED
+	charset CDATA #IMPLIED
+	attachorder CDATA #IMPLIED
+	modify (modifiable | modified | non) "non" 
+>

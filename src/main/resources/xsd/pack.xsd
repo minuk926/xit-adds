@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:element name="pack">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="header"/>
+                <xs:element ref="contents"/>
+            </xs:sequence>
+            <xs:attribute name="filename" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="header">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="type"/>
+                <xs:element ref="date"/>
+                <xs:element ref="sender"/>
+                <xs:element ref="receiver"/>
+                <xs:element ref="sender_userid"/>
+                <xs:element ref="receiver_userid"/>
+                <xs:element ref="sender_email" minOccurs="0"/>
+                <xs:element ref="sender_orgname"/>
+                <xs:element ref="sender_systemname"/>
+                <xs:element ref="administrative_num"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="type">
+        <xs:complexType>
+            <xs:attribute name="doc-type" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:NMTOKEN">
+                        <xs:enumeration value="send"/>
+                        <xs:enumeration value="fail"/>
+                        <xs:enumeration value="arrive"/>
+                        <xs:enumeration value="receive"/>
+                        <xs:enumeration value="invalid"/>
+                        <xs:enumeration value="submit"/>
+                        <xs:enumeration value="return"/>
+                        <xs:enumeration value="approval"/>
+                        <xs:enumeration value="normal-resend"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>   
+    <xs:element name="date" type="xs:string"/>
+    <xs:element name="sender" type="xs:string"/>
+    <xs:element name="receiver" type="xs:string"/>
+    <xs:element name="sender_userid" type="xs:string"/> 
+    <xs:element name="receiver_userid" type="xs:string"/>
+    <xs:element name="sender_email" type="xs:string"/>
+    <xs:element name="sender_orgname" type="xs:string"/>
+    <xs:element name="sender_systemname" type="xs:string"/> 
+    <xs:element name="administrative_num" type="xs:string"/>
+	<xs:element name="contents">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="content"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="content">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="content-role" type="xs:string" use="required"/>
+                    <xs:attribute name="content-transfer-encoding" type="xs:string" default="base64"/>
+                    <xs:attribute name="filename" type="xs:string" use="required"/>
+                    <xs:attribute name="content-type" type="xs:string"/>
+                    <xs:attribute name="charset" type="xs:string"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>   
+
+</xs:schema>

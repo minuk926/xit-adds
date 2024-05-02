@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="EUC-KR" ?>
+  
+  <!ELEMENT pack (header, contents)>
+  <!ATTLIST pack filename CDATA #REQUIRED >
+
+  <!ELEMENT header (type, date, sender, receiver, sender_userid, receiver_userid, sender_email?,sender_orgname, sender_systemname?, administrative_num)>
+
+  <!ELEMENT type EMPTY>
+  <!ATTLIST type doc-type (send|fail|arrive|receive|invalid|submit|return|approval) #REQUIRED >`	
+  <!ELEMENT date (#PCDATA)>
+  <!ELEMENT sender (#PCDATA)>
+  <!ELEMENT receiver (#PCDATA)>
+  <!ELEMENT sender_userid (#PCDATA)>
+  <!ELEMENT receiver_userid (#PCDATA)>
+  <!ELEMENT sender_email (#PCDATA)>
+  <!ELEMENT sender_orgname (#PCDATA)> 
+  <!ELEMENT sender_systemname (#PCDATA)> 
+  <!ELEMENT administrative_num (#PCDATA)> 
+
+  <!ELEMENT contents (content)*>
+
+  <!ELEMENT content (#PCDATA)>
+  <!ATTLIST content content-role CDATA #REQUIRED >
+  <!ATTLIST content content-transfer-encoding CDATA "base64" >
+  <!ATTLIST content filename      CDATA #REQUIRED >
+  <!ATTLIST content content-type  CDATA #IMPLIED >
+  <!ATTLIST content charset  CDATA #IMPLIED >

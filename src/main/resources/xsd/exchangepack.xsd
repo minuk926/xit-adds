@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:element name="exchangepack">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="header"/>
+                <xs:element ref="contents" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="filename" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="header">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="server"/>
+                <xs:element ref="sender"/>
+                <xs:element ref="receiver"/>
+                <xs:element ref="sendersystemname"/>
+                <xs:element ref="exchangetype"/>
+                <xs:element ref="doctype"/>
+                <xs:element ref="date"/>
+                <xs:element ref="administrativenum"/>
+                <xs:element ref="title"/>
+                <xs:element ref="addenda" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element> 
+    <xs:element name="server">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="sendserverid"/>
+                <xs:element ref="receiveserverid"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="sendserverid" type="xs:string"/>  
+    <xs:element name="receiveserverid" type="xs:string"/>
+
+    <xs:element name="sender">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="organ"/>
+                <xs:element ref="sendkey"/>
+                <xs:element ref="username" minOccurs="0"/>
+                <xs:element ref="userposition" minOccurs="0"/>
+                <xs:element ref="email" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="receiver">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="organ"/>
+                <xs:element ref="recvkey"/>
+                <xs:element ref="username" minOccurs="0"/>
+                <xs:element ref="userposition" minOccurs="0"/>
+                <xs:element ref="email" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>   
+    
+    <xs:element name="organ">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="orgname"/>
+                <xs:element ref="deptname"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>   
+    
+    <xs:element name="orgname">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="orgcode" type="xs:string" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>       
+    </xs:element>
+    <xs:element name="deptname">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="deptcode" type="xs:string" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element> 
+    <xs:element name="sendkey" type="xs:string"/>
+    <xs:element name="recvkey" type="xs:string"/>
+    <xs:element name="username" type="xs:string"/>
+    <xs:element name="userposition" type="xs:string"/>
+    <xs:element name="email" type="xs:string"/> 
+    
+    <xs:element name="sendersystemname" type="xs:string"/>
+    <xs:element name="exchangetype">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="maintype"/>
+                <xs:element ref="subtype" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>   
+
+    <xs:element name="maintype" type="xs:string"/>
+    <xs:element name="subtype" type="xs:string"/>
+    <xs:element name="doctype" type="xs:string"/>       
+    <xs:element name="date" type="xs:string"/>
+    <xs:element name="administrativenum" type="xs:string"/>     
+    <xs:element name="title" type="xs:string"/>     
+    
+    <xs:element name="addenda">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="addendum" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="addendum">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="Name" type="xs:string" use="required"/>
+                    <xs:attribute name="comment" type="xs:string" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="contents">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="content"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>   
+
+    <xs:element name="content">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="content-role" type="xs:string" use="required"/>
+                    <xs:attribute name="sub-role" type="xs:string" default="content"/>
+                    <xs:attribute name="content-transfer-encoding" type="xs:string" default="base64"/>
+                    <xs:attribute name="filename" type="xs:string" use="required"/>
+                    <xs:attribute name="content-type" type="xs:string"/>
+                    <xs:attribute name="charset" type="xs:string"/>
+                    <xs:attribute name="attachorder" type="xs:string"/>
+                    <xs:attribute name="modify" default="non">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                                <xs:enumeration value="modifiable"/>
+                                <xs:enumeration value="modified"/>
+                                <xs:enumeration value="non"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>	
