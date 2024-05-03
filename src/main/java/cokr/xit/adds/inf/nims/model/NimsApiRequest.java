@@ -102,13 +102,27 @@ public class NimsApiRequest {
         String ymd = StringUtils.EMPTY;
 
         /**
+         * <pre>
          * 조회범위2
          * 1:NK(취급승인)포함 - default
          * 2:NK(취급승인)제외
+         * </pre>
          */
         @Schema(requiredMode = REQUIRED, title = "조회범위2(1:NK(취급승인)포함 - default, 2:NK(취급승인)제외)", description = "조회범위2(1:NK(취급승인)포함 - default, 2:NK(취급승인)제외)", example = "1", allowableValues = {"1", "2"})
         @Builder.Default
         String fg2 = "1";
+
+        /**
+         * <pre>
+         * DB 조회 skip 여부
+         * DB먼저 조회 하고 없는 경우 NIMS API 조회 호출
+         * true 인 경우 DB 조회 skip
+         * </pre>
+         */
+        @Schema(title = "DB 조회 skip 여부", description = "DB 조회 skip 여부(DB 조회 없이 NIMS API호출 하려면 Y)", example = "N")
+        @Builder.Default
+        //@JsonIgnore
+        private String dbSkipYn = "N";
     }
 
     /**
@@ -177,6 +191,18 @@ public class NimsApiRequest {
         @Schema(title = "제품명", description = "제품명", example = " ")
         @Builder.Default
         String pn = StringUtils.EMPTY;
+
+        /**
+         * <pre>
+         * DB 조회 skip 여부
+         * DB먼저 조회 하고 없는 경우 NIMS API 조회 호출
+         * true 인 경우 DB 조회 skip
+         * </pre>
+         */
+        @Schema(title = "DB 조회 skip 여부", description = "DB 조회 skip 여부(DB 조회 없이 NIMS API호출 하려면 Y)", example = "N")
+        @Builder.Default
+        //@JsonIgnore
+        private String dbSkipYn = "N";
     }
 
     @Schema(name = "DsuseRptInfoRequest", description = "폐기 보고 정보 조회 request")

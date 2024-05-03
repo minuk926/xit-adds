@@ -8,6 +8,7 @@ import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
 import cokr.xit.adds.biz.nims.model.BizNimsRequest;
 import cokr.xit.adds.biz.nims.model.BizNimsResponse;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
+import cokr.xit.adds.inf.nims.model.NimsApiRequest;
 import cokr.xit.foundation.component.AbstractMapper;
 
 /**
@@ -30,8 +31,10 @@ public interface BizNimsMapper extends AbstractMapper {
 	//------------------------------------------------------------------------------------------------------
 	// NIMS API CALL
 	//------------------------------------------------------------------------------------------------------
-	int mergeBsshInfoSt(NimsApiDto.BsshInfoSt dto);
-	int mergeProductInfoKd(NimsApiDto.ProductInfoKd dto);
+	void mergeBsshInfoSt(NimsApiDto.BsshInfoSt dto);
+	List<NimsApiDto.BsshInfoSt> selectBsshInfos(NimsApiRequest.BsshInfoRequest dto);
+	void mergeProductInfoKd(NimsApiDto.ProductInfoKd dto);
+	List<NimsApiDto.ProductInfoKd> selectProductInfos(NimsApiRequest.ProductInfoRequest dto);
 	// int mergeStorgeInfo(NimsApiDto.StorageInfo dto);
 
 	//------------------------------------------------------------------------------------------------------

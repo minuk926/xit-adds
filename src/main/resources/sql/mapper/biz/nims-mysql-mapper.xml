@@ -109,6 +109,64 @@
             mdfr = #{rgtr}
     </insert>
 
+    <select id="selectBsshInfos" parameterType="cokr.xit.adds.inf.nims.model.NimsApiRequest$BsshInfoRequest" resultType="cokr.xit.adds.inf.nims.model.NimsApiDto$BsshInfoSt">
+        /** nims-mysql-mapper|selectBsshInfos-마약류취급자정보 조회|julim  */
+        SELECT bssh_cd,        /* 마약류취급자식별번호 */
+               bssh_nm,        /* 마약류취급자명 */
+               induty_nm,      /* 업종명 */
+               hdnt_cd,        /* 의료업자구분 */
+               hdnt_nm,        /* 의료업자구분명 */
+               bizrno,         /* 사업자등록번호 */
+               rprsntv_nm,     /* 대표자명 */
+               chrg_nm,        /* 담당자명 */
+               hptl_no,        /* 요양기관번호 */
+               join_yn,        /* 회원가입여부 */
+               bssh_stts_nm,   /* 마약류취급자상태명 */
+               prmisn_no       /* 허가번호 */
+          FROM tb_bssh_info
+         <where>
+            <if test="bc != null and bc != ''">
+            AND bssh_cd = #{bc}
+            </if>
+            <if test="bn != null and bn != ''">
+            AND INSTR(bssh_nm, #{bn}) > 0
+            </if>
+            <if test="bi != null and bi != ''">
+            AND bizrno = #{bi}
+            </if>
+            <if test="hp != null and hp != ''">
+            AND hptl_no = #{hp}
+            </if>
+         </where>
+    </select>
+
+    <select id="selectProductInfos" parameterType="cokr.xit.adds.inf.nims.model.NimsApiRequest$ProductInfoRequest" resultType="cokr.xit.adds.inf.nims.model.NimsApiDto$ProductInfoKd">
+        /** nims-mysql-mapper|selectProductInfo-상품 정보 조회|julim  */
+        SELECT prduct_cd,              /* 제품코드 */
+               prdlst_mst_cd,          /* 제품대표코드 */
+               prduct_nm,              /* 제품명 */
+               nrcd_se_nm,             /* 마약항정구분 */
+               prtm_se_nm,             /* 중점일반구분 */
+               prd_min_distb_qy,       /* 최소유통단위수량 - 제품규격정보(고정값=1) */
+               std_packng_stle_nm,     /* 제품최소유통단위 */
+               prd_tot_pce_qy,         /* 제품총낱개단위수량 */
+               pce_co_unit_nm,         /* 제품낱개단위 */
+               bssh_cd,                /* 마약류취급자식별번호 */
+               rgs_dt,                 /* 등록일 */
+               upd_dt                  /* 변경일 */
+          FROM tb_prduct_info
+        <where>
+            <if test="p != null and p != ''">
+            AND prduct_cd = #{p}
+            </if>
+            <if test="pn != null and pn != ''">
+            AND INSTR(prduct_nm, #{pn}) > 0
+            </if>
+            <if test="fg2 != null and fg2 != ''">
+            AND prtm_se_nm = IF(#{fg2} = '1', '중점관리대상', '일반관리대상')
+            </if>
+        </where>
+    </select>
     <!-- **************************************************************************** -->
     <!-- NIMS API end -->
     <!-- **************************************************************************** -->
@@ -260,16 +318,16 @@
           LEFT JOIN tb_bssh_info tbi
             ON (tpi.bssh_cd = tbi.bssh_cd)
          WHERE tdmd.dscdmng_id = #{dscdmngId}
-           <if test="dscdmngSn != null">
+           <if test="dscdmngSn != null and dscdmngSn != ''">
            AND tdmd.dscdmng_sn = #{dscdmngSn}
            </if>
-           <if test="useYn != null">
+           <if test="useYn != null and useYn != ''">
            AND tdmd.use_yn = #{useYn}
            </if>
-           <if test="userId != null">
+           <if test="userId != null and userId != ''">
            AND tdmd.userId = #{userId}
            </if>
-           <if test="usrRptIdNo != null">
+           <if test="usrRptIdNo != null and usrRptIdNo != ''">
            AND tdmd.usr_rpt_id_no = #{usrRptIdNo}
            </if>
     </select>
@@ -310,10 +368,10 @@
                rgtr
           FROM tb_dsuse_rpt_info
          WHERE usr_rpt_id_no = #{usrRptIdNo}
-           <if test="useYn != null">
+           <if test="useYn != null and useYn != ''">
            AND use_yn = #{useYn}
            </if>
-           <if test="userId != null">
+           <if test="userId != null and userId != ''">
            AND userId = #{userId}
            </if>
     </select>
@@ -344,13 +402,13 @@
           LEFT JOIN tb_bssh_info tbi
             ON (tpi.bssh_cd = tbi.bssh_cd)
          WHERE tdrid.usr_rpt_id_no = #{usrRptIdNo}
-           <if test="usrRptLnIdNo != null">
+           <if test="usrRptLnIdNo != null and usrRptLnIdNo != ''">
            AND tdrid.usr_rpt_ln_id_no = #{usrRptLnIdNo}
            </if>
-           <if test="useYn != null">
+           <if test="useYn != null and useYn != ''">
            AND tdrid.use_yn = #{useYn}
            </if>
-           <if test="userId != null">
+           <if test="userId != null and userId != ''">
            AND tdrid.userId = #{userId}
            </if>
     </select>

@@ -66,6 +66,8 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	//------------------------------------------------------------------------------------------------------
 	/**
 	 * <pre>
+	 *     DB에서 먼저 조회(dbSkipYn = 'Y' 인 경우는 DB 조회 skip)
+	 *     -> 조회 결과가 없는 경우 API 조회
 	 *     업체정보 조회후 DB 저장
 	 *     조회 건수를 제한하기 위해 조회 조건 강제 - 업체명(3자 이상) 필수
 	 * @param dto NimsApiRequest.BsshInfoRequest
@@ -77,7 +79,14 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		if(!isEmpty(dto.getBn()) && dto.getBn().length() < 3) {
 			throw ApiCustomException.create("업체[사업자]명은 3자 이상 으로 조회해 주세요");
 		}
+
+		// DB 조회
 		List<BsshInfoSt> list = new ArrayList<>();
+		if("N".equals(dto.getDbSkipYn())) {
+			list = bizNimsMapper.selectBsshInfos(dto);
+			if (!isEmpty(list)) 	return list;
+		}
+
 		while(true) {
 			// 마약류취급자식별번호로 마약류취급자정보 조회
 			NimsApiResult.Response<BsshInfoSt> rslt = infNimsService.getBsshInfoSt(dto);
@@ -100,6 +109,8 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 	/**
 	 * <pre>
+	 *     DB에서 먼저 조회(dbSkipYn = 'Y' 인 경우는 DB 조회 skip)
+	 *     -> 조회 결과가 없는 경우 API 조회
 	 *     상품정보 조회후 DB 저장
 	 *     제조번호 조회 여부에 따라 제조번호, 일련번호, 유효기간 정보 목록 추가
 	 *     조회 건수를 제한하기 위해 조회 조건 강제 - 상품번호 또는 상품명(2자 이상) 필수
@@ -119,6 +130,14 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		}
 
 		List<NimsApiDto.ProductInfoKd> list = new ArrayList<>();
+		// DB 조회
+		if("N".equals(dto.getDbSkipYn())) {
+			list = bizNimsMapper.selectProductInfos(dto);
+			if (!isEmpty(list)){
+				if(isMnfSeqInfo)	productInfoaddMnfSeqs(list);
+				return list;
+			}
+		}
 		while(true) {
 			// 제품코드로 제품정보 조회
 			NimsApiResult.Response<NimsApiDto.ProductInfoKd> rslt = infNimsService.getProductInfoKd(dto);
@@ -130,10 +149,10 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 				d.setRgtr(Constants.NIMS_API_USER_ID);
 				bizNimsMapper.mergeProductInfoKd(d);
 			}
-			list.addAll(curList);
 
 			// 제조 번호, 일련번호, 유효기간  정보 목록 추가
 			if(isMnfSeqInfo)	productInfoaddMnfSeqs(curList);
+			list.addAll(curList);
 
 			if(rslt.isEndYn()) break;
 			dto.setPg(String.valueOf(Integer.parseInt(dto.getPg()) + 1));
