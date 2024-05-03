@@ -102,18 +102,18 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 		return result.getResponse();
 	}
 
-	// @Override
-	// @TraceLogging
-	// public NimsApiResult.Response<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
-	// 	dto.setK(nimsApiKey);
-	// 	ApiUtil.validate(dto, null, validator);
-	// 	if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
-	//
-	// 	String rslt = ApiUtil.callNimsApi(nimsUrl + seqinfo, dto);
-	// 	NimsApiResult<NimsApiDto.MnfSeqInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.MnfSeqInfo>>() {});
-	// 	return result.getResponse();
-	// }
-	//
+	@Override
+	@TraceLogging
+	public NimsApiResult.Response<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
+		dto.setK(nimsApiKey);
+		ApiUtil.validate(dto, null, validator);
+		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
+
+		String rslt = ApiUtil.callNimsApi(nimsUrl + seqinfo, dto);
+		NimsApiResult<NimsApiDto.MnfSeqInfo> result = json.parse(rslt, new TypeReference<NimsApiResult<NimsApiDto.MnfSeqInfo>>() {});
+		return result.getResponse();
+	}
+
 	// @Override
 	// @TraceLogging
 	// public NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(
@@ -177,26 +177,24 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 				.usrRptIdNo(usrRptIdNoList.get(i))
 				.usrRptLnIdNo(usrRptLnIdNoList.get(0)+i)
 				.prductCd("8806718050823")
-				.prductNm("제품명")
+				.prductNm("아쿠아폴주20밀리리터(프로포폴) (20㎖)")
 				.minDistbQy(1)
-				.pceQy(0)
-				.mnfNo("제조번호")
-				.prdValidDe("20240401")
-				.mnfSeq("-")
-				.mvmnTyCd("1102")
+				.pceQy(5)
+				.mnfNo("123456")
+				.prdValidDe("99991231")
+				.mnfSeq("A0201K5391D57T")
 				.dsuseQy(30)
 				.build();
 			NimsApiDto.DsuseRptInfoDtl dtl2 = NimsApiDto.DsuseRptInfoDtl.builder()
 				.usrRptIdNo(usrRptIdNoList.get(i))
 				.usrRptLnIdNo(usrRptLnIdNoList.get(1)+i)
-				.prductCd("8806718050822")
-				.prductNm("제품명1")
+				.prductCd("8806717024900")
+				.prductNm("베리콜시럽")
 				.minDistbQy(1)
-				.pceQy(0)
-				.mnfNo("제조번호1")
-				.prdValidDe("20240401")
-				.mnfSeq("-")
-				.mvmnTyCd("1102")
+				.pceQy(1)
+				.mnfNo("A1111")
+				.prdValidDe("20300303")
+				.mnfSeq("A11111111")
 				.dsuseQy(10)
 				.build();
 
@@ -215,7 +213,6 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 				.dsuseMthCd("1")
 				.dsuseLoc("보건소")
 				.status("0")
-				.rptPrgSttsCd("0")
 				.dsuseRptInfoDtls("1".equals(rptTyCds.get(i))? null : List.of(dtl1, dtl2))
 				.build();
 			dsuseRpts.add(dsuseRpt);

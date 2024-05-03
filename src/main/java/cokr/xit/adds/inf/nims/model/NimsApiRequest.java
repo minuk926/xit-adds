@@ -289,65 +289,65 @@ public class NimsApiRequest {
 
     }
 
-    //     /**
-    //  * 제품 일련 번호 정보 조회 request
-    //  */
-    // @Schema(name = "MnfSeqInfoRequest", description = "제품 일련 번호 정보 조회 request")
-    // @Data
-    // @NoArgsConstructor
-    // @AllArgsConstructor
-    // @Builder
-    // public static class MnfSeqInfoRequest {
-    //     /**
-    //      * 인증키
-    //      */
-    //     @Schema(requiredMode = REQUIRED, title = "인증키", description = "인증키", example = "998003699950fa950b798c9edea1b38f3cfbcf3b77e03e419")
-    //     @NotEmpty(message = "인증키는 필수 입니다")
-    //     String k;
-    //
-    //     /**
-    //      * 조회범위 : 실제는 동일
-    //      * 1-제조번호, 2-일련번호, 3-바코드/RFID
-    //      */
-    //     @Schema(requiredMode = REQUIRED, title = "제조번호 또는 일련번호 구분", description = "제조번호 또는 일련번호 구분(1-제조번호, 2-일련번호, 3-바코드/RFID)", example = "1", allowableValues = {"1", "2", "3"})
-    //     @Pattern(regexp = "[1-3]", message = "제조번호 또는 일련번호 구분은 필수 입니다(1-제조번호, 2-일련번호, 3-바코드/RFID)")
-    //     String fg;
-    //
-    //     /**
-    //      * 조회 페이지
-    //      */
-    //     @Schema(requiredMode = REQUIRED, title = "조회 페이지", description = "조회 페이지", example = "1")
-    //     @Pattern(regexp = "[0-9]{1,}", message = "조회 페이지는 필수 입니다")
-    //     String pg;
-    //
-    //     /**
-    //      * 제품코드
-    //      * 제품코드(like 검색)
-    //      * 조회범위(pg)가 3인 경우 청구 코드
-    //      */
-    //     @Schema(requiredMode = REQUIRED, title = "제품코드", description = "제품코드", example = "8806718050823")
-    //     @Pattern(regexp = "[0-9]{13}", message = "제품코드는 필수 입니다(13자리)")
-    //     String p;
-    //
-    //
-    //     /**
-    //      * 기준일자 이후
-    //      * yyyyMMdd
-    //      */
-    //     @Schema(title = "기준일자(yyyyMMdd-이후일자)", description = "기준일자(yyyyMMdd-이후일자)", example = " ")
-    //     @Pattern(regexp = "^$|"+Constants.DATE_REGX, message = "기준 일자는 8자리 입니다(yyyyMMdd)")
-    //     @Builder.Default
-    //     String ymd = StringUtils.EMPTY;
-    //
-    //     /**
-    //      * 제품코드 : like 검색 - 오류 -> 사용하지 말것
-    //      */
-    //     @Schema(title = "번호일부 검색", description = "번호 일부 검색(like)", example = " ")
-    //     @Pattern(regexp = "^$|[0-9]{5,}", message = "제품코드를 5자이상 입력해주세요(제품코드는 13자리)")
-    //     @Builder.Default
-    //     String t = StringUtils.EMPTY;
-    // }
-    //
+    /**
+     * 제품 일련 번호 정보 조회 request
+     */
+    @Schema(name = "MnfSeqInfoRequest", description = "제품 일련 번호 정보 조회 request")
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MnfSeqInfoRequest {
+        /**
+         * 인증키
+         */
+        @Schema(requiredMode = REQUIRED, title = "인증키", description = "인증키", example = "998003699950fa950b798c9edea1b38f3cfbcf3b77e03e419")
+        @NotEmpty(message = "인증키는 필수 입니다")
+        String k;
+
+        /**
+         * 조회범위 : 실제는 동일
+         * 1-제조번호, 2-일련번호, 3-바코드/RFID
+         */
+        @Schema(requiredMode = REQUIRED, title = "제조번호 또는 일련번호 구분", description = "제조번호 또는 일련번호 구분(1-제조번호, 2-일련번호, 3-바코드/RFID)", example = "1", allowableValues = {"1", "2", "3"})
+        @Pattern(regexp = "[1-3]", message = "제조번호 또는 일련번호 구분은 필수 입니다(1-제조번호, 2-일련번호, 3-바코드/RFID)")
+        String fg;
+
+        /**
+         * 조회 페이지
+         */
+        @Schema(requiredMode = REQUIRED, title = "조회 페이지", description = "조회 페이지", example = "1")
+        @Pattern(regexp = "[0-9]{1,}", message = "조회 페이지는 필수 입니다")
+        String pg;
+
+        /**
+         * 제품코드
+         * 제품코드(like 검색)
+         * 조회범위(pg)가 3인 경우 청구 코드
+         */
+        @Schema(requiredMode = REQUIRED, title = "제품코드", description = "제품코드", example = "8806718050823")
+        @Pattern(regexp = "[0-9]{13}", message = "제품코드는 필수 입니다(13자리)")
+        String p;
+
+
+        /**
+         * 기준일자 이후
+         * yyyyMMdd
+         */
+        @Schema(title = "기준일자(yyyyMMdd-이후일자)", description = "기준일자(yyyyMMdd-이후일자)", example = " ")
+        @Pattern(regexp = "^$|"+Constants.DATE_REGX, message = "기준 일자는 8자리 입니다(yyyyMMdd)")
+        @Builder.Default
+        String ymd = StringUtils.EMPTY;
+
+        /**
+         * 제품코드 : like 검색 - 오류 -> 사용하지 말것
+         */
+        @Schema(title = "번호일부 검색", description = "번호 일부 검색(like)", example = " ")
+        @Pattern(regexp = "^$|[0-9]{5,}", message = "제품코드를 5자이상 입력해주세요(제품코드는 13자리)")
+        @Builder.Default
+        String t = StringUtils.EMPTY;
+    }
+
     // /**
     //  * 관할 허가 관청 정보 조회 request
     //  */

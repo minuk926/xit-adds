@@ -37,21 +37,24 @@ public interface BizNimsMapper extends AbstractMapper {
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ
 	//------------------------------------------------------------------------------------------------------
+	int insertDsuseMgt(BizNimsRequest.DsuseMgt dto);
+	int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
+	List<BizNimsResponse.DsuseMgtResponse> selectDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
+	List<BizNimsResponse.DsuseMgtDtlResponse> selectDsuseMgtDtls(Map<String, String> map);
+
 	int insertDsuseRptInfo(NimsApiDto.DsuseRptInfo dto);
 	int insertDsuseRptInfoDtl(NimsApiDto.DsuseRptInfoDtl dto);
 	int updateCancelDsuseRptInfo(NimsApiDto.DsuseRptInfo dto);
 	int updateCancelDsuseRptInfoDtl(NimsApiDto.DsuseRptInfo dto);
 	int updateCancelDsuseMgt(NimsApiDto.DsuseRptInfo dto);
-
 	Map<String, String> recusiveRefUsrRptIdNo(String refUsrRptIdNo);
 
-	int insertDsuseMgt(BizNimsRequest.DsuseMgt dto);
+
 	NimsApiDto.DsuseRptInfo selectDsuseRptInfoByUsrRptIdNo(Map<String, String> map);
 	List<NimsApiDto.DsuseRptInfoDtl> selectDsuseRptInfoDtls(Map<String, String> map);
 
 
-	List<BizNimsResponse.DsuseMgtResponse> selectSavedDsuseMgts(List<String> dsuseMgtIds);
-	List<BizNimsResponse.DsuseMgtResponse> selectDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
+	List<BizNimsResponse.DsuseRptInfoResponse> selectSavedDsuseMgts(List<String> dsuseMgtIds);
 	// int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
 	// int updateCancelDsuseMgtDtl(BizNimsRequest.DsuseMgt dto);
 

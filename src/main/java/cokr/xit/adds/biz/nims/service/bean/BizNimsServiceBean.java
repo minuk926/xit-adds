@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -63,8 +64,19 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	//------------------------------------------------------------------------------------------------------
 	// NIMS API CALL
 	//------------------------------------------------------------------------------------------------------
+	/**
+	 * <pre>
+	 *     업체정보 조회후 DB 저장
+	 *     조회 건수를 제한하기 위해 조회 조건 강제 - 업체명(3자 이상) 필수
+	 * @param dto NimsApiRequest.BsshInfoRequest
+	 * @return List<NimsApiDto.BsshInfoSt>
+	 * </pre>
+	 */
 	@Override
 	public List<BsshInfoSt> saveBsshInfoSt(BsshInfoRequest dto) {
+		if(!isEmpty(dto.getBn()) && dto.getBn().length() < 3) {
+			throw ApiCustomException.create("업체[사업자]명은 3자 이상 으로 조회해 주세요");
+		}
 		List<BsshInfoSt> list = new ArrayList<>();
 		while(true) {
 			// 마약류취급자식별번호로 마약류취급자정보 조회
@@ -86,10 +98,27 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return list;
 	}
 
+	/**
+	 * <pre>
+	 *     상품정보 조회후 DB 저장
+	 *     제조번호 조회 여부에 따라 제조번호, 일련번호, 유효기간 정보 목록 추가
+	 *     조회 건수를 제한하기 위해 조회 조건 강제 - 상품번호 또는 상품명(2자 이상) 필수
+	 * @param dto NimsApiRequest.ProductInfoRequest
+	 * @param isMnfSeqInfo 제조번호 조회 여부
+	 * @return
+	 * </pre>
+	 */
 	@Override
-	public List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
-		List<NimsApiDto.ProductInfoKd> list = new ArrayList<>();
+	public List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoRequest dto, boolean isMnfSeqInfo) {
+		if(isEmpty(dto.getP()) && isEmpty(dto.getPn())){
+			throw ApiCustomException.create("상품번호 또는 상품명은 필수 입니다");
+		}
 
+		if(!isEmpty(dto.getPn()) && dto.getPn().length() < 2){
+			throw ApiCustomException.create("상품명은 2자 이상 으로 조회해 주세요");
+		}
+
+		List<NimsApiDto.ProductInfoKd> list = new ArrayList<>();
 		while(true) {
 			// 제품코드로 제품정보 조회
 			NimsApiResult.Response<NimsApiDto.ProductInfoKd> rslt = infNimsService.getProductInfoKd(dto);
@@ -103,36 +132,33 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 			}
 			list.addAll(curList);
 
+			// 제조 번호, 일련번호, 유효기간  정보 목록 추가
+			if(isMnfSeqInfo)	productInfoaddMnfSeqs(curList);
+
 			if(rslt.isEndYn()) break;
 			dto.setPg(String.valueOf(Integer.parseInt(dto.getPg()) + 1));
 		}
 		return list;
 	}
 
-	// @Override
-	// public List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
-	// 	NimsApiResult.Response<NimsApiDto.MnfSeqInfo> response = infNimsService.getMnfSeqInfo(dto);
-	//
-	// 	return response.getResultOrThrow();
-	// }
-	//
-	// @Override
-	// public List<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(NimsApiRequest.JurisdictionGovInfoRequest dto) {
-	// 	NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> result = infNimsService.getJurisdictionGovInfo(dto);
-	// 	return result.getResultOrThrow();
-	// }
-	//
-	// @Override
-	// public List<NimsApiDto.StorageInfo> saveStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
-	// 	NimsApiResult.Response<NimsApiDto.StorageInfo> result = infNimsService.getStorageInfo(dto);
-	// 	List<NimsApiDto.StorageInfo> list = result.getResultOrThrow();
-	//
-	// 	for (NimsApiDto.StorageInfo d : list) {
-	// 		d.setRgtr(Constants.NIMS_API_USER_ID);
-	// 		bizNimsMapper.mergeStorgeInfo(d);
-	// 	}
-	// 	return list;
-	// }
+	@Override
+	public List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
+		NimsApiResult.Response<NimsApiDto.MnfSeqInfo> response = infNimsService.getMnfSeqInfo(dto);
+
+		List<NimsApiDto.MnfSeqInfo> results = response.getResultOrThrow();
+		// FIXME: 내림 차순 정렬
+		results.sort((a, b) -> {
+			if (isEmpty(a.getPrdValidDe()) && isEmpty(b.getPrdValidDe()))
+				return 0;
+			if (isEmpty(a.getPrdValidDe()))
+				return 1;
+			if (isEmpty(b.getPrdValidDe()))
+				return -1;
+			return b.getPrdValidDe().compareTo(a.getPrdValidDe());
+		});
+
+		return results;
+	}
 
 	/**
 	 * <pre>
@@ -228,6 +254,48 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ
 	//------------------------------------------------------------------------------------------------------
+	public BizNimsRequest.DsuseMgt saveDsuseMgt(BizNimsRequest.DsuseMgt dto) {
+		ApiUtil.validate(dto, null, validator);
+		if(dto.getRndDtlRptCnt() != dto.getDsuseMgtDtls().size()) throw ApiCustomException.create("폐기물 보고수 오류[폐기물 갯수 확인]");
+		dto.setRgtr(Constants.NIMS_API_USER_ID);
+
+		if(bizNimsMapper.insertDsuseMgt(dto) == 1){
+			int dtlCnt = 0;
+			for (BizNimsRequest.DsuseMgtDtl d : dto.getDsuseMgtDtls()) {
+				d.setDscdmngId(dto.getDscdmngId());
+				d.setDscdmngSn(StringUtils.leftPad(dtlCnt + 1 + "", 3, "0"));
+				d.setRgtr(Constants.NIMS_API_USER_ID);
+				dtlCnt = dtlCnt + bizNimsMapper.insertDsuseMgtDtl(d);
+			}
+			if(dto.getDsuseMgtDtls().size() != dtlCnt) throw ApiCustomException.create("폐기 관리 상세 등록 실패");
+		} else {
+			throw ApiCustomException.create("폐기 관리 마스터 등록 실패");
+		}
+		return dto;
+	}
+
+	@Override
+	public List<BizNimsResponse.DsuseMgtResponse> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto) {
+		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectDsuseMgts(dto);
+
+		for (BizNimsResponse.DsuseMgtResponse r : resList) {
+			r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
+			r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
+			r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
+			r.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(r.getDsuseMthCd()));
+
+			Map<String, String> map = new HashMap<>();
+			map.put("dscdmngId", r.getDscdmngId());
+			List<BizNimsResponse.DsuseMgtDtlResponse> dsuseRptInfoDtls = bizNimsMapper.selectDsuseMgtDtls(map);
+			setDsuseMgtDtlAddProductInfo(dsuseRptInfoDtls);
+			r.getDsuseMgtDtls().addAll(dsuseRptInfoDtls);
+		}
+
+		return resList;
+	}
+
+
+
 	/**
 	 * <pre>
 	 * 폐기관리정보 저장
@@ -236,8 +304,9 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * @return List<BizNimsResponse.DsuseMgtResponse>
 	 * </pre>
 	 */
+	@Deprecated
 	@Override
-	public List<BizNimsResponse.DsuseMgtResponse> saveDsuseMgt(List<BizNimsRequest.DsuseMgt> dtos) {
+	public List<BizNimsResponse.DsuseRptInfoResponse> saveDsuseMgts(List<BizNimsRequest.DsuseMgt> dtos) {
 		for (BizNimsRequest.DsuseMgt dto : dtos) {
 			ApiUtil.validate(dto, null, validator);
 		}
@@ -249,7 +318,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 			bizNimsMapper.insertDsuseMgt(dto);
 			dscdmngIds.add(dto.getDscdmngId());
 		}
-		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectSavedDsuseMgts(dscdmngIds);
+		List<BizNimsResponse.DsuseRptInfoResponse> resList = bizNimsMapper.selectSavedDsuseMgts(dscdmngIds);
 
 		// 마약류취급업체의 허가번호(prmisnNo), 대표자명(rprsntvNm) set
 		setAddBsshInfo(resList);
@@ -257,29 +326,63 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return resList;
 	}
 
-	@Override
-	public List<BizNimsResponse.DsuseMgtResponse> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto) {
-		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectDsuseMgts(dto);
-
-        for (BizNimsResponse.DsuseMgtResponse r : resList) {
-            r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
-            r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
-            r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
-            r.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(r.getDsuseMthCd()));
-
-            Map<String, String> map = new HashMap<>();
-            map.put("usrRptIdNo", r.getUsrRptIdNo());
-            List<NimsApiDto.DsuseRptInfoDtl> dsuseRptInfoDtls = bizNimsMapper.selectDsuseRptInfoDtls(map);
-            setAddProductInfo(dsuseRptInfoDtls);
-            r.getDsuseRptInfoDtls().addAll(dsuseRptInfoDtls);
-        }
-
-        return resList;
-	}
 
 	//------------------------------------------------------------------------------------------------------
 	// private method
 	//------------------------------------------------------------------------------------------------------
+	/**
+	 * <pre>
+	 * 제품 추가 정보 set
+	 * 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm), 제조수입자명(bsshNm)
+	 * 제품최소유통단위(stdPackngStleNm), 제품낱개단위명(pceCoUnitNm) set
+	 * @param dtlList <NimsApiDto.DsuseRptInfoDtl>
+	 * </pre>
+	 */
+	private void setDsuseMgtDtlAddProductInfo(List<BizNimsResponse.DsuseMgtDtlResponse> dtlList) {
+
+		for (BizNimsResponse.DsuseMgtDtlResponse r : dtlList) {//if()
+			// 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm)
+			if (isEmpty(r.getNrcdSeNm()) || isEmpty(r.getPrtmSeNm())) {
+				//NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(
+
+				List<NimsApiDto.ProductInfoKd> list = saveProductInfoKd(
+					NimsApiRequest.ProductInfoRequest.builder()
+						.fg("1")
+						.pg("1")
+						.p(r.getPrductCd())
+						.build(),
+					false
+				);
+				if (isEmpty(list)) {
+					// FIXME : 데이타 정상 흐름 확인후 comment 제거
+					continue;
+					//throw ApiCustomException.create(String.format("데이타 오류(제품코드[%s]에 해당하는 데이타가 없습니다)", r.getPrductCd()));
+				}
+				r.setNrcdSeNm(list.get(0).getNrcdSeNm());
+				r.setPrtmSeNm(list.get(0).getPrtmSeNm());
+				r.setStdPackngStleNm(list.get(0).getStdPackngStleNm());
+				r.setPceCoUnitNm(list.get(0).getPceCoUnitNm());
+			}
+
+			// 제조수입자명(bsshNm)
+			if (isEmpty(r.getBsshNm()) && !isEmpty(r.getBsshCd())) {
+				List<BsshInfoSt> list = saveBsshInfoSt(
+					BsshInfoRequest.builder()
+						.fg("1")
+						.pg("1")
+						.bc(r.getBsshCd())
+						.build()
+				);
+				if (isEmpty(list)) {
+					// FIXME : 데이타 정상 흐름 확인후 comment 제거
+					continue;
+					//throw ApiCustomException.create(String.format("데이타 오류(마약류취급자식별번호[%s]에 해당하는 데이타가 없습니다)", r.getBsshCd()));
+				}
+				r.setBsshNm(list.get(0).getBsshNm());
+			}
+		}
+	}
+
 
 	/**
 	 * <pre>
@@ -391,8 +494,8 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * @param resList List<BizNimsResponse.DsuseMgtResponse>
 	 * </pre>
 	 */
-	private void setAddBsshInfo(List<BizNimsResponse.DsuseMgtResponse> resList) {
-        for (BizNimsResponse.DsuseMgtResponse r : resList) {
+	private void setAddBsshInfo(List<BizNimsResponse.DsuseRptInfoResponse> resList) {
+        for (BizNimsResponse.DsuseRptInfoResponse r : resList) {
             r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
             r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
             r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
@@ -420,7 +523,8 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	/**
 	 * <pre>
 	 * 제품 추가 정보 set
-	 * 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm), 제조수입자명(bsshNm) set
+	 * 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm), 제조수입자명(bsshNm)
+	 * 제품최소유통단위(stdPackngStleNm), 제품낱개단위명(pceCoUnitNm) set
 	 * @param dtlList <NimsApiDto.DsuseRptInfoDtl>
 	 * </pre>
 	 */
@@ -428,24 +532,27 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
         for (NimsApiDto.DsuseRptInfoDtl r : dtlList) {//if()
             // 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm)
-			// if (isEmpty(r.getNrcdSeNm()) || isEmpty(r.getPrtmSeNm())) {
-            //     //NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(
-			//
-            //     List<NimsApiDto.ProductInfoKd> list = saveProductInfoKd(
-            //         NimsApiRequest.ProductInfoRequest.builder()
-            //             .fg("1")
-            //             .pg("1")
-            //             .p(r.getPrductCd())
-            //             .build()
-            //     );
-            //     if (isEmpty(list)) {
-            //         // FIXME : 데이타 정상 흐름 확인후 comment 제거
-            //         continue;
-            //         //throw ApiCustomException.create(String.format("데이타 오류(제품코드[%s]에 해당하는 데이타가 없습니다)", r.getPrductCd()));
-            //     }
-            //     r.setNrcdSeNm(list.get(0).getNrcdSeNm());
-            //     r.setPrtmSeNm(list.get(0).getPrtmSeNm());
-            // }
+			if (isEmpty(r.getNrcdSeNm()) || isEmpty(r.getPrtmSeNm())) {
+                //NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(
+
+                List<NimsApiDto.ProductInfoKd> list = saveProductInfoKd(
+                    NimsApiRequest.ProductInfoRequest.builder()
+                        .fg("1")
+                        .pg("1")
+                        .p(r.getPrductCd())
+                        .build(),
+					false
+                );
+                if (isEmpty(list)) {
+                    // FIXME : 데이타 정상 흐름 확인후 comment 제거
+                    continue;
+                    //throw ApiCustomException.create(String.format("데이타 오류(제품코드[%s]에 해당하는 데이타가 없습니다)", r.getPrductCd()));
+                }
+                r.setNrcdSeNm(list.get(0).getNrcdSeNm());
+                r.setPrtmSeNm(list.get(0).getPrtmSeNm());
+				r.setStdPackngStleNm(list.get(0).getStdPackngStleNm());
+				r.setPceCoUnitNm(list.get(0).getPceCoUnitNm());
+            }
 
 			// 제조수입자명(bsshNm)
 			if (isEmpty(r.getBsshNm()) && !isEmpty(r.getBsshCd())) {
@@ -466,6 +573,37 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
         }
     }
 
+	/**
+	 * <pre>
+	 * 상품정보에 제조번호 목록 추가
+	 * @param list List<NimsApiDto.ProductInfoKd>
+	 * </pre>
+	 */
+	private void productInfoaddMnfSeqs(List<NimsApiDto.ProductInfoKd> list) {
+		String productCd = "";
+
+		try {
+
+            for (NimsApiDto.ProductInfoKd d : list) {
+                productCd = d.getPrductCd();
+
+                List<NimsApiDto.MnfSeqInfo> mnfList = getMnfSeqInfo(
+                    NimsApiRequest.MnfSeqInfoRequest.builder()
+                        .fg("1")
+                        .pg("1")
+                        .p(d.getPrductCd())
+                        .build()
+                );
+                d.getMnfSeqInfos().addAll(mnfList);
+            }
+
+        }catch (Exception e){
+			if( e instanceof ApiCustomException){
+				throw ApiCustomException.create(String.format("[%s]의 제조번호 정보를 찾을수 없습니다.", productCd));
+			}
+			throw ApiCustomException.create(e.getMessage());
+		}
+	}
 
 
 
@@ -476,7 +614,23 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 
 
-
+	// @Override
+	// public List<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(NimsApiRequest.JurisdictionGovInfoRequest dto) {
+	// 	NimsApiResult.Response<NimsApiDto.JurisdictionGovInfo> result = infNimsService.getJurisdictionGovInfo(dto);
+	// 	return result.getResultOrThrow();
+	// }
+	//
+	// @Override
+	// public List<NimsApiDto.StorageInfo> saveStorageInfo(NimsApiRequest.StorageInfoRequest dto) {
+	// 	NimsApiResult.Response<NimsApiDto.StorageInfo> result = infNimsService.getStorageInfo(dto);
+	// 	List<NimsApiDto.StorageInfo> list = result.getResultOrThrow();
+	//
+	// 	for (NimsApiDto.StorageInfo d : list) {
+	// 		d.setRgtr(Constants.NIMS_API_USER_ID);
+	// 		bizNimsMapper.mergeStorgeInfo(d);
+	// 	}
+	// 	return list;
+	// }
 
 
 /*
@@ -650,7 +804,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	// 		throw ApiCustomException.create(e.getMessage());
 	// 	}
 	// }
-	//
+
 	// private void setMnfSeqs(List<BizNimsAarDto.AarDetail> aarDetails) {
 	// 	AtomicReference<String> productCd = new AtomicReference<>("");
 	//

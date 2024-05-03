@@ -1,13 +1,19 @@
 package cokr.xit.adds.inf.nims.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import cokr.xit.adds.core.model.AuditDto;
+import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -193,6 +199,79 @@ public class NimsApiDto {
          */
         @JsonAlias("UPD_DT")
         private String updDt;
+
+        @JsonSerialize(using = NimsApiDto.MnfSeqInfoSerializer.class)
+        @Setter
+        private List<NimsApiDto.MnfSeqInfo> mnfSeqInfos = new ArrayList<>();
+    }
+
+    /**
+     * 제품 제조 일련 번호 정보 조회 response
+     */
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @SuperBuilder
+    public static class MnfSeqInfo extends AuditDto {
+        /**
+         * 제품코드
+         */
+        @JsonAlias("PRDUCT_CD")
+        private String prductCd;
+
+        /**
+         * 제품명
+         */
+        @JsonAlias("PRDUCT_NM")
+        private String prductNm;
+
+        /**
+         * 제조번호
+         */
+        @JsonAlias("MNF_NO")
+        private String mnfNo;
+
+        /**
+         * 일련번호
+         */
+        @JsonAlias("MNF_SEQ")
+        private String mnfSeq;
+
+        /**
+         * 유효기간
+         */
+        @JsonAlias("PRD_VALID_DE")
+        private String prdValidDe;
+    }
+
+    /**
+     * <pre>
+     * 제품 제조 일련 번호 정보 조회 response Serializer
+     * 제품 제조 일련 번호 정보 조회시 (json "PRODUCT_CD" -> "prductCd") 직렬화를 위한 Serializer
+     * @uses @JsonSerialize(using = MnfSeqInfoSerializer.class)
+     * </pre>
+     */
+    public static class MnfSeqInfoSerializer extends JsonSerializer<List<MnfSeqInfo>> {
+        @Override
+        public void serialize(List<NimsApiDto.MnfSeqInfo> mnfSeqInfos, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
+
+            try {
+                jsonGenerator.writeStartArray();
+                for(MnfSeqInfo mnfSeqInfo : mnfSeqInfos) {
+                    jsonGenerator.writeStartObject();
+                    jsonGenerator.writeStringField("prductCd", mnfSeqInfo.getPrductCd());
+                    jsonGenerator.writeStringField("prductNm", mnfSeqInfo.getPrductNm());
+                    jsonGenerator.writeStringField("mnfNo", mnfSeqInfo.getMnfNo());
+                    jsonGenerator.writeStringField("mnfSeq", mnfSeqInfo.getMnfSeq());
+                    jsonGenerator.writeStringField("prdValidDe", mnfSeqInfo.getPrdValidDe());
+                    jsonGenerator.writeEndObject();
+                }
+                jsonGenerator.writeEndArray();
+            } catch (IOException e) {
+                throw ApiCustomException.create("NIMS 제조 일련 번호 조회 API 호출 결과 직렬화 중 오류가 발생 하였습니다.");
+            }
+        }
     }
 
     /**
@@ -411,6 +490,16 @@ public class NimsApiDto {
         private String prtmSeNm;
 
         /**
+         * 최소유통단위
+         */
+        private String stdPackngStleNm;
+
+        /**
+         * 낱개단위명
+         */
+        private String pceCoUnitNm;
+
+        /**
          * 제조 수입자
          */
         private String bsshCd;
@@ -421,46 +510,8 @@ public class NimsApiDto {
         private String bsshNm;
     }
 
-    // /**
-    //  * 제품 제조 일련 번호 정보 조회 response
-    //  */
-    // @Getter
-    // @Setter
-    // @NoArgsConstructor
-    // @AllArgsConstructor
-    // @SuperBuilder
-    // public static class MnfSeqInfo extends AuditDto {
-    //     /**
-    //      * 제품코드
-    //      */
-    //     @JsonAlias("PRDUCT_CD")
-    //     private String prductCd;
-    //
-    //     /**
-    //      * 제품명
-    //      */
-    //     @JsonAlias("PRDUCT_NM")
-    //     private String prductNm;
-    //
-    //     /**
-    //      * 제조번호
-    //      */
-    //     @JsonAlias("MNF_NO")
-    //     private String mnfNo;
-    //
-    //     /**
-    //      * 일련번호
-    //      */
-    //     @JsonAlias("MNF_SEQ")
-    //     private String mnfSeq;
-    //
-    //     /**
-    //      * 유효기간
-    //      */
-    //     @JsonAlias("PRD_VALID_DE")
-    //     private String prdValidDe;
-    // }
-    //
+
+
     // /**
     //  * 관할 허가 관청 정보 조회 response
     //  */
@@ -563,33 +614,6 @@ public class NimsApiDto {
     //     private String useAt;
     // }
     //
-    // /**
-    //  * <pre>
-    //  * 제품 제조 일련 번호 정보 조회 response Serializer
-    //  * 제품 제조 일련 번호 정보 조회시 (json "PRODUCT_CD" -> "prductCd") 직렬화를 위한 Serializer
-    //  * @uses @JsonSerialize(using = MnfSeqInfoSerializer.class)
-    //  * </pre>
-    //  */
-    // public static class MnfSeqInfoSerializer extends JsonSerializer<List<MnfSeqInfo>> {
-    //     @Override
-    //     public void serialize(List<NimsApiDto.MnfSeqInfo> mnfSeqInfos, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
-    //
-    //         try {
-    //             jsonGenerator.writeStartArray();
-    //             for(MnfSeqInfo mnfSeqInfo : mnfSeqInfos) {
-    //                 jsonGenerator.writeStartObject();
-    //                 jsonGenerator.writeStringField("prductCd", mnfSeqInfo.getPrductCd());
-    //                 jsonGenerator.writeStringField("prductNm", mnfSeqInfo.getPrductNm());
-    //                 jsonGenerator.writeStringField("mnfNo", mnfSeqInfo.getMnfNo());
-    //                 jsonGenerator.writeStringField("mnfSeq", mnfSeqInfo.getMnfSeq());
-    //                 jsonGenerator.writeStringField("prdValidDe", mnfSeqInfo.getPrdValidDe());
-    //                 jsonGenerator.writeEndObject();
-    //             }
-    //             jsonGenerator.writeEndArray();
-    //         } catch (IOException e) {
-    //             throw ApiCustomException.create("NIMS 제조 일련 번호 조회 API 호출 결과 직렬화 중 오류가 발생 하였습니다.");
-    //         }
-    //     }
-    // }
+
 }
 

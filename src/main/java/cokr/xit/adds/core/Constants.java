@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 
 import cokr.xit.adds.core.spring.exception.ApiCustomException;
@@ -55,6 +56,8 @@ public class Constants {
         }
 
         public static String getName(final String code){
+            if(StringUtils.isEmpty(code)) return StringUtils.EMPTY;
+
             return Arrays.stream(RPT_TY_CD.values())
                 .filter(ssc -> ssc.getCode().equals(code))
                 .findFirst()
@@ -86,6 +89,8 @@ public class Constants {
         }
 
         public static String getName(final String code){
+            if(StringUtils.isEmpty(code)) return StringUtils.EMPTY;
+
             return Arrays.stream(DSUSE_SE_CD.values())
                 .filter(ssc -> ssc.getCode().equals(code))
                 .findFirst()
@@ -124,6 +129,8 @@ public class Constants {
         }
 
         public static String getName(final String code){
+            if(StringUtils.isEmpty(code)) return StringUtils.EMPTY;
+
             return Arrays.stream(DSUSE_PRV_CD.values())
                 .filter(ssc -> ssc.getCode().equals(code))
                 .findFirst()
@@ -161,6 +168,8 @@ public class Constants {
         }
 
         public static String getName(final String code){
+            if(StringUtils.isEmpty(code)) return StringUtils.EMPTY;
+
             return Arrays.stream(DSUSE_MTH_CD.values())
                 .filter(ssc -> ssc.getCode().equals(code))
                 .findFirst()
@@ -191,6 +200,8 @@ public class Constants {
         }
 
         public static String getName(final String code){
+            if(StringUtils.isEmpty(code)) return StringUtils.EMPTY;
+
             return Arrays.stream(MVMN_TY_CD.values())
                 .filter(ssc -> ssc.getCode().equals(code))
                 .findFirst()

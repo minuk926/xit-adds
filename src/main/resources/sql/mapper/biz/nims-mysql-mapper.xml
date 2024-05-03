@@ -117,6 +117,176 @@
     <!-- **************************************************************************** -->
     <!-- ADDS BIZ start -->
     <!-- **************************************************************************** -->
+
+    <!-- ========================== -->
+    <!-- 폐기관리 업무 테이블 start -->
+    <!-- ========================== -->
+    <insert id="insertDsuseMgt" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgt">
+        /** nims-mysql-mapper|insertDsuseMgt-폐기관리 생성|julim  */
+        <selectKey keyProperty="dscdmngId" resultType="string" order="BEFORE">
+            SELECT NVL(MAX(dscdmng_id), CONCAT(DATE_FORMAT(now(), '%Y%m'),'0000')) + 1
+              FROM tb_dsuse_mgt
+             WHERE dscdmng_id LIKE CONCAT(DATE_FORMAT(now(), '%Y%m'), '%');
+        </selectKey>
+        INSERT INTO tb_dsuse_mgt (
+            dscdmng_id,             /* 폐기관리ID */
+            user_id,                /* 사용자ID */
+            prgrs_stts_cd,          /* 폐기관리진행상태코드 */
+            bssh_cd,                /* 마약류취급자식별ID */
+            rnd_dtl_rpt_cnt,        /* 수불상세보고수 */
+            hdr_de,                 /* 취급일자 */
+            rpt_de,                 /* 보고일자 */
+            dsuse_se_cd,            /* 폐기구분코드 */
+            dsuse_prv_cd,           /* 폐기사유코드 */
+            dsuse_mth_cd,           /* 폐기방법코드 */
+            dsuse_loc,              /* 폐기장소 */
+            dsuse_de,               /* 폐기일자 */
+            use_yn,
+            reg_dt,
+            rgtr
+        ) VALUES (
+            #{dscdmngId},
+            #{userId},
+            #{prgrsSttsCd},
+            #{bsshCd},
+            #{rndDtlRptCnt},
+            #{hdrDe},
+            #{rptDe},
+            #{dsuseSeCd},
+            #{dsusePrvCd},
+            #{dsuseMthCd},
+            #{dsuseLoc},
+            #{dsuseDe},
+            'Y',
+            DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
+            #{rgtr}
+        )
+    </insert>
+
+    <insert id="insertDsuseMgtDtl" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgtDtl">
+        /** nims-mysql-mapper|insertDsuseMgtDtl-폐기관리 상세 생성|julim  */
+        INSERT INTO tb_dsuse_mgt_dtl (
+            dscdmng_id,             /* 폐기관리ID */
+            dscdmng_sn,             /* 폐기관리일련번호 */
+            prduct_cd,              /* 제품코드 */
+            prduct_nm,              /* 제품명 */
+            min_distb_qy,           /* 최소유통단위수량 */
+            pce_qy,                 /* 낱개단위수량 */
+            mnf_no,                 /* 제조번호 */
+            prd_valid_de,           /* 제품유효기한일자 */
+            mnf_seq,                /* 제품일련번호 */
+            dsuse_qy,               /* 폐기수량 */
+            use_yn,
+            reg_dt,
+            rgtr
+        ) VALUES (
+            #{dscdmngId},
+            #{dscdmngSn},
+            #{prductCd},
+            #{prductNm},
+            #{minDistbQy},
+            #{pceQy},
+            #{mnfNo},
+            #{prdValidDe},
+            #{mnfSeq},
+            #{dsuseQy},
+            'Y',
+            DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
+            #{rgtr}
+        )
+    </insert>
+
+    <select id="selectDsuseMgts" parameterType="java.util.List" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtResponse">
+        /** nims-mysql-mapper|selectDsuseMgts-폐기관리 목록 조회|julim  */
+        <include refid="sqlDsuseMgt"/>
+         WHERE tdm.dscdmng_id IN
+        <foreach collection="dscdmngIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <sql id="sqlDsuseMgt">
+        SELECT tdm.dscdmng_id,          /** 폐기관리ID */
+               tdm.user_id,             /** 사용자ID */
+               tdm.prgrs_stts_cd,       /** 폐기관리진행상태코드 */
+               tdm.bssh_cd,             /** 마약류취급자식별번호 */
+               tdm.rnd_dtl_rpt_cnt,     /** 수불상세보고수 */
+               tdm.hdr_de,              /** 취급일자 */
+               tdm.rpt_de,              /** 보고일자 */
+               tdm.dsuse_se_cd,         /** 폐기구분코드 */
+               tdm.dsuse_prv_cd,        /** 폐기사유코드 */
+               tdm.dsuse_mth_cd,        /** 폐기방법코드 */
+               tdm.dsuse_loc,           /** 폐기장소 */
+               tdm.dsuse_de,            /** 폐기일자 */
+               tdm.stts,                /** 처리상태 */
+               tdm.usr_rpt_id_no,       /** 사용자보고식별번호 */
+               tdm.org_usr_rpt_id_no,   /** 원사용자보고식별번호 */
+               tdm.rpt_ty_cd,           /** 보고유형코드 */
+               tbi.bssh_nm,             /** 마약류취급자명 */
+               tbi.rprsntv_nm,          /** 대표자명 */
+               tbi.prmisn_no            /** 허가번호 */
+          FROM tb_dsuse_mgt tdm
+          LEFT JOIN tb_bssh_info tbi
+            ON tdm.bssh_cd = tbi.bssh_cd
+    </sql>
+
+    <select id="selectDsuseMgtDtls" parameterType="map" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtDtlResponse">
+        /** nims-mysql-mapper|selectDsuseMgtDtls-폐기관리 상세 목록 조회|julim  */
+        SELECT tdmd.dscdmng_id,         /* 폐기관리ID */
+               tdmd.dscdmng_sn,         /* 폐기관리일련번호 */
+               tdmd.prduct_cd,          /* 제품코드 */
+               tdmd.prduct_nm,          /* 제품명 */
+               tdmd.min_distb_qy,       /* 최소유통단위수량 */
+               tdmd.pce_qy,             /* 낱개단위수량 */
+               tdmd.mnf_no,             /* 제조번호 */
+               tdmd.prd_valid_de,       /* 제품유효기한일자 */
+               tdmd.mnf_seq,            /* 제품일련번호 */
+               tdmd.dsuse_qy,           /* 폐기수량 */
+               tdmd.usr_rpt_id_no,      /* 사용자보고식별번호 */
+               tdmd.usr_rpt_ln_id_no,   /* 사용자보고라인식별번호 */
+               tdmd.use_yn,
+               tdmd.reg_dt,
+               tdmd.rgtr,
+               tpi.nrcd_se_nm,           /* 마약항정구분 */
+               tpi.prtm_se_nm,           /* 중점일반구분 */
+               tpi.std_packng_stle_nm,   /* 제품최소유통단위 */
+               tpi.pce_co_unit_nm,       /* 제품낱개단위명 */
+               tpi.bssh_cd,              /* 제조수입자 */
+               tbi.bssh_nm               /* 제조수입자명 */
+          FROM tb_dsuse_mgt_dtl tdmd
+          LEFT JOIN tb_prduct_info tpi
+            ON (tdmd.prduct_cd = tpi.prduct_cd)
+        --    AND tdrid.use_yn = 'Y')
+          LEFT JOIN tb_bssh_info tbi
+            ON (tpi.bssh_cd = tbi.bssh_cd)
+         WHERE tdmd.dscdmng_id = #{dscdmngId}
+           <if test="dscdmngSn != null">
+           AND tdmd.dscdmng_sn = #{dscdmngSn}
+           </if>
+           <if test="useYn != null">
+           AND tdmd.use_yn = #{useYn}
+           </if>
+           <if test="userId != null">
+           AND tdmd.userId = #{userId}
+           </if>
+           <if test="usrRptIdNo != null">
+           AND tdmd.usr_rpt_id_no = #{usrRptIdNo}
+           </if>
+    </select>
+    <!-- ========================== -->
+    <!-- 폐기 관리 업무 테이블 end -->
+    <!-- ========================== -->
+
+
+
+
+
+
+
+
+    <!-- ============================= -->
+    <!-- 폐기 보고 정보 업무 테이블 start -->
+    <!-- ============================= -->
     <select id="selectDsuseRptInfoByUsrRptIdNo" parameterType="map" resultType="cokr.xit.adds.inf.nims.model.NimsApiDto$DsuseRptInfo">
         /** nims-mysql-mapper|selectDsuseRptInfoByUsrRptIdNo-폐기보고정보 데이타 조회|julim  */
         SELECT usr_rpt_id_no,       /* 사용자보고식별번호 */
@@ -134,7 +304,6 @@
                dsuse_loc,           /* 폐기장소 */
                dsuse_de,            /* 폐기일자 */
                status,              /* 상태 */
-               rpt_prg_stts_cd,     /* 보고진행상태코드 */
                org_usr_rpt_id_no,   /* 원본사용자보고식별번호 */
                use_yn,
                reg_dt,
@@ -160,7 +329,6 @@
                tdrid.mnf_no,             /* 제조번호 */
                tdrid.prd_valid_de,       /* 제품유효기한일자 */
                tdrid.mnf_seq,            /* 제품일련번호 */
-               tdrid.mvmn_ty_cd,         /* 이동유형코드 */
                tdrid.dsuse_qy,           /* 폐기수량 */
                tdrid.use_yn,
                tdrid.reg_dt,
@@ -205,7 +373,6 @@
             dsuse_loc,              /* 폐기장소 */
             dsuse_de,               /* 폐기일자 */
             status,                 /* 상태 */
-            rpt_prg_stts_cd,        /* 보고진행상태코드 */
             org_usr_rpt_id_no,      /* 원본사용자보고식별번호 */
             use_yn,
             reg_dt,
@@ -226,7 +393,6 @@
             #{dsuseLoc},
             #{dsuseDe},
             #{status},
-            #{rptPrgSttsCd},
             #{orgUsrRptIdNo},
             IF(#{rptTyCd} = '1', 'N', 'Y'),
             DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
@@ -246,7 +412,6 @@
             mnf_no,             /* 제조번호 */
             prd_valid_de,       /* 제품유효기한일자 */
             mnf_seq,            /* 제품일련번호 */
-            mvmn_ty_cd,         /* 이동유형코드 */
             dsuse_qy,           /* 폐기수량 */
             use_yn,
             reg_dt,
@@ -261,7 +426,6 @@
             #{mnfNo},
             #{prdValidDe},
             #{mnfSeq},
-            #{mvmnTyCd},
             #{dsuseQy},
             'Y',
             DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
@@ -308,55 +472,32 @@
           FROM tb_dsuse_rpt_info
          WHERE usr_rpt_id_no = #{refUsrRptIdNo}
     </select>
+    <!-- ============================= -->
+    <!-- 폐기 보고 정보 업무 테이블 end -->
+    <!-- ============================= -->
 
 
-    <insert id="insertDsuseMgt" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgt">
-        /** nims-mysql-mapper|insertDsuseMgt-폐기관리 생성|julim  */
-        <selectKey keyProperty="dscdmngId" resultType="string" order="BEFORE">
-            SELECT NVL(MAX(dscdmng_id), CONCAT(DATE_FORMAT(now(), '%Y%m'),'0000')) + 1
-              FROM tb_dsuse_mgt
-             WHERE dscdmng_id LIKE CONCAT(DATE_FORMAT(now(), '%Y%m'), '%');
-        </selectKey>
-        INSERT INTO tb_dsuse_mgt (
-            dscdmng_id,             /* 폐기관리ID */
-            user_id,                /* 사용자ID */
-            usr_rpt_id_no,          /* 사용자보고식별번호 */
-            org_usr_rpt_id_no,      /* 원사용자보고식별번호 */
-            prgrs_stts_cd,          /* 폐기관리진행상태코드 */
-            use_yn,
-            reg_dt,
-            rgtr
-        ) VALUES (
-            #{dscdmngId},
-            #{userId},
-            #{usrRptIdNo},
-            #{orgUsrRptIdNo},
-            #{prgrsSttsCd},
-            'Y',
-            DATE_FORMAT(now(), '%Y%m%d%H%i%s'),
-            #{rgtr}
-        )
-    </insert>
 
-    <select id="selectSavedDsuseMgts" parameterType="java.util.List" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtResponse">
-        /** nims-mysql-mapper|selectSavedDsuseMgts-저장 폐기관리목록 조회|julim  */
-        <include refid="sqlDsuseMgt"/>
-         WHERE tdm.dscdmng_id IN
-             <foreach collection="list" item="item" separator="," open="(" close=")">
-               #{item}
-             </foreach>
-    </select>
 
-    <select id="selectDsuseMgts" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgtInq" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtResponse">
+
+
+
+
+
+
+
+
+
+    <select id="selectDsuseMgts2" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgtInq" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseRptInfoResponse">
         /** nims-mysql-mapper|selectDsuseMgts-폐기관리목록 조회|julim  */
-        <include refid="sqlDsuseMgt"/>
+        <include refid="sqlDsuseRptInfoByDsuseMgt"/>
         WHERE tdm.dscdmng_id IN
         <foreach collection="dscdmngIds" item="item" separator="," open="(" close=")">
             #{item}
         </foreach>
     </select>
 
-    <sql id="sqlDsuseMgt">
+    <sql id="sqlDsuseRptInfoByDsuseMgt">
         SELECT tdm.dscdmng_id           /** 폐기관리ID */
              , tdm.user_id              /** 사용자ID */
              , tdm.usr_rpt_id_no        /** 사용자보고식별번호 */

@@ -11,7 +11,7 @@ select *
 
 select *
 from tb_prduct_info
-where prduct_cd in( '8806498014732', '8806718050823');
+where prduct_cd in( '8806717024900', '8806718050823');
 
 select *
 from tb_bssh_info

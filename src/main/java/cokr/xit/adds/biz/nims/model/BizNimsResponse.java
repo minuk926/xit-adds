@@ -32,7 +32,75 @@ public class BizNimsResponse {
 	@AllArgsConstructor
 	@SuperBuilder
 	@EqualsAndHashCode(callSuper = true)
-	public static class DsuseMgtResponse extends NimsApiDto.DsuseRptInfo {
+	public static class DsuseMgtResponse extends BizNimsRequest.DsuseMgt {
+
+		private String dsuseSeCdNm;
+		private String dsusePrvCdNm;
+		private String dsuseMthCdNm;
+		private String rptTyCdNm;
+
+		/**
+		 * <pre>
+		 * 대표자명
+		 * </pre>
+		 */
+		private String rprsntvNm;
+
+		/**
+		 * 허가번호
+		 */
+		private String prmisnNo;
+	}
+
+	/**
+	 * 폐기관리정보 조회 response
+	 */
+	@Schema(name = "DsuseMgtDtlResponse", description = "폐기관리상세정보 조회 response DTO")
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@SuperBuilder
+	@EqualsAndHashCode(callSuper = true)
+	public static class DsuseMgtDtlResponse extends BizNimsRequest.DsuseMgtDtl {
+
+		/**
+		 * 마약항정구분
+		 */
+		private String nrcdSeNm;
+
+		/**
+		 * 중점일반구분
+		 */
+		private String prtmSeNm;
+
+		private String bsshCd;
+
+		/**
+		 * 제조수입자명
+		 */
+		private String bsshNm;
+
+		/**
+		 * 최소유통단위
+		 */
+		private String stdPackngStleNm;
+
+		/**
+		 * 낱개단위명
+		 */
+		private String pceCoUnitNm;
+	}
+
+	/**
+	 * 폐기관리정보 조회 response
+	 */
+	@Schema(name = "DsuseRptInfoResponse", description = "폐기보고관리정보 조회 response DTO")
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@SuperBuilder
+	@EqualsAndHashCode(callSuper = true)
+	public static class DsuseRptInfoResponse extends NimsApiDto.DsuseRptInfo {
 		private String dscdmngId;
 
 		private String userId;
