@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlValue;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -35,13 +37,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PackDto {
-    @XmlElement(required = true)
+    @JacksonXmlProperty
+    @JsonProperty(required = true)
     protected Header header;
 
-    @XmlElement(required = true)
+    @JacksonXmlProperty
+    @JsonProperty(required = true)
     protected Contents contents;
 
-    @XmlAttribute(name = "filename", required = true)
+    @JacksonXmlProperty(localName = "filename", isAttribute = true)
+    @JsonProperty(required = true)
     protected String filename;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -49,34 +54,43 @@ public class PackDto {
     @AllArgsConstructor
     @Builder
     public static class Header {
-        @XmlElement(required = true)
+        @JacksonXmlProperty
+        @JsonProperty(required = true)
         protected Type type;
 
-        @XmlElement(required = true)
+        @JacksonXmlProperty
+        @JsonProperty(required = true)
         protected String date;
 
-        @XmlElement(required = true)
+        @JacksonXmlProperty
+        @JsonProperty(required = true)
         protected String sender;
 
-        @XmlElement(required = true)
+        @JacksonXmlProperty
+        @JsonProperty(required = true)
         protected String receiver;
 
-        @XmlElement(name = "sender_userid", required = true)
+        @JacksonXmlProperty(localName = "sender_userid")
+        @JsonProperty(required = true)
         protected String senderUserid;
 
-        @XmlElement(name = "receiver_userid", required = true)
+        @JacksonXmlProperty(localName = "receiver_userid")
+        @JsonProperty(required = true)
         protected String receiverUserid;
 
-        @XmlElement(name = "sender_email")
+        @JacksonXmlProperty(localName = "sender_email")
         protected String senderEmail;
 
-        @XmlElement(name = "sender_orgname", required = true)
+        @JacksonXmlProperty(localName = "sender_orgname")
+        @JsonProperty(required = true)
         protected String senderOrgname;
 
-        @XmlElement(name = "sender_systemname", required = true)
+        @JacksonXmlProperty(localName = "sender_systemname")
+        @JsonProperty(required = true)
         protected String senderSystemname;
 
-        @XmlElement(name = "administrative_num", required = true)
+        @JacksonXmlProperty(localName = "administrative_num")
+        @JsonProperty(required = true)
         protected String administrativeNum;
     }
 
@@ -91,7 +105,8 @@ public class PackDto {
          * send|fail|arrive|receive|invalid|submit|return|approval
          *</pre>
          */
-        @XmlAttribute(name = "doc-type", required = true)
+        @JacksonXmlProperty(localName = "doc-type", isAttribute = true)
+        @JsonProperty(required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         protected String docType;
     }
@@ -101,6 +116,8 @@ public class PackDto {
     @AllArgsConstructor
     @Builder
     public static class Contents {
+        @JacksonXmlElementWrapper(useWrapping = false)
+        @JacksonXmlProperty(localName = "content")
         protected List<Content> content;
 
         public List<Content> getContent() {
@@ -117,21 +134,24 @@ public class PackDto {
     @Builder
     public static class Content {
         @XmlValue
+        @JacksonXmlText
         protected String value;
 
-        @XmlAttribute(name = "content-role", required = true)
+        @JacksonXmlProperty(localName = "content-role", isAttribute = true)
+        @JsonProperty(required = true)
         protected String contentRole;
 
-        @XmlAttribute(name = "content-transfer-encoding")
+        @JacksonXmlProperty(localName = "content-transfer-encoding", isAttribute = true)
         protected String contentTransferEncoding = "base64";
 
-        @XmlAttribute(name = "filename", required = true)
+        @JacksonXmlProperty(localName = "filename", isAttribute = true)
+        @JsonProperty(required = true)
         protected String filename;
 
-        @XmlAttribute(name = "content-type")
+        @JacksonXmlProperty(localName = "content-type", isAttribute = true)
         protected String contentType;
 
-        @XmlAttribute(name = "charset")
+        @JacksonXmlProperty(localName = "charset", isAttribute = true)
         protected String charset;
     }
 }
