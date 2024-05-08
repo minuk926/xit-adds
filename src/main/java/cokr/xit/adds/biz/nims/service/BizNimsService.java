@@ -26,9 +26,9 @@ public interface BizNimsService {
 	//------------------------------------------------------------------------------------------------------
 	// NIMS API CALL
 	//------------------------------------------------------------------------------------------------------
-	List<NimsApiDto.BsshInfoSt> saveBsshInfoSt(NimsApiRequest.BsshInfoRequest dto);
-	List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoRequest dto, boolean isMnfSeqInfo);
-	List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto);
+	List<NimsApiDto.BsshInfoSt> saveBsshInfoSt(NimsApiRequest.BsshInfoReq dto);
+	List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoReq dto, boolean isMnfSeqInfo);
+	List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoReq dto);
 	// List<NimsApiDto.JurisdictionGovInfo> getJurisdictionGovInfo(NimsApiRequest.JurisdictionGovInfoRequest dto);
 	// List<NimsApiDto.StorageInfo> saveStorageInfo(NimsApiRequest.StorageInfoRequest dto);
 
@@ -49,7 +49,7 @@ public interface BizNimsService {
 	 * @return List<NimsApiDto.DsuseRptInfo>
 	 * </pre>
 	 */
-	List<NimsApiDto.DsuseRptInfo> saveDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto);
+	List<NimsApiDto.DsuseRptInfo> saveDsuseRptInfo(NimsApiRequest.DsuseRptInfoReq dto);
 
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ
@@ -59,11 +59,11 @@ public interface BizNimsService {
 	// NimsAarResult cancelReportDsuse();
 
 	BizNimsRequest.DsuseMgt saveDsuseMgt(BizNimsRequest.DsuseMgt dto);
-	List<BizNimsResponse.DsuseMgtResponse> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
+	List<BizNimsResponse.DsuseMgtRes> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
 
 
-	@Deprecated
-	List<BizNimsResponse.DsuseRptInfoResponse> saveDsuseMgts(List<BizNimsRequest.DsuseMgt> dtos);
+	// @Deprecated
+	// List<BizNimsResponse.DsuseRptInfoResponse> saveDsuseMgts(List<BizNimsRequest.DsuseMgt> dtos);
 
 
 	// BizNimsAarDto.AarHeader getTgtDsuseRptData(BizNimsRequest.DsuseMgt dto);

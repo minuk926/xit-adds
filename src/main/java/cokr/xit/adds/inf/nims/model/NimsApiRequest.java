@@ -34,12 +34,12 @@ public class NimsApiRequest {
     /**
      * 마약류 취급자 정보 조회 request
      */
-    @Schema(name = "BsshInfoRequest", description = "마약류 취급자 정보 조회 request")
+    @Schema(name = "BsshInfoReq", description = "마약류 취급자 정보 조회 request")
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class BsshInfoRequest {
+    public static class BsshInfoReq {
 
         /**
          * 인증키
@@ -128,12 +128,12 @@ public class NimsApiRequest {
     /**
      * 상품 정보 조회 request
      */
-    @Schema(name = "ProductInfoRequest", description = "상품 정보 조회 request")
+    @Schema(name = "ProductInfoReq", description = "상품 정보 조회 request")
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class ProductInfoRequest {
+    public static class ProductInfoReq {
         /**
          * 인증키
          */
@@ -205,12 +205,12 @@ public class NimsApiRequest {
         private String dbSkipYn = "N";
     }
 
-    @Schema(name = "DsuseRptInfoRequest", description = "폐기 보고 정보 조회 request")
+    @Schema(name = "DsuseRptInfoReq", description = "폐기 보고 정보 조회 request")
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class DsuseRptInfoRequest {
+    public static class DsuseRptInfoReq {
         /**
          * 인증키
          */
@@ -318,12 +318,12 @@ public class NimsApiRequest {
     /**
      * 제품 일련 번호 정보 조회 request
      */
-    @Schema(name = "MnfSeqInfoRequest", description = "제품 일련 번호 정보 조회 request")
+    @Schema(name = "MnfSeqInfoReq", description = "제품 일련 번호 정보 조회 request")
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class MnfSeqInfoRequest {
+    public static class MnfSeqInfoReq {
         /**
          * 인증키
          */
@@ -382,7 +382,7 @@ public class NimsApiRequest {
     // @NoArgsConstructor
     // @AllArgsConstructor
     // @Builder
-    // public static class JurisdictionGovInfoRequest {
+    // public static class JurisdictionGovInfoReq {
     //     /**
     //      * 인증키
     //      */
@@ -435,7 +435,7 @@ public class NimsApiRequest {
     // @NoArgsConstructor
     // @AllArgsConstructor
     // @Builder
-    // public static class StorageInfoRequest {
+    // public static class StorageInfoReq {
     //     /**
     //      * 인증키
     //      */

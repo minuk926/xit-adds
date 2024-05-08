@@ -11,7 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtl;
-import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlRequest;
+import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlReq;
 import cokr.xit.adds.inf.iros.model.IrosResponse;
 import cokr.xit.foundation.data.JSON;
 import cokr.xit.foundation.web.WebClient;
@@ -41,7 +41,7 @@ public class IrosRestfulTest {
     @Test
     public void testDrugPrdtMcpnDtl() {
 
-        final DrugPrdtMcpnDtlRequest param = DrugPrdtMcpnDtlRequest.builder()
+        final DrugPrdtMcpnDtlReq param = DrugPrdtMcpnDtlReq.builder()
             .serviceKey(serviceKey)
             .pageNo("1")
             .numOfRows("10")

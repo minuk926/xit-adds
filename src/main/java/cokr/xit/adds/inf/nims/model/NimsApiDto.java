@@ -6,12 +6,18 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import cokr.xit.adds.biz.nims.model.BizNimsRequest;
+import cokr.xit.adds.biz.nims.model.BizNimsResponse;
+import cokr.xit.adds.core.Constants;
 import cokr.xit.adds.core.model.AuditDto;
 import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import lombok.AllArgsConstructor;
@@ -404,6 +410,141 @@ public class NimsApiDto {
         @Builder.Default
         @Valid
         private List<DsuseRptInfoDtl> dsuseRptInfoDtls = new ArrayList<>();
+
+        /**
+         * <pre>
+         * 폐기 관리 정보에 폐기 보고 정보 매핑 처리
+         * -> 사용자보고라인식별번호가 매핑되지 않은 경우 - 신규인 경우
+         * -> 폐기관리진행상태가 폐기신청서 접수인 상태의 데이타 대상
+         *
+         * 1. 폐기 관리 정보와 폐기 보고 정보가 동일한 데이타 매핑
+         * 2. 폐기관리 데이타 set
+         *    -> 폐기보고진생상태 - 폐기보고매핑(02)으로 set
+         *    -> 사용자보고식별번호, 원사용자보고식별번호, 보고유형코드, 처리상태 set
+         * @param dsuseMgts List<BizNimsResponse.DsuseMgtRes> 진행중인 폐기관리목록
+         * @return List<BizNimsResponse.DsuseMgtRes> 매핑 목록
+         * </pre>
+         */
+        @JsonIgnore
+        public List<BizNimsResponse.DsuseMgtRes> mappingNewDsuseRptInfo(List<BizNimsResponse.DsuseMgtRes> dsuseMgts){
+            List<BizNimsResponse.DsuseMgtRes> newList = new ArrayList<>();
+
+            for(BizNimsResponse.DsuseMgtRes mgtDto: dsuseMgts) {
+                // 폐기 신청서 접수 상태 데이타만 처리
+                if (Constants.PRGRS_STTS_CD.RECEIPT.getCode().equals(mgtDto.getPrgrsSttsCd())) {
+                    String rptInfo = String.join("",
+                        this.bsshCd,            // 마약류취급자식별번호
+                        this.hdrDe,                         // 취급일자
+                        this.rptDe,                         // 보고일자
+                        this.dsuseSeCd,                     // 폐기구분코드
+                        this.dsusePrvCd,                    // 폐기사유코드
+                        this.dsuseMthCd,                    // 폐기방법코드
+                        this.dsuseDe,                       // 폐기일자
+                        String.valueOf(this.rndDtlRptCnt)   // 수불상세보고수
+                    );
+                    String mgtInfo = String.join("",
+                        mgtDto.getBsshCd(),                         // 마약류취급자식별번호
+                        mgtDto.getHdrDe(),                          // 취급일자
+                        mgtDto.getRptDe(),                          // 보고일자
+                        mgtDto.getDsuseSeCd(),                      // 폐기구분코드
+                        mgtDto.getDsusePrvCd(),                     // 폐기사유코드
+                        mgtDto.getDsuseMthCd(),                     // 폐기방법코드
+                        mgtDto.getDsuseDe(),                        // 폐기일자
+                        String.valueOf(mgtDto.getRndDtlRptCnt())    // 수불상세보고수
+                    );
+
+                    // FIXME: 폐기관리와 폐기보고의 상품정보 일치 여부 set - 비교 필드 확정 필요
+                    if (rptInfo.equals(mgtInfo)) {
+                        if (this.dsuseRptInfoDtls.size() == mgtDto.getDsuseMgtDtls().size()) {
+                            for (DsuseRptInfoDtl rptDtl : this.dsuseRptInfoDtls) {
+                                for (BizNimsRequest.DsuseMgtDtl mgtDtl : mgtDto.getDsuseMgtDtls()) {
+                                    if (rptDtl.getPrductCd().equals(mgtDtl.getPrductCd())
+                                        // && rptDtl.getMnfNo().equals(mgtDtl.getMnfNo())
+                                        // && rptDtl.getPrdValidDe().equals(mgtDtl.getPrdValidDe())
+                                        // && rptDtl.getMnfSeq().equals(mgtDtl.getMnfSeq())
+                                        && rptDtl.getDsuseQy().equals(mgtDtl.getDsuseQy())) {
+                                        mgtDtl.setValidYn("Y");
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        mgtDto.setUsrRptIdNo(this.usrRptIdNo);
+                        mgtDto.setOrgUsrRptIdNo(this.orgUsrRptIdNo);
+                        mgtDto.setRptTyCd(this.rptTyCd);
+                        mgtDto.setStts(this.status);
+                        mgtDto.setPrgrsSttsCd(Constants.PRGRS_STTS_CD.MAPPING.getCode());
+                        mgtDto.setRgtr(this.getRgtr());
+                        newList.add(mgtDto);
+                    }
+                }
+            }
+            return newList;
+        }
+
+
+        /**
+         * <pre>
+         * 폐기 관리 정보에 폐기 보고 정보 매핑 처리
+         * -> 사용자보고라인식별번호가 매핑되어 있는 경우
+         *
+         * 1. 원사용자식별번호가 동일한 데이타 매핑
+         * 2. 폐기관리 데이타 set
+         *    2-1. 취소인경우 - 폐기관리에 매핑된 정보 초기화(폐기보고신청서접수 상태로)
+         *    2-2. 변경인 경우
+         *    -> 폐기보고진생상태 - 폐기보고매핑(02)으로 set
+         *    -> 사용자보고식별번호, 원사용자보고식별번호, 보고유형코드, 처리상태 set
+         * @param dsuseMgts List<BizNimsResponse.DsuseMgtRes> 진행중인 폐기관리목록
+         * @return List<BizNimsResponse.DsuseMgtRes> 매핑 목록
+         * </pre>
+         */
+        @JsonIgnore
+        public List<BizNimsResponse.DsuseMgtRes> mappingDsuseRptInfo(List<BizNimsResponse.DsuseMgtRes> dsuseMgts){
+            List<BizNimsResponse.DsuseMgtRes> newList = new ArrayList<>();
+
+            for(BizNimsResponse.DsuseMgtRes mgtDto: dsuseMgts) {
+
+                if (this.orgUsrRptIdNo.equals(mgtDto.getOrgUsrRptIdNo())) {
+
+                    // 취소인 경우
+                    // 폐기관리에 매핑된 정보 초기화
+                    if (Constants.RPT_TY_CD.CANCEL.getCode().equals(this.rptTyCd)) {
+                        mgtDto.setUsrRptIdNo(StringUtils.EMPTY);
+                        mgtDto.setOrgUsrRptIdNo(StringUtils.EMPTY);
+                        mgtDto.setRptTyCd(StringUtils.EMPTY);
+                        mgtDto.setStts(StringUtils.EMPTY);
+                        mgtDto.setPrgrsSttsCd(Constants.PRGRS_STTS_CD.RECEIPT.getCode());
+                        mgtDto.setRgtr(this.getRgtr());
+                        newList.add(mgtDto);
+                        continue;
+                    }
+
+                    // FIXME: 상품정보 미일치 여부 set - 비교 필드 확정 필요
+                    if (this.dsuseRptInfoDtls.size() == mgtDto.getDsuseMgtDtls().size()) {
+                        for (DsuseRptInfoDtl rptDtl : this.dsuseRptInfoDtls) {
+                            for (BizNimsRequest.DsuseMgtDtl mgtDtl : mgtDto.getDsuseMgtDtls()) {
+                                if (rptDtl.getPrductCd().equals(mgtDtl.getPrductCd())
+                                    // && rptDtl.getMnfNo().equals(mgtDtl.getMnfNo())
+                                    // && rptDtl.getPrdValidDe().equals(mgtDtl.getPrdValidDe())
+                                    // && rptDtl.getMnfSeq().equals(mgtDtl.getMnfSeq())
+                                    && rptDtl.getDsuseQy().equals(mgtDtl.getDsuseQy())) {
+                                    mgtDtl.setValidYn("Y");
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    mgtDto.setUsrRptIdNo(this.usrRptIdNo);
+                    mgtDto.setOrgUsrRptIdNo(this.orgUsrRptIdNo);
+                    mgtDto.setRptTyCd(this.rptTyCd);
+                    mgtDto.setStts(this.status);
+                    mgtDto.setPrgrsSttsCd(Constants.PRGRS_STTS_CD.MAPPING.getCode());
+                    mgtDto.setRgtr(this.getRgtr());
+                    newList.add(mgtDto);
+                }
+            }
+            return newList;
+        }
     }
 
     @Getter
@@ -509,6 +650,7 @@ public class NimsApiDto {
          */
         private String bsshNm;
     }
+
 
 
 

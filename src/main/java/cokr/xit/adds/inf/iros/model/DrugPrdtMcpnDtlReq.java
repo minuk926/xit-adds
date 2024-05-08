@@ -28,13 +28,13 @@ import lombok.NoArgsConstructor;
  *
  * </pre>
  */
-@Schema(name = "DrugPrdtMcpnDtlRequest", description = "의약 제품 주성분 상세 정보 조회 request")
+@Schema(name = "DrugPrdtMcpnDtlReq", description = "의약 제품 주성분 상세 정보 조회 request")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DrugPrdtMcpnDtlRequest {
+public class DrugPrdtMcpnDtlReq {
 	@Schema(requiredMode = REQUIRED, title = "서비스 키", description = "서비스 키", example = "0fTkYnZU6XjaAPAp6GzKW9Q6fYq8iaoSH9wKUZwz2PBjRXGM04aUgtO3a61xYGjL8nFZn4fjLGS9XErhMSXq%2Bw%3D%3D")
 	@NotEmpty(message = "서비스 키는 필수 입니다")
 	private String serviceKey;

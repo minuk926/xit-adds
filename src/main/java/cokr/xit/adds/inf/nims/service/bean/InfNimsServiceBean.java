@@ -77,7 +77,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 	@Override
 	@TraceLogging
-	public NimsApiResult.Response<NimsApiDto.BsshInfoSt> getBsshInfoSt(NimsApiRequest.BsshInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.BsshInfoSt> getBsshInfoSt(NimsApiRequest.BsshInfoReq dto) {
 		dto.setK(nimsApiKey);
 		ApiUtil.validate(dto, null, validator);
 		if(isEmpty(dto.getBi()) && isEmpty(dto.getHp()) && isEmpty(dto.getBn()) && isEmpty(dto.getBc())) {
@@ -92,7 +92,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 	@Override
 	@TraceLogging
-	public NimsApiResult.Response<NimsApiDto.ProductInfoKd> getProductInfoKd(NimsApiRequest.ProductInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.ProductInfoKd> getProductInfoKd(NimsApiRequest.ProductInfoReq dto) {
 		dto.setK(nimsApiKey);
 		ApiUtil.validate(dto, null, validator);
 		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
@@ -104,7 +104,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 
 	@Override
 	@TraceLogging
-	public NimsApiResult.Response<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoReq dto) {
 		dto.setK(nimsApiKey);
 		ApiUtil.validate(dto, null, validator);
 		if(!isEmpty(dto.getYmd())) ApiUtil.checkYmdError(dto.getYmd(), null);
@@ -147,7 +147,7 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 	// }
 
 	@Override
-	public NimsApiResult.Response<NimsApiDto.DsuseRptInfo> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest dto) {
+	public NimsApiResult.Response<NimsApiDto.DsuseRptInfo> getDsuseRptInfo(NimsApiRequest.DsuseRptInfoReq dto) {
 		dto.setK(nimsApiKey);
 		dto.setFg4(ofCd);
 		ApiUtil.validate(dto, null, validator);
@@ -201,16 +201,17 @@ public class InfNimsServiceBean extends AbstractServiceBean implements InfNimsSe
 			NimsApiDto.DsuseRptInfo dsuseRpt = NimsApiDto.DsuseRptInfo.builder()
 				.usrRptIdNo(usrRptIdNoList.get(i))
 				.refUsrRptIdNo("0".equals(rptTyCds.get(i))? null : refUsrRptIdNos.get(refIdx++))
-				.bsshCd("H00008333")
-				.bsshNm("수지미래산부인과의원")
 				.indutyNm("마약류취급의료업")
 				.rptTyCd(rptTyCds.get(i))
 				.rndDtlRptCnt("1".equals(rptTyCds.get(i))? 0 : 2)
+				.bsshCd("H00008333")
+				.bsshNm("수지미래산부인과의원")
 				.hdrDe("20240401")
 				.rptDe("20240401")
 				.dsuseSeCd("1")
 				.dsusePrvCd("01")
-				.dsuseMthCd("1")
+				.dsuseMthCd("3")
+				.dsuseDe("20240306")
 				.dsuseLoc("보건소")
 				.status("0")
 				.dsuseRptInfoDtls("1".equals(rptTyCds.get(i))? null : List.of(dtl1, dtl2))

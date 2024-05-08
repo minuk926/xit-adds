@@ -3,7 +3,7 @@ package cokr.xit.adds.biz.iros.service;
 import java.util.List;
 
 import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtl;
-import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlRequest;
+import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlReq;
 
 /**
  * <pre>
@@ -20,5 +20,5 @@ import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlRequest;
  * </pre>
  */
 public interface BizIrosService {
-    List<DrugPrdtMcpnDtl> getDrugPrdtMcpnDtls(DrugPrdtMcpnDtlRequest dto);
+    List<DrugPrdtMcpnDtl> getDrugPrdtMcpnDtls(DrugPrdtMcpnDtlReq dto);
 }

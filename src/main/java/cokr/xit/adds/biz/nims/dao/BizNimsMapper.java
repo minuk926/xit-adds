@@ -32,9 +32,9 @@ public interface BizNimsMapper extends AbstractMapper {
 	// NIMS API CALL
 	//------------------------------------------------------------------------------------------------------
 	void mergeBsshInfoSt(NimsApiDto.BsshInfoSt dto);
-	List<NimsApiDto.BsshInfoSt> selectBsshInfos(NimsApiRequest.BsshInfoRequest dto);
+	List<NimsApiDto.BsshInfoSt> selectBsshInfos(NimsApiRequest.BsshInfoReq dto);
 	void mergeProductInfoKd(NimsApiDto.ProductInfoKd dto);
-	List<NimsApiDto.ProductInfoKd> selectProductInfos(NimsApiRequest.ProductInfoRequest dto);
+	List<NimsApiDto.ProductInfoKd> selectProductInfos(NimsApiRequest.ProductInfoReq dto);
 	// int mergeStorgeInfo(NimsApiDto.StorageInfo dto);
 
 	//------------------------------------------------------------------------------------------------------
@@ -42,22 +42,27 @@ public interface BizNimsMapper extends AbstractMapper {
 	//------------------------------------------------------------------------------------------------------
 	int insertDsuseMgt(BizNimsRequest.DsuseMgt dto);
 	int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
-	List<BizNimsResponse.DsuseMgtResponse> selectDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
-	List<BizNimsResponse.DsuseMgtDtlResponse> selectDsuseMgtDtls(Map<String, String> map);
+	List<BizNimsResponse.DsuseMgtRes> selectDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
+	List<BizNimsResponse.DsuseMgtDtlRes> selectDsuseMgtDtls(Map<String, String> map);
+	int updateMappingDsuseMgt(BizNimsResponse.DsuseMgtRes mgtDto);
 
 	int insertDsuseRptInfo(NimsApiDto.DsuseRptInfo dto);
 	int insertDsuseRptInfoDtl(NimsApiDto.DsuseRptInfoDtl dto);
 	int updateCancelDsuseRptInfo(NimsApiDto.DsuseRptInfo dto);
 	int updateCancelDsuseRptInfoDtl(NimsApiDto.DsuseRptInfo dto);
-	int updateCancelDsuseMgt(NimsApiDto.DsuseRptInfo dto);
+//	int updateCancelDsuseMgt(NimsApiDto.DsuseRptInfo dto);
 	Map<String, String> recusiveRefUsrRptIdNo(String refUsrRptIdNo);
 
+	/**
+	 * 폐기관리 테이블 사용자보고식별번호 반영
+ 	 */
+	int updateUsrRptIdNoOfDsuseMgt(NimsApiDto.DsuseRptInfo dto);
 
 	NimsApiDto.DsuseRptInfo selectDsuseRptInfoByUsrRptIdNo(Map<String, String> map);
 	List<NimsApiDto.DsuseRptInfoDtl> selectDsuseRptInfoDtls(Map<String, String> map);
 
 
-	List<BizNimsResponse.DsuseRptInfoResponse> selectSavedDsuseMgts(List<String> dsuseMgtIds);
+	List<BizNimsResponse.DsuseRptInfoRes> selectSavedDsuseMgts(List<String> dsuseMgtIds);
 	// int insertDsuseMgtDtl(BizNimsRequest.DsuseMgtDtl dto);
 	// int updateCancelDsuseMgtDtl(BizNimsRequest.DsuseMgt dto);
 

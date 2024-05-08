@@ -1,5 +1,6 @@
 package cokr.xit.adds.biz.nims.model;
 
+import cokr.xit.adds.core.Constants;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -26,13 +27,13 @@ public class BizNimsResponse {
 	/**
 	 * 폐기관리정보 조회 response
 	 */
-	@Schema(name = "DsuseMgtResponse", description = "폐기관리정보 조회 response DTO")
+	@Schema(name = "DsuseMgtRes", description = "폐기관리정보 조회 response DTO")
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@SuperBuilder
 	@EqualsAndHashCode(callSuper = true)
-	public static class DsuseMgtResponse extends BizNimsRequest.DsuseMgt {
+	public static class DsuseMgtRes extends BizNimsRequest.DsuseMgt {
 
 		private String dsuseSeCdNm;
 		private String dsusePrvCdNm;
@@ -55,13 +56,13 @@ public class BizNimsResponse {
 	/**
 	 * 폐기관리정보 조회 response
 	 */
-	@Schema(name = "DsuseMgtDtlResponse", description = "폐기관리상세정보 조회 response DTO")
+	@Schema(name = "DsuseMgtDtlRes", description = "폐기관리상세정보 조회 response DTO")
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@SuperBuilder
 	@EqualsAndHashCode(callSuper = true)
-	public static class DsuseMgtDtlResponse extends BizNimsRequest.DsuseMgtDtl {
+	public static class DsuseMgtDtlRes extends BizNimsRequest.DsuseMgtDtl {
 
 		/**
 		 * 마약항정구분
@@ -94,13 +95,13 @@ public class BizNimsResponse {
 	/**
 	 * 폐기관리정보 조회 response
 	 */
-	@Schema(name = "DsuseRptInfoResponse", description = "폐기보고관리정보 조회 response DTO")
+	@Schema(name = "DsuseRptInfoRes", description = "폐기보고관리정보 조회 response DTO")
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@SuperBuilder
 	@EqualsAndHashCode(callSuper = true)
-	public static class DsuseRptInfoResponse extends NimsApiDto.DsuseRptInfo {
+	public static class DsuseRptInfoRes extends NimsApiDto.DsuseRptInfo {
 		private String dscdmngId;
 
 		private String userId;
@@ -109,8 +110,8 @@ public class BizNimsResponse {
 		 * <pre>
 		 * 진행상태
 		 *
-		 * 01-폐기보고 접수
-		 * 02-폐기보고 확인
+		 * 01-폐기신청서 접수
+		 * 02-폐기보고 매핑
 		 * 11-민원수령처리(전자결재)
 		 * 21-폐기결과통보서 작성
 		 * 22-폐기결과보고서 작성
@@ -119,7 +120,7 @@ public class BizNimsResponse {
 		 * 99-종료
 		 * </pre>
 		 */
-		private String prgrsSttsCd = "01";
+		private String prgrsSttsCd = Constants.PRGRS_STTS_CD.RECEIPT.getCode();
 
 		/**
 		 * <pre>

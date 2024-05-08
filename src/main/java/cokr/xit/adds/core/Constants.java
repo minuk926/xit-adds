@@ -181,6 +181,54 @@ public class Constants {
 
     /**
      * <pre>
+     * 폐기관리진행상태 - ADDS11
+     * 01-폐기신청서 접수
+     * 02-폐기보고 매핑
+     * 11-민원수령처리(전자결재)
+     * 21-폐기결과통보서 작성
+     * 22-폐기결과보고서 작성
+     * 31-기안 및 발송
+     * 41-폐기보고
+     * 99-종료
+     * </pre>
+     */
+    @Getter
+    public enum PRGRS_STTS_CD {
+        // 폐기보고신청서의 데이타 입력 생성 - 폐기관리 데이타 생성
+        RECEIPT("01", "폐기신청서접수"),
+        // 폐기보고 데이타 매핑 완료
+        MAPPING("02", "폐기보고매핑"),
+        ACCEPT("11", "민원수령처리(전자결재)"),
+        NOTICE_WRITE("21", "폐기결과통보서작성"),
+        REPORT_WRITE("22", "폐기결과보고서작성"),
+        DRAFT("31", "기안 및 발송"),
+        REPORT("41", "폐기보고"),
+        END("99", "종료")
+        ;
+
+        private final String code;
+        private final String nm;
+
+        PRGRS_STTS_CD(String code, String nm) {
+            this.code = code;
+            this.nm = nm;
+        }
+
+        public static String getName(final String code){
+            if(StringUtils.isEmpty(code)) return StringUtils.EMPTY;
+
+            return Arrays.stream(PRGRS_STTS_CD.values())
+                .filter(ssc -> ssc.getCode().equals(code))
+                .findFirst()
+                .map(PRGRS_STTS_CD::getNm)
+                .orElseThrow(() -> ApiCustomException.create(String.format("미 정의된 폐기 관리 진행 상태 코드[%s]", code)));
+            //return eNum.getNm();
+        }
+    }
+
+
+    /**
+     * <pre>
      * 이동 유형 코드 - ADDS06
      * 1102:폐기출고, 1170:폐기재고미차감
      * </pre>

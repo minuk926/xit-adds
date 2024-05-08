@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cokr.xit.adds.core.model.ApiBaseResponse;
 import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtl;
-import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlRequest;
+import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlReq;
 import cokr.xit.adds.inf.iros.model.IrosResponse;
 import cokr.xit.adds.inf.iros.service.InfIrosService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +39,7 @@ public class InfIrosController {
     @Operation(summary = "의약 제품 주성분 상세 정보 조회", description = "의약 제품 주성분 상세 정보 조회")
     @PostMapping("/getDrugPrdtMcpnDtls")
     public ApiBaseResponse<IrosResponse<DrugPrdtMcpnDtl>> getDrugPrdtMcpnDtls(
-        @RequestBody DrugPrdtMcpnDtlRequest dto
+        @RequestBody DrugPrdtMcpnDtlReq dto
     ) {
         return ApiBaseResponse.of(infIrosService.getDrugPrdtMcpnDtls(dto));
     }

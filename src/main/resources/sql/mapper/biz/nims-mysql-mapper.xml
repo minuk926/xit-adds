@@ -109,7 +109,7 @@
             mdfr = #{rgtr}
     </insert>
 
-    <select id="selectBsshInfos" parameterType="cokr.xit.adds.inf.nims.model.NimsApiRequest$BsshInfoRequest" resultType="cokr.xit.adds.inf.nims.model.NimsApiDto$BsshInfoSt">
+    <select id="selectBsshInfos" parameterType="cokr.xit.adds.inf.nims.model.NimsApiRequest$BsshInfoReq" resultType="cokr.xit.adds.inf.nims.model.NimsApiDto$BsshInfoSt">
         /** nims-mysql-mapper|selectBsshInfos-마약류취급자정보 조회|julim  */
         SELECT bssh_cd,        /* 마약류취급자식별번호 */
                bssh_nm,        /* 마약류취급자명 */
@@ -140,7 +140,7 @@
          </where>
     </select>
 
-    <select id="selectProductInfos" parameterType="cokr.xit.adds.inf.nims.model.NimsApiRequest$ProductInfoRequest" resultType="cokr.xit.adds.inf.nims.model.NimsApiDto$ProductInfoKd">
+    <select id="selectProductInfos" parameterType="cokr.xit.adds.inf.nims.model.NimsApiRequest$ProductInfoReq" resultType="cokr.xit.adds.inf.nims.model.NimsApiDto$ProductInfoKd">
         /** nims-mysql-mapper|selectProductInfo-상품 정보 조회|julim  */
         SELECT prduct_cd,              /* 제품코드 */
                prdlst_mst_cd,          /* 제품대표코드 */
@@ -254,13 +254,20 @@
         )
     </insert>
 
-    <select id="selectDsuseMgts" parameterType="java.util.List" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtResponse">
+    <select id="selectDsuseMgts" parameterType="java.util.List" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtRes">
         /** nims-mysql-mapper|selectDsuseMgts-폐기관리 목록 조회|julim  */
         <include refid="sqlDsuseMgt"/>
-         WHERE tdm.dscdmng_id IN
-        <foreach collection="dscdmngIds" item="item" separator="," open="(" close=")">
-            #{item}
-        </foreach>
+        <where>
+            <if test="dscdmngIds != null and dscdmngIds.size != 0">
+            AND dscdmng_id IN
+                <foreach collection="dscdmngIds" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="prgrsSttsCd != null and prgrsSttsCd != ''">
+            AND prgrs_stts_cd != #{prgrsSttsCd}
+            </if>
+        </where>
     </select>
 
     <sql id="sqlDsuseMgt">
@@ -288,7 +295,7 @@
             ON tdm.bssh_cd = tbi.bssh_cd
     </sql>
 
-    <select id="selectDsuseMgtDtls" parameterType="map" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtDtlResponse">
+    <select id="selectDsuseMgtDtls" parameterType="map" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtDtlRes">
         /** nims-mysql-mapper|selectDsuseMgtDtls-폐기관리 상세 목록 조회|julim  */
         SELECT tdmd.dscdmng_id,         /* 폐기관리ID */
                tdmd.dscdmng_sn,         /* 폐기관리일련번호 */
@@ -314,7 +321,7 @@
           FROM tb_dsuse_mgt_dtl tdmd
           LEFT JOIN tb_prduct_info tpi
             ON (tdmd.prduct_cd = tpi.prduct_cd)
-        --    AND tdrid.use_yn = 'Y')
+        --    AND tdmd.use_yn = 'Y')
           LEFT JOIN tb_bssh_info tbi
             ON (tpi.bssh_cd = tbi.bssh_cd)
          WHERE tdmd.dscdmng_id = #{dscdmngId}
@@ -331,6 +338,35 @@
            AND tdmd.usr_rpt_id_no = #{usrRptIdNo}
            </if>
     </select>
+
+
+    <update id="updateMappingDsuseMgt" parameterType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseMgtRes">
+        /** nims-mysql-mapper|updateMappingDsuseMgt-폐기관리 매핑정보 update|julim  */
+        UPDATE tb_dsuse_mgt
+           SET prgrs_stts_cd = #{prgrsSttsCd}
+             , usr_rpt_id_no = #{usrRptIdNo}
+             , org_usr_rpt_id_no = #{orgUsrRptIdNo}
+             , rpt_ty_cd = #{rptTyCd}
+             , stts = #{status}
+             , mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s')
+             , mdfr = #{rgtr}
+         WHERE dscdmng_id = #{dscdmngId}
+           AND use_yn = 'Y'
+    </update>
+
+
+    <!-- FIXME:: 미사용 예정 :: 삭제 -->
+    <update id="updateCancelDsuseMgt" parameterType="cokr.xit.adds.inf.nims.model.NimsApiDto$DsuseRptInfo">
+        /** nims-mysql-mapper|updateCancelDsuseMgt-폐기관리 취소(참조사용자식별번호로)|julim  */
+        UPDATE tb_dsuse_mgt
+        SET usr_rpt_id_no = #{usrRptIdNo}
+          , use_yn = IF(#{rptTyCd} = '1', 'N', use_yn)
+          , mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s')
+          , mdfr = #{rgtr}
+        WHERE usr_rpt_id_no = #{refUsrRptIdNo}
+          AND use_yn = 'Y'
+    </update>
+
     <!-- ========================== -->
     <!-- 폐기 관리 업무 테이블 end -->
     <!-- ========================== -->
@@ -501,17 +537,6 @@
            AND use_yn = 'Y'
     </update>
 
-    <update id="updateCancelDsuseMgt" parameterType="cokr.xit.adds.inf.nims.model.NimsApiDto$DsuseRptInfo">
-        /** nims-mysql-mapper|updateCancelDsuseMgt-폐기관리 취소(참조사용자식별번호로)|julim  */
-        UPDATE tb_dsuse_mgt
-           SET usr_rpt_id_no = #{usrRptIdNo}
-             , use_yn = IF(#{rptTyCd} = '1', 'N', use_yn)
-             , mdfcn_dt = DATE_FORMAT(now(), '%Y%m%d%H%i%s')
-             , mdfr = #{rgtr}
-         WHERE usr_rpt_id_no = #{refUsrRptIdNo}
-           AND use_yn = 'Y'
-    </update>
-
     <update id="updateCancelDsuseRptInfoDtl" parameterType="cokr.xit.adds.inf.nims.model.NimsApiDto$DsuseRptInfo">
         /** nims-mysql-mapper|updateCancelDsuseRptInfoDtl-폐기보고정보 상세 취소|julim  */
         UPDATE tb_dsuse_rpt_info_dtl
@@ -530,6 +555,9 @@
           FROM tb_dsuse_rpt_info
          WHERE usr_rpt_id_no = #{refUsrRptIdNo}
     </select>
+
+
+
     <!-- ============================= -->
     <!-- 폐기 보고 정보 업무 테이블 end -->
     <!-- ============================= -->
@@ -546,7 +574,7 @@
 
 
 
-    <select id="selectDsuseMgts2" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgtInq" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseRptInfoResponse">
+    <select id="selectDsuseMgts2" parameterType="cokr.xit.adds.biz.nims.model.BizNimsRequest$DsuseMgtInq" resultType="cokr.xit.adds.biz.nims.model.BizNimsResponse$DsuseRptInfoRes">
         /** nims-mysql-mapper|selectDsuseMgts-폐기관리목록 조회|julim  */
         <include refid="sqlDsuseRptInfoByDsuseMgt"/>
         WHERE tdm.dscdmng_id IN

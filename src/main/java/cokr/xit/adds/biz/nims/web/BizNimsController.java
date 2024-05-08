@@ -48,7 +48,7 @@ public class BizNimsController {
     @Operation(summary = "마약류 취급자 정보 조회(NIMS API)", description = "마약류 취급자 정보 조회<br><br>NIMS API 호출 결과를 DB에 저장후 결과 Return<br><br><strong>bi-사업자등록번호, hp-요양기관번호, bn-업체명, bc-취급자식별번호 중 하나는 필수<strong>")
     @PostMapping(value = "/getBsshInfoSt")
     public ApiBaseResponse<List<NimsApiDto.BsshInfoSt>> getBsshInfoSt(
-        @RequestBody @Validated NimsApiRequest.BsshInfoRequest dto
+        @RequestBody @Validated NimsApiRequest.BsshInfoReq dto
     ) {
         return ApiBaseResponse.of(bizNimsService.saveBsshInfoSt(dto));
     }
@@ -56,7 +56,7 @@ public class BizNimsController {
     @Operation(summary = "마약류 상품 정보 조회(NIMS API)", description = "마약류 상품정보 조회<br><br>NIMS API 호출 결과를 DB에 저장후 결과 Return")
     @PostMapping(value = "/getProductInfoKd")
     public ApiBaseResponse<List<NimsApiDto.ProductInfoKd>> getMnfSeqInfo(
-        @RequestBody @Validated NimsApiRequest.ProductInfoRequest dto
+        @RequestBody @Validated NimsApiRequest.ProductInfoReq dto
     ) {
         return ApiBaseResponse.of(bizNimsService.saveProductInfoKd(dto, false));
     }
@@ -64,7 +64,7 @@ public class BizNimsController {
     @Operation(summary = "마약류 상품 정보 & 제조번호 조회(NIMS API)", description = "마약류 상품정보 & 제조번호 조회<br><br>NIMS API 호출 결과를 DB에 저장후 결과 Return")
     @PostMapping(value = "/getProductInfoKdAndMnfSeqInfo")
     public ApiBaseResponse<List<NimsApiDto.ProductInfoKd>> getProductInfoKdAndMnfSeqInfo(
-        @RequestBody @Validated NimsApiRequest.ProductInfoRequest dto
+        @RequestBody @Validated NimsApiRequest.ProductInfoReq dto
     ) {
         return ApiBaseResponse.of(bizNimsService.saveProductInfoKd(dto, true));
     }
@@ -72,15 +72,15 @@ public class BizNimsController {
     @Operation(summary = "제조 일련 번호 정보 조회(NIMS API)", description = "제보 일련 번호 정보 조회<br><br>NIMS API 호출 결과 Return")
     @PostMapping(value = "/getMnfSeqInfo")
     public ApiBaseResponse<List<NimsApiDto.MnfSeqInfo>> getMnfSeqInfo(
-        @RequestBody @Validated NimsApiRequest.MnfSeqInfoRequest dto
+        @RequestBody @Validated NimsApiRequest.MnfSeqInfoReq dto
     ) {
         return ApiBaseResponse.of(bizNimsService.getMnfSeqInfo(dto));
     }
 
-    @Operation(summary = "업체 폐기 보고 정보 조회(NIMS API)", description = "업체 폐기 보고 정보 조회<br><br>NIMS API 호출 결과를 DB에 저장후 Return")
+    @Operation(summary = "폐기 보고 정보 목록 조회(NIMS API)", description = "업체의 폐기 보고 정보 목록 조회<br><br>NIMS API 호출 결과를 DB에 저장후 Return")
     @PostMapping("/getDsuseRptInfo")
     public ApiBaseResponse<List<NimsApiDto.DsuseRptInfo>> getDsuseRptInfo(
-        @RequestBody @Validated NimsApiRequest.DsuseRptInfoRequest dto
+        @RequestBody @Validated NimsApiRequest.DsuseRptInfoReq dto
     ) {
         return ApiBaseResponse.of(bizNimsService.saveDsuseRptInfo(dto));
     }
@@ -139,7 +139,7 @@ public class BizNimsController {
 
     @Operation(summary = "사고 마약류 폐기 관리 목록 조회", description = "사고 마약류 폐기 관리 목록 조회<br><br>사고마약류 관리대장, 결과통보서, 폐기현황등에 필요한 내용 조회")
     @PostMapping(value = "/getDsuseMgts")
-    public ApiBaseResponse<List<BizNimsResponse.DsuseMgtResponse>> getDsuseMgts(
+    public ApiBaseResponse<List<BizNimsResponse.DsuseMgtRes>> getDsuseMgts(
         @RequestBody BizNimsRequest.DsuseMgtInq dto
     ) {
         return ApiBaseResponse.of(bizNimsService.getDsuseMgts(dto));
@@ -153,46 +153,46 @@ public class BizNimsController {
 
 
 
-
-
-    @Operation(deprecated = true, summary = "사고 마약류 폐기 관리 생성", description = "사고 마약류 폐기 관리 생성<br><br>폐기관리 데이타 생성후 폐기보고 정보 return")
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = {
-        @Content(mediaType = "application/json", examples = {
-            @ExampleObject(value = """
-                [
-                    {
-                        "userId":"userid1",
-                        "usrRptIdNo":"22222",
-                        "orgUsrRptIdNo":"22222"
-                    },
-                    {
-                        "userId":"userid1",
-                        "usrRptIdNo":"44444",
-                        "orgUsrRptIdNo":"44444"
-                    },
-                    {
-                        "userId":"userid1",
-                        "usrRptIdNo":"77777",
-                        "orgUsrRptIdNo":"33333"
-                    }
-                ]
-                """)
-        })
-    })
-    @PostMapping("/saveDsuseMgts")
-    public ApiBaseResponse<List<BizNimsResponse.DsuseRptInfoResponse>> saveDsuseMgts(
-        @RequestBody List<BizNimsRequest.DsuseMgt> dtos
-    ) {
-        return ApiBaseResponse.of(bizNimsService.saveDsuseMgts(dtos));
-    }
-
     @Operation(deprecated = true, summary = "사고 마약류 폐기 관리 목록 조회", description = "사고 마약류 폐기 관리 목록 조회<br><br>사고마약류 관리대장, 결과통보서, 폐기현황등에 필요한 내용 조회")
     @PostMapping(value = "/getDsuseMgts2")
-    public ApiBaseResponse<List<BizNimsResponse.DsuseRptInfoResponse>> getDsuseMgts2(
+    public ApiBaseResponse<List<BizNimsResponse.DsuseRptInfoRes>> getDsuseMgts2(
         @RequestBody BizNimsRequest.DsuseMgtInq dto
     ) {
         return null; //ApiBaseResponse.of(bizNimsService.getDsuseMgts(dto));
     }
+
+    // @Operation(deprecated = true, summary = "사고 마약류 폐기 관리 생성", description = "사고 마약류 폐기 관리 생성<br><br>폐기관리 데이타 생성후 폐기보고 정보 return")
+    // @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = {
+    //     @Content(mediaType = "application/json", examples = {
+    //         @ExampleObject(value = """
+    //             [
+    //                 {
+    //                     "userId":"userid1",
+    //                     "usrRptIdNo":"22222",
+    //                     "orgUsrRptIdNo":"22222"
+    //                 },
+    //                 {
+    //                     "userId":"userid1",
+    //                     "usrRptIdNo":"44444",
+    //                     "orgUsrRptIdNo":"44444"
+    //                 },
+    //                 {
+    //                     "userId":"userid1",
+    //                     "usrRptIdNo":"77777",
+    //                     "orgUsrRptIdNo":"33333"
+    //                 }
+    //             ]
+    //             """)
+    //     })
+    // })
+    // @PostMapping("/saveDsuseMgts")
+    // public ApiBaseResponse<List<BizNimsResponse.DsuseRptInfoResponse>> saveDsuseMgts(
+    //     @RequestBody List<BizNimsRequest.DsuseMgt> dtos
+    // ) {
+    //     return ApiBaseResponse.of(bizNimsService.saveDsuseMgts(dtos));
+    // }
+
+
 
 
 

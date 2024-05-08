@@ -22,7 +22,7 @@ import cokr.xit.adds.core.util.ApiUtil;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import cokr.xit.adds.inf.nims.model.NimsApiDto.BsshInfoSt;
 import cokr.xit.adds.inf.nims.model.NimsApiRequest;
-import cokr.xit.adds.inf.nims.model.NimsApiRequest.BsshInfoRequest;
+import cokr.xit.adds.inf.nims.model.NimsApiRequest.BsshInfoReq;
 import cokr.xit.adds.inf.nims.model.NimsApiResult;
 import cokr.xit.adds.inf.nims.service.InfNimsService;
 import cokr.xit.foundation.component.AbstractServiceBean;
@@ -75,7 +75,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * </pre>
 	 */
 	@Override
-	public List<BsshInfoSt> saveBsshInfoSt(BsshInfoRequest dto) {
+	public List<BsshInfoSt> saveBsshInfoSt(BsshInfoReq dto) {
 		if(!isEmpty(dto.getBn()) && dto.getBn().length() < 3) {
 			throw ApiCustomException.create("업체[사업자]명은 3자 이상 으로 조회해 주세요");
 		}
@@ -120,7 +120,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * </pre>
 	 */
 	@Override
-	public List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoRequest dto, boolean isMnfSeqInfo) {
+	public List<NimsApiDto.ProductInfoKd> saveProductInfoKd(NimsApiRequest.ProductInfoReq dto, boolean isMnfSeqInfo) {
 		if(isEmpty(dto.getP()) && isEmpty(dto.getPn())){
 			throw ApiCustomException.create("상품번호 또는 상품명은 필수 입니다");
 		}
@@ -161,7 +161,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	}
 
 	@Override
-	public List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoRequest dto) {
+	public List<NimsApiDto.MnfSeqInfo> getMnfSeqInfo(NimsApiRequest.MnfSeqInfoReq dto) {
 		NimsApiResult.Response<NimsApiDto.MnfSeqInfo> response = infNimsService.getMnfSeqInfo(dto);
 
 		List<NimsApiDto.MnfSeqInfo> results = response.getResultOrThrow();
@@ -203,7 +203,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * </pre>
 	 */
 	@Override
-	public List<NimsApiDto.DsuseRptInfo> saveDsuseRptInfo(NimsApiRequest.DsuseRptInfoRequest reqDto) {
+	public List<NimsApiDto.DsuseRptInfo> saveDsuseRptInfo(NimsApiRequest.DsuseRptInfoReq reqDto) {
 		List<NimsApiDto.DsuseRptInfo> rsltList = new ArrayList<>();
 
 		while(true) {
@@ -217,6 +217,29 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 			if(rslt.isEndYn()) break;
 			reqDto.setPg(String.valueOf(Integer.parseInt(reqDto.getPg()) + 1));
 		}
+
+		// TODO: 보고관리-보고정보 매핑 처리
+		// 미완료(종료)된 폐기 관리 목록 조회
+		List<BizNimsResponse.DsuseMgtRes> dsuseMgts = getDsuseMgts(BizNimsRequest.DsuseMgtInq.builder()
+			.prgrsSttsCd(Constants.PRGRS_STTS_CD.END.getCode())
+			.build());
+
+		//////////////////////////////////////////////////////////////////////////////
+		// FIXME : 테스트를 위한 코드
+		//////////////////////////////////////////////////////////////////////////////
+		// for (NimsApiDto.DsuseRptInfo dto : rsltList) {
+		// 	// 폐기 관리 데이타 매핑
+		// 	for(BizNimsResponse.DsuseMgtResponse mgtDto: dsuseMgts){
+		// 		// 폐기 신청서 접수 상태 데이타만 처리
+		// 		if(Constants.PRGRS_STTS_CD.RECEIPT.getCode().equals(mgtDto.getPrgrsSttsCd())){
+		// 			dto.mappingDsuseRptInfo(mgtDto);
+		// 		};
+		// 	}
+		// }
+		// if(true)	return null;
+		//////////////////////////////////////////////////////////////////////////////
+
+
 		// 0. 조회(저장)한 데이타 대상 에서 제외 (usrRptIdNo가 DB에 저장된 경우)
 		List<NimsApiDto.DsuseRptInfo> list = new ArrayList<>();
 		for (NimsApiDto.DsuseRptInfo dto : rsltList) {
@@ -235,8 +258,20 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 			// 신규가 아닌 경우 skip
 			if(!"0".equals(dto.getRptTyCd())) continue;
 
+			// 폐기 보고 정보 데이타 생성
 			createDsuseRpt(dto, true);
+
+			// FIXME : 폐기 관리 데이타 매핑
+			List<BizNimsResponse.DsuseMgtRes> newList = dto.mappingNewDsuseRptInfo(dsuseMgts);
+			if(newList.size() > 1){
+				throw ApiCustomException.create("폐기 관리 데이타 매핑 오류[폐기 관리 데이타 중복]");
+			}
+			if(bizNimsMapper.updateMappingDsuseMgt(newList.get(0)) == 1){
+				throw ApiCustomException.create("폐기 관리 데이타 매핑 오류[폐기 관리 데이타 매핑 실패]");
+			};
 		}
+
+
 
 		// 2. 신규 외의 경우(rptTyCd : 1 - 취소, 2 - 변경)
 		String errMsg = null;
@@ -261,6 +296,15 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 			// 2-3. tb_dsuse_rpt_info, tb_dsuse_rpt_info_dtl 생성 (취소인 경우는 tb_dsuse_rpt_info의 사용 여부 'N'으로 생성)
 			createDsuseRpt(dto, false);
+
+			// FIXME : 폐기 관리 데이타 매핑
+			List<BizNimsResponse.DsuseMgtRes> newList = dto.mappingDsuseRptInfo(dsuseMgts);
+			if(newList.size() > 1){
+				throw ApiCustomException.create("폐기 관리 데이타 매핑 오류[폐기 관리 데이타 중복]");
+			}
+			if(bizNimsMapper.updateMappingDsuseMgt(newList.get(0)) == 1){
+				throw ApiCustomException.create("폐기 관리 데이타 매핑 오류[폐기 관리 데이타 매핑 실패]");
+			};
 		}
 
 
@@ -273,6 +317,14 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	//------------------------------------------------------------------------------------------------------
 	// NIMS BIZ
 	//------------------------------------------------------------------------------------------------------
+
+	/**
+	 * <pre>
+	 *     사고마약류폐기관리 생성
+	 * @param dto BizNimsRequest.DsuseMgt
+	 * @return BizNimsRequest.DsuseMgt 생성된 폐기관리 정보
+	 * </pre>
+	 */
 	public BizNimsRequest.DsuseMgt saveDsuseMgt(BizNimsRequest.DsuseMgt dto) {
 		ApiUtil.validate(dto, null, validator);
 		if(dto.getRndDtlRptCnt() != dto.getDsuseMgtDtls().size()) throw ApiCustomException.create("폐기물 보고수 오류[폐기물 갯수 확인]");
@@ -293,11 +345,18 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return dto;
 	}
 
+	/**
+	 * <pre>
+	 *     폐기 관리 목록 조회
+	 * @param dto BizNimsRequest.DsuseMgtInq
+	 * @return List<BizNimsResponse.DsuseMgtResponse> 조회된 폐기 관리 목록
+	 * </pre>
+	 */
 	@Override
-	public List<BizNimsResponse.DsuseMgtResponse> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto) {
-		List<BizNimsResponse.DsuseMgtResponse> resList = bizNimsMapper.selectDsuseMgts(dto);
+	public List<BizNimsResponse.DsuseMgtRes> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto) {
+		List<BizNimsResponse.DsuseMgtRes> resList = bizNimsMapper.selectDsuseMgts(dto);
 
-		for (BizNimsResponse.DsuseMgtResponse r : resList) {
+		for (BizNimsResponse.DsuseMgtRes r : resList) {
 			r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
 			r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
 			r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
@@ -305,7 +364,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 			Map<String, String> map = new HashMap<>();
 			map.put("dscdmngId", r.getDscdmngId());
-			List<BizNimsResponse.DsuseMgtDtlResponse> dsuseRptInfoDtls = bizNimsMapper.selectDsuseMgtDtls(map);
+			List<BizNimsResponse.DsuseMgtDtlRes> dsuseRptInfoDtls = bizNimsMapper.selectDsuseMgtDtls(map);
 			setDsuseMgtDtlAddProductInfo(dsuseRptInfoDtls);
 			r.getDsuseMgtDtls().addAll(dsuseRptInfoDtls);
 		}
@@ -317,33 +376,32 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
 	/**
 	 * <pre>
-	 * 폐기관리정보 저장
-	 *
+	 *    폐기관리정보 저장
 	 * @param dtos List<BizNimsRequest.DsuseMgt>
-	 * @return List<BizNimsResponse.DsuseMgtResponse>
+	 * @return List<BizNimsResponse.DsuseRptInfoResponse>
 	 * </pre>
 	 */
-	@Deprecated
-	@Override
-	public List<BizNimsResponse.DsuseRptInfoResponse> saveDsuseMgts(List<BizNimsRequest.DsuseMgt> dtos) {
-		for (BizNimsRequest.DsuseMgt dto : dtos) {
-			ApiUtil.validate(dto, null, validator);
-		}
-
-		final List<String> dscdmngIds = new ArrayList<>();
-		for (BizNimsRequest.DsuseMgt dto : dtos) {
-			dto.setRgtr(Constants.NIMS_API_USER_ID);
-
-			bizNimsMapper.insertDsuseMgt(dto);
-			dscdmngIds.add(dto.getDscdmngId());
-		}
-		List<BizNimsResponse.DsuseRptInfoResponse> resList = bizNimsMapper.selectSavedDsuseMgts(dscdmngIds);
-
-		// 마약류취급업체의 허가번호(prmisnNo), 대표자명(rprsntvNm) set
-		setAddBsshInfo(resList);
-
-		return resList;
-	}
+	// @Deprecated
+	// @Override
+	// public List<BizNimsResponse.DsuseRptInfoResponse> saveDsuseMgts(List<BizNimsRequest.DsuseMgt> dtos) {
+	// 	for (BizNimsRequest.DsuseMgt dto : dtos) {
+	// 		ApiUtil.validate(dto, null, validator);
+	// 	}
+	//
+	// 	final List<String> dscdmngIds = new ArrayList<>();
+	// 	for (BizNimsRequest.DsuseMgt dto : dtos) {
+	// 		dto.setRgtr(Constants.NIMS_API_USER_ID);
+	//
+	// 		bizNimsMapper.insertDsuseMgt(dto);
+	// 		dscdmngIds.add(dto.getDscdmngId());
+	// 	}
+	// 	List<BizNimsResponse.DsuseRptInfoResponse> resList = bizNimsMapper.selectSavedDsuseMgts(dscdmngIds);
+	//
+	// 	// 마약류취급업체의 허가번호(prmisnNo), 대표자명(rprsntvNm) set
+	// 	setAddBsshInfo(resList);
+	//
+	// 	return resList;
+	// }
 
 
 	//------------------------------------------------------------------------------------------------------
@@ -357,15 +415,15 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * @param dtlList <NimsApiDto.DsuseRptInfoDtl>
 	 * </pre>
 	 */
-	private void setDsuseMgtDtlAddProductInfo(List<BizNimsResponse.DsuseMgtDtlResponse> dtlList) {
+	private void setDsuseMgtDtlAddProductInfo(List<BizNimsResponse.DsuseMgtDtlRes> dtlList) {
 
-		for (BizNimsResponse.DsuseMgtDtlResponse r : dtlList) {//if()
+		for (BizNimsResponse.DsuseMgtDtlRes r : dtlList) {//if()
 			// 마약항정구분(nrcdSeNm), 중점일반구분(prtmSenm)
 			if (isEmpty(r.getNrcdSeNm()) || isEmpty(r.getPrtmSeNm())) {
 				//NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(
 
 				List<NimsApiDto.ProductInfoKd> list = saveProductInfoKd(
-					NimsApiRequest.ProductInfoRequest.builder()
+					NimsApiRequest.ProductInfoReq.builder()
 						.fg("1")
 						.pg("1")
 						.p(r.getPrductCd())
@@ -386,7 +444,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 			// 제조수입자명(bsshNm)
 			if (isEmpty(r.getBsshNm()) && !isEmpty(r.getBsshCd())) {
 				List<BsshInfoSt> list = saveBsshInfoSt(
-					BsshInfoRequest.builder()
+					BsshInfoReq.builder()
 						.fg("1")
 						.pg("1")
 						.bc(r.getBsshCd())
@@ -419,13 +477,14 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		else errMsg = "변경";
 
 		if (bizNimsMapper.updateCancelDsuseRptInfo(dto) == 1) {
+			// TODO : 폐기 관리 테이블에 사용자보고식별번호 반영
 			// tb_dsuse_mgt
 			// 조건 : 사용자보고식별번호 = 참조사용자보고식별번호
 			//      => usr_rpt_id_no -> refUsrRptIdNo update
 			//      => 취소인 경우 use_yn = 'N' update
-			if(bizNimsMapper.updateCancelDsuseMgt(dto) == 0){
-				throw ApiCustomException.create("폐기보고정보 변경 적용 실패\n[폐기관리테이블에 사용자보고식별번호 = 참조사용자보고식별번호에 해당하는 데이타 미존재]");
-			}
+			// if(bizNimsMapper.updateCancelDsuseMgt(dto) == 0){
+			// 	throw ApiCustomException.create("폐기보고정보 변경 적용 실패\n[폐기관리테이블에 사용자보고식별번호 = 참조사용자보고식별번호에 해당하는 데이타 미존재]");
+			// }
 
 			int cnt = bizNimsMapper.updateCancelDsuseRptInfoDtl(dto);
 			if(cnt == 0) throw ApiCustomException.create(String.format("폐기 정보 상세 %s 실패", errMsg));
@@ -461,6 +520,9 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		dto.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(dto.getDsusePrvCd()));
 		dto.setDsuseMthCdNm(Constants.DSUSE_MTH_CD.getName(dto.getDsuseMthCd()));
 
+		// TODO : 폐기 관리 테이블에 사용자보고식별번호 반영
+		// 원 사용자 식별 번호 set - 변경/취소 인 경우
+		// 신규인 경우는 사용자보고식별번호로 설정
 		if(!isNew){
 
 			String refUsrRptIdNo = dto.getRefUsrRptIdNo();
@@ -485,10 +547,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		}
 
 
-		//취소인 경우 상세 데이타 등록 skip
-		//if("1".equals(dto.getRptTyCd()))	return;
-
-
+		// TODO : 폐기 관리 테이블에 사용자보고식별번호 반영
 		if (bizNimsMapper.insertDsuseRptInfo(dto) == 1) {
 
 			//취소인 경우 상세 데이타 등록 skip
@@ -513,8 +572,8 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 	 * @param resList List<BizNimsResponse.DsuseMgtResponse>
 	 * </pre>
 	 */
-	private void setAddBsshInfo(List<BizNimsResponse.DsuseRptInfoResponse> resList) {
-        for (BizNimsResponse.DsuseRptInfoResponse r : resList) {
+	private void setAddBsshInfo(List<BizNimsResponse.DsuseRptInfoRes> resList) {
+        for (BizNimsResponse.DsuseRptInfoRes r : resList) {
             r.setRptTyCdNm(Constants.RPT_TY_CD.getName(r.getRptTyCd()));
             r.setDsuseSeCdNm(Constants.DSUSE_SE_CD.getName(r.getDsuseSeCd()));
             r.setDsusePrvCdNm(Constants.DSUSE_PRV_CD.getName(r.getDsusePrvCd()));
@@ -522,7 +581,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 
             if (isEmpty(r.getPrmisnNo())) {
                 List<BsshInfoSt> list = saveBsshInfoSt(
-                    BsshInfoRequest.builder()
+                    BsshInfoReq.builder()
                         .fg("1")
                         .pg("1")
                         .bc(r.getBsshCd())
@@ -555,7 +614,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
                 //NimsApiResult.Response<NimsApiDto.ProductInfoKd> result = infNimsService.getProductInfoKd(
 
                 List<NimsApiDto.ProductInfoKd> list = saveProductInfoKd(
-                    NimsApiRequest.ProductInfoRequest.builder()
+                    NimsApiRequest.ProductInfoReq.builder()
                         .fg("1")
                         .pg("1")
                         .p(r.getPrductCd())
@@ -576,7 +635,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 			// 제조수입자명(bsshNm)
 			if (isEmpty(r.getBsshNm()) && !isEmpty(r.getBsshCd())) {
 				List<BsshInfoSt> list = saveBsshInfoSt(
-					BsshInfoRequest.builder()
+					BsshInfoReq.builder()
 						.fg("1")
 						.pg("1")
 						.bc(r.getBsshCd())
@@ -607,7 +666,7 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
                 productCd = d.getPrductCd();
 
                 List<NimsApiDto.MnfSeqInfo> mnfList = getMnfSeqInfo(
-                    NimsApiRequest.MnfSeqInfoRequest.builder()
+                    NimsApiRequest.MnfSeqInfoReq.builder()
                         .fg("1")
                         .pg("1")
                         .p(d.getPrductCd())

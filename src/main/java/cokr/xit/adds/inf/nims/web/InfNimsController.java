@@ -39,7 +39,7 @@ public class InfNimsController {
 	@Operation(summary = "마약류 취급자 정보 조회", description = "마약류 취급자 정보 조회")
 	@PostMapping("/getBsshInfoSt")
 	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.BsshInfoSt>> getBsshInfoSt(
-		@RequestBody NimsApiRequest.BsshInfoRequest dto
+		@RequestBody NimsApiRequest.BsshInfoReq dto
 	) {
 		return ApiBaseResponse.of(infNimsService.getBsshInfoSt(dto));
 	}
@@ -47,7 +47,7 @@ public class InfNimsController {
 	@Operation(summary = "마약류 상품 정보 조회", description = "마약류 상품정보 조회")
 	@PostMapping("/getProductInfoKd")
 	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.ProductInfoKd>> getProductInfoKd(
-		@RequestBody NimsApiRequest.ProductInfoRequest dto
+		@RequestBody NimsApiRequest.ProductInfoReq dto
 	) {
 		return ApiBaseResponse.of(infNimsService.getProductInfoKd(dto));
 	}
@@ -55,7 +55,7 @@ public class InfNimsController {
 	@Operation(summary = "제조 일련 번호 정보 조회", description = "제조 일련 번호 정보 조회")
 	@PostMapping("/getMnfSeqInfo")
 	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.MnfSeqInfo>> getMnfSeqInfo(
-		@RequestBody NimsApiRequest.MnfSeqInfoRequest dto
+		@RequestBody NimsApiRequest.MnfSeqInfoReq dto
 	) {
 		return ApiBaseResponse.of(infNimsService.getMnfSeqInfo(dto));
 	}
@@ -79,7 +79,7 @@ public class InfNimsController {
 	@Operation(summary = "폐기 보고 정보 조회", description = "폐기 보고 정보 조회")
 	@PostMapping("/getDsuseRptInfo")
 	public ApiBaseResponse<NimsApiResult.Response<NimsApiDto.DsuseRptInfo>> getDsuseRptInfo(
-		@RequestBody NimsApiRequest.DsuseRptInfoRequest dto
+		@RequestBody NimsApiRequest.DsuseRptInfoReq dto
 	) {
 		return ApiBaseResponse.of(infNimsService.getDsuseRptInfo(dto));
 	}

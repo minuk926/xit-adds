@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import cokr.xit.adds.biz.iros.service.BizIrosService;
 import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtl;
-import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlRequest;
+import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlReq;
 import cokr.xit.adds.inf.iros.model.IrosResponse;
 import cokr.xit.adds.inf.iros.service.InfIrosService;
 import cokr.xit.foundation.component.AbstractServiceBean;
@@ -34,7 +34,7 @@ public class BizIrosServiceBean extends AbstractServiceBean implements BizIrosSe
     private final InfIrosService infIrosService;
 
     @Override
-    public List<DrugPrdtMcpnDtl> getDrugPrdtMcpnDtls(DrugPrdtMcpnDtlRequest dto) {
+    public List<DrugPrdtMcpnDtl> getDrugPrdtMcpnDtls(DrugPrdtMcpnDtlReq dto) {
         IrosResponse<DrugPrdtMcpnDtl> rslt = infIrosService.getDrugPrdtMcpnDtls(dto);
 
         return rslt.getResultOrThrow();

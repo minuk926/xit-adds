@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import cokr.xit.adds.core.util.ApiUtil;
 import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtl;
-import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlRequest;
+import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlReq;
 import cokr.xit.adds.inf.iros.model.IrosResponse;
 import cokr.xit.adds.inf.iros.service.InfIrosService;
 import cokr.xit.foundation.component.AbstractServiceBean;
@@ -53,7 +53,7 @@ public class InfIrosServiceBean extends AbstractServiceBean implements InfIrosSe
     private String drugPrdtMcpnDtlInq;
 
     @Override
-    public IrosResponse<DrugPrdtMcpnDtl> getDrugPrdtMcpnDtls(DrugPrdtMcpnDtlRequest dto) {
+    public IrosResponse<DrugPrdtMcpnDtl> getDrugPrdtMcpnDtls(DrugPrdtMcpnDtlReq dto) {
         dto.setServiceKey(irosApiKey);
         ApiUtil.validate(dto, null, validator);
 

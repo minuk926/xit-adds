@@ -11,6 +11,7 @@ import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import cokr.xit.adds.core.Constants;
 import cokr.xit.adds.core.model.AuditDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -83,8 +84,8 @@ public class BizNimsRequest {
 		 * <pre>
 		 * 진행상태
 		 *
-		 * 01-폐기보고 접수
-		 * 02-폐기보고 확인
+		 * 01-폐기신청서 접수
+		 * 02-폐기보고 매핑
 		 * 11-민원수령처리(전자결재)
 		 * 21-폐기결과통보서 작성
 		 * 22-폐기결과보고서 작성
@@ -93,9 +94,9 @@ public class BizNimsRequest {
 		 * 99-종료
 		 * </pre>
 		 */
-		@Schema(requiredMode = REQUIRED, title = "진행 상태 코드", example = " ", allowableValues = {"01", "02", "11", "22", "31", "41", "99"})
+		@Schema(requiredMode = REQUIRED, title = "진행 상태 코드", example = " ", allowableValues = {"01", "02", "11", "21", "22", "31", "41", "99"})
 		@Pattern(regexp = "01|02|11|22|31|41|99", message = "진행 상태 코드는 필수 입니다")
-		private String prgrsSttsCd = "01";
+		private String prgrsSttsCd = Constants.PRGRS_STTS_CD.RECEIPT.getCode();
 	}
 
 	/**
@@ -125,8 +126,8 @@ public class BizNimsRequest {
 		 * <pre>
 		 * 진행상태
 		 *
-		 * 01-폐기보고 접수
-		 * 02-폐기보고 확인
+		 * 01-폐기신청서 접수
+		 * 02-폐기보고 매핑
 		 * 11-민원수령처리(전자결재)
 		 * 21-폐기결과통보서 작성
 		 * 22-폐기결과보고서 작성
@@ -135,7 +136,7 @@ public class BizNimsRequest {
 		 * 99-종료
 		 * </pre>
 		 */
-		private String prgrsSttsCd = "01";
+		private String prgrsSttsCd = Constants.PRGRS_STTS_CD.RECEIPT.getCode();
 
 		/**
 		 * 마약류취급자식별번호
@@ -270,6 +271,14 @@ public class BizNimsRequest {
 		private String usrRptIdNo;
 		// 사용자_보고_라인_식별_번호
 		private String usrRptLnIdNo;
+
+		/**
+		 * <pre>
+		 *     폐기관리상세와 폐기보고정보 상세의 폐기 정보(상품) 유효성 체크
+		 *     -> 일치하는 경우 "Y"
+		 * </pre>
+		 */
+		private String validYn;
 	}
 
 	/**
@@ -291,10 +300,10 @@ public class BizNimsRequest {
 
 		/**
 		 * <pre>
-		 * 진행상태
+		 * 폐기관리진행상태
 		 *
-		 * 01-폐기보고 접수
-		 * 02-폐기보고 확인
+		 * 01-폐기신청서 접수
+		 * 02-폐기보고 매핑
 		 * 11-민원수령처리(전자결재)
 		 * 21-폐기결과통보서 작성
 		 * 22-폐기결과보고서 작성
@@ -303,8 +312,8 @@ public class BizNimsRequest {
 		 * 99-종료
 		 * </pre>
 		 */
-		@Schema(requiredMode = REQUIRED, title = "진행 상태 코드", example = " ", allowableValues = {"01", "02", "11", "22", "31", "41", "99"})
-		private String prgrsSttsCd = "01";
+		@Schema(requiredMode = REQUIRED, title = "진행 상태 코드", example = " ", allowableValues = {"01", "02", "11", "21", "22", "31", "41", "99"})
+		private String prgrsSttsCd = Constants.PRGRS_STTS_CD.RECEIPT.getCode();
 	}
 	/**
 	 * 마약류 폐기 관리 상세 request

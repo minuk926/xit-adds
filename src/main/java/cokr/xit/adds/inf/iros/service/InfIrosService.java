@@ -1,7 +1,7 @@
 package cokr.xit.adds.inf.iros.service;
 
 import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtl;
-import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlRequest;
+import cokr.xit.adds.inf.iros.model.DrugPrdtMcpnDtlReq;
 import cokr.xit.adds.inf.iros.model.IrosResponse;
 
 /**
@@ -20,5 +20,5 @@ import cokr.xit.adds.inf.iros.model.IrosResponse;
  * </pre>
  */
 public interface InfIrosService {
-    IrosResponse<DrugPrdtMcpnDtl> getDrugPrdtMcpnDtls(DrugPrdtMcpnDtlRequest dto);
+    IrosResponse<DrugPrdtMcpnDtl> getDrugPrdtMcpnDtls(DrugPrdtMcpnDtlReq dto);
 }
