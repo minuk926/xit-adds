@@ -65,36 +65,36 @@ public class ExchangeDtoTest {
                <TO_ADMINISTRATIVE_SYSTEM>
                  <DOCNUM docnumcode="1310000012699"><![CDATA[고도화팀-2699]]></DOCNUM>
                  <SANCTION_INFO status="완료">
-                 <LINES>
-                   <LINE>
-                     <LEVEL>1</LEVEL>
-                     <SANCTION result="상신" type="기안">
-                       <PERSON>
-                         <USERID>hongkildong</USERID>
-                         <NAME>홍길동</NAME>
-                         <POSITION>전산주사</POSITION>
-                         <DEPT><![CDATA[고도화팀]]></DEPT>
-                         <ORG><![CDATA[행정안전부]]></ORG>
-                       </PERSON>
-                       <COMMENT><![CDATA[보고자 의견입니다.]]></COMMENT>
-                       <DATE>2007-01-25 14:45:34</DATE>
-                     </SANCTION>
-                   </LINE>
-                   <LINE>
-                     <LEVEL>final</LEVEL>
-                     <SANCTION result="결재" type="결재">
-                       <PERSON>
-                         <USERID>parkchulsoo</USERID>
-                         <NAME>박철수</NAME>
-                         <POSITION>팀장</POSITION>
-                         <DEPT><![CDATA[고도화팀]]></DEPT>
-                         <ORG><![CDATA[행정안전부]]></ORG>
-                       </PERSON>
-                       <COMMENT><![CDATA[결재완료 의견입니다.]]></COMMENT>
-                       <DATE>2007-01-25 14:45:34</DATE>
-                     </SANCTION>
-                   </LINE>
-                 </LINES>
+                     <LINES>
+                       <LINE>
+                         <LEVEL>1</LEVEL>
+                         <SANCTION result="상신" type="기안">
+                           <PERSON>
+                             <USERID>hongkildong</USERID>
+                             <NAME>홍길동</NAME>
+                             <POSITION>전산주사</POSITION>
+                             <DEPT><![CDATA[고도화팀]]></DEPT>
+                             <ORG><![CDATA[행정안전부]]></ORG>
+                           </PERSON>
+                           <COMMENT><![CDATA[보고자 의견입니다.]]></COMMENT>
+                           <DATE>2007-01-25 14:45:34</DATE>
+                         </SANCTION>
+                       </LINE>
+                       <LINE>
+                         <LEVEL>final</LEVEL>
+                         <SANCTION result="결재" type="결재">
+                           <PERSON>
+                             <USERID>parkchulsoo</USERID>
+                             <NAME>박철수</NAME>
+                             <POSITION>팀장</POSITION>
+                             <DEPT><![CDATA[고도화팀]]></DEPT>
+                             <ORG><![CDATA[행정안전부]]></ORG>
+                           </PERSON>
+                           <COMMENT><![CDATA[결재완료 의견입니다.]]></COMMENT>
+                           <DATE>2007-01-25 14:45:34</DATE>
+                         </SANCTION>
+                       </LINE>
+                     </LINES>
                  </SANCTION_INFO>
                  <MODIFICATION_FLAG>
                    <MODIFIABLE modifyflag="no"/>
@@ -152,12 +152,12 @@ public class ExchangeDtoTest {
             <!DOCTYPE EXCHANGE SYSTEM "exchange.dtd">
             """;
         // FIXME: 파일명 생성
-        try (FileWriter w = new FileWriter("exchange_exchange_1.xml")) {
+        try (FileWriter w = new FileWriter("exchange.xml")) {
             XMLStreamWriter sw = factory.createXMLStreamWriter(w);
             sw.writeStartDocument("EUC-KR", "1.0");
             sw.writeDTD("\n"+dtd);
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            //mapper.writeValue(sw, dto);
+            mapper.writeValue(sw, dto);
 
 
 
@@ -190,19 +190,82 @@ public class ExchangeDtoTest {
             .administrativeNum("APP20060000000004075")
             .build();
 
-        ExchangeDto.Direction direction = ExchangeDto.Direction.builder()
-            .toDocumentSystem(
-                ExchangeDto.ToDocumentSystem.builder()
-                    .notification("all")
-                    .modificationFlag(
-                        ExchangeDto.ModificationFlag.builder()
-                            .modifiable(
-                                ExchangeDto.Modifiable.builder()
-                                    .modifyflag("yes")
-                                    .build())
+
+        ExchangeDto.Docnum docnum = ExchangeCommon.Docnum.builder()
+            .docnumcode("1310000012699")
+            .value("고도화팀-2699")
+            .build();
+
+        ExchangeCommon.Line line1 = ExchangeCommon.Line.builder()
+            .level("1")
+            .sanction(
+                ExchangeCommon.Sanction.builder()
+                    .result("상신")
+                    .type("기안")
+                    .person(
+                        ExchangeCommon.Person.builder()
+                            .userid("hongkildong")
+                            .name("홍길동")
+                            .position("전산주사")
+                            .dept("고도화팀")
+                            .org("행정안전부")
                             .build())
-                    .build()
-            )
+                    .comment("보고자 의견입니다.")
+                    .date("2007-01-25 14:45:34")
+                    .build())
+            .build();
+        ExchangeCommon.Line line2 = ExchangeCommon.Line.builder()
+            .level("1")
+            .sanction(
+                ExchangeCommon.Sanction.builder()
+                    .result("상신")
+                    .type("기안")
+                    .person(
+                        ExchangeCommon.Person.builder()
+                            .userid("hongkildong1")
+                            .name("홍길동1")
+                            .position("전산주사1")
+                            .dept("고도화팀1")
+                            .org("행정안전부1")
+                            .build())
+                    .comment("보고자 의견입니다1.")
+                    .date("2007-01-25 14:45:34")
+                    .build())
+            .build();
+
+
+        ExchangeDto.ToAdministrativeSystem administrativeSystem = ExchangeDto.ToAdministrativeSystem.builder()
+            .docnum(docnum)
+            .sanctionInfo(
+                ExchangeDto.SanctionInfo.builder()
+                    .status("완료")
+                    .lines(ExchangeDto.Lines.builder()
+                            .line(List.of(line1, line2))
+                            .build())
+                    .build())
+            .modificationFlag(
+                ExchangeDto.ModificationFlag.builder()
+                    .modifiable(
+                        ExchangeDto.Modifiable.builder()
+                            .modifyflag("no")
+                            .build())
+                    .build())
+            .build();
+
+        ExchangeDto.Direction direction = ExchangeDto.Direction.builder()
+            // .toDocumentSystem(
+            //     ExchangeDto.ToDocumentSystem.builder()
+            //         .notification("all")
+            //         .modificationFlag(
+            //             ExchangeDto.ModificationFlag.builder()
+            //                 .modifiable(
+            //                     ExchangeDto.Modifiable.builder()
+            //                         .modifyflag("yes")
+            //                         .build())
+            //                 .build())
+            //         .build()
+            // )
+            .toAdministrativeSystem(administrativeSystem)
             .build();
 
         ExchangeDto.Header header = ExchangeDto.Header.builder()

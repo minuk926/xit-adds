@@ -40,8 +40,8 @@ public class PackDtoTest {
         <?xml version='1.1' encoding='UTF-8'?>
         <pack filename="filename">
           <header>
-            <type doc-type="docType"/>
-            <date>2024-03-14</date>
+            <doc-type>send</doc-type>
+            <date>20241231</date>
             <sender>sender</sender>
             <receiver>receiver</receiver>
             <sender_userid>senderUserid</sender_userid>
@@ -74,9 +74,20 @@ public class PackDtoTest {
         // xmlMapper.writeValue(System.out, dto);
 
         XML xml = new XML();
+        // Consumer<XmlMapper> configurer = xmlMapper -> {
+        //     // 필수 필드 체크를 활성화
+        //     xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
+        // };
+        // xml.configure(configurer);
         PackDto dto = xml.parse(packXml, new TypeReference<PackDto>() {});
         log.info("dto: {}", dto);
         xml.write(System.out, dto, true);
+
+        // XmlMapper xmlMapper = new XmlMapper();
+        // xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
+        // PackDto dto = xmlMapper.readValue(packXml, PackDto.class);
+        // System.out.println("Generated XML:");
+        // xmlMapper.writeValue(System.out, dto);
     }
 
     @DisplayName("전자결재 pack xml write 테스트")
@@ -96,8 +107,18 @@ public class PackDtoTest {
         // FIXME: 파일명 생성
         try (FileOutputStream fos = new FileOutputStream("pack.xml");) {
             XML xml = new XML();
+            //dto.configureXmlMapper(xml.getXmlMapper());
             xml.write(fos, dto, true);
-            fos.flush();
+            xml.write(System.out, dto, true);
+
+
+            // XmlMapper xmlMapper = new XmlMapper();
+            // dto.configureXmlMapper(xmlMapper);
+            // //xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
+            // String str = xmlMapper.writeValueAsString(dto);
+            // System.out.println("Generated XML:");
+            // System.out.println(str);
+            //fos.flush();
 
         }catch (Exception e) {
             e.printStackTrace();
@@ -108,9 +129,9 @@ public class PackDtoTest {
 
         PackDto.Header header = PackDto.Header.builder()
             .type(PackDto.Type.builder()
-                .docType("docType")
-                .build())
-            .date("2024-03-14")
+                 .docType("send")
+                 .build())
+            .date("20241231")
             .sender("sender")
             .receiver("receiver")
             .senderUserid("senderUserid")

@@ -10,8 +10,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
 import jakarta.xml.bind.annotation.XmlValue;
-import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -286,7 +284,6 @@ public class ExchangepackDto {
          * </pre>
          */
         @JacksonXmlProperty(localName = "modify", isAttribute = true)
-        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         @Builder.Default
         protected String modify = "non";
     }

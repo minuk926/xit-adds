@@ -5,14 +5,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
 import jakarta.xml.bind.annotation.XmlValue;
-import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -107,7 +106,6 @@ public class PackDto {
          */
         @JacksonXmlProperty(localName = "doc-type", isAttribute = true)
         @JsonProperty(required = true)
-        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         protected String docType;
     }
 
@@ -153,5 +151,10 @@ public class PackDto {
 
         @JacksonXmlProperty(localName = "charset", isAttribute = true)
         protected String charset;
+    }
+
+    public void configureXmlMapper(XmlMapper xmlMapper) {
+        // 필수 필드 체크를 활성화
+        xmlMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
     }
 }

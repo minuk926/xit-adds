@@ -35,3 +35,4 @@ build/
 ### h2db ###
 *.mv.db
 *exchange*.xml
+pack.xml

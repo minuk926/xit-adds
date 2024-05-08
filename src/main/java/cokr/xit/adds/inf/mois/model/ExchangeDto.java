@@ -1,6 +1,7 @@
 package cokr.xit.adds.inf.mois.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
@@ -33,6 +34,7 @@ public class ExchangeDto extends ExchangeCommon {
     private Header header;
 
     @JacksonXmlProperty(localName =  "BODY")
+    @JacksonXmlCData
     private String body;
 
     @JacksonXmlProperty(localName =  "ATTACHMENTS")
@@ -53,6 +55,12 @@ public class ExchangeDto extends ExchangeCommon {
         private Addenda addenda;
     }
 
+    /**
+     * <pre>
+     * ToDocumentSystem | ToAdministrativeSystem
+     * or 관계 - 둘중 하나만 사용 되어야 한다
+     * </pre>
+     */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NoArgsConstructor
     @AllArgsConstructor
@@ -62,7 +70,7 @@ public class ExchangeDto extends ExchangeCommon {
         private ToDocumentSystem toDocumentSystem;
 
         @JacksonXmlProperty(localName =  "TO_ADMINISTRATIVE_SYSTEM")
-        private ExchangeMisDto.ToAdministrativeSystem toAdministrativeSystem;
+        private ToAdministrativeSystem toAdministrativeSystem;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -70,8 +78,12 @@ public class ExchangeDto extends ExchangeCommon {
     @AllArgsConstructor
     @Builder
     public static class ToDocumentSystem {
+        /**
+         * all | final
+         */
         @JacksonXmlProperty(isAttribute = true, localName = "notification")
-        String notification;
+        @Builder.Default
+        String notification = "all";
 
         @JacksonXmlProperty(localName =  "LINES")
         private Lines lines;

@@ -3,6 +3,7 @@ package cokr.xit.adds.inf.mois.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
@@ -42,6 +43,7 @@ public class ExchangeCommon {
         private Receiver receiver;
 
         @JacksonXmlProperty(localName = "TITLE")
+        @JacksonXmlCData
         private String title;
 
         @JacksonXmlProperty(localName = "CREATED_DATE")
@@ -96,6 +98,7 @@ public class ExchangeCommon {
 
         @XmlValue
         @JacksonXmlText
+        @JacksonXmlCData
         private String value;
     }
 
@@ -104,6 +107,9 @@ public class ExchangeCommon {
     @AllArgsConstructor
     @Builder
     public static class SanctionInfo {
+        /**
+         * 진행| 완료
+         */
         @JacksonXmlProperty(localName = "status", isAttribute = true)
         private String status;
 
@@ -138,9 +144,19 @@ public class ExchangeCommon {
     @AllArgsConstructor
     @Builder
     public static class Sanction {
+        /**
+         * <pre>
+         *     상신 | 기안취소 | 승인 | 반려 | 미결
+         * </pre>
+         */
         @JacksonXmlProperty(localName = "result", isAttribute = true)
         private String result;
 
+        /**
+         * <pre>
+         *     기안 | 검토 | 협조 | 전결 | 대결 | 결재
+         * </pre>
+         */
         @JacksonXmlProperty(localName = "type", isAttribute = true)
         private String type;
 
@@ -148,6 +164,7 @@ public class ExchangeCommon {
         private Person person;
 
         @JacksonXmlProperty(localName = "COMMENT")
+        @JacksonXmlCData
         private String comment;
 
         @JacksonXmlProperty(localName = "DATE")
@@ -169,9 +186,11 @@ public class ExchangeCommon {
         private String position;
 
         @JacksonXmlProperty(localName = "DEPT")
+        @JacksonXmlCData
         private String dept;
 
         @JacksonXmlProperty(localName = "ORG")
+        @JacksonXmlCData
         private String org;
     }
 
@@ -192,8 +211,12 @@ public class ExchangeCommon {
     @AllArgsConstructor
     @Builder
     public static class Modifiable {
+        /**
+         * yes | no
+         */
         @JacksonXmlProperty(localName = "modifyflag", isAttribute = true)
-        private String modifyflag;
+        @Builder.Default
+        private String modifyflag = "no";
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -218,6 +241,7 @@ public class ExchangeCommon {
 
         @XmlValue
         @JacksonXmlText
+        @JacksonXmlCData
         private String value;
     }
 
@@ -283,6 +307,7 @@ public class ExchangeCommon {
 
         @XmlValue
         @JacksonXmlText
+        @JacksonXmlCData
         private String value;
     }
 }
