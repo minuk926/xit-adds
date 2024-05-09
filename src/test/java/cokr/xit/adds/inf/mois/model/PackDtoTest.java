@@ -1,20 +1,36 @@
 package cokr.xit.adds.inf.mois.model;
 
-import java.io.FileOutputStream;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.Base64Utils;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
+import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import cokr.xit.foundation.data.XML;
 import lombok.extern.slf4j.Slf4j;
 
@@ -79,9 +95,19 @@ public class PackDtoTest {
         //     xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
         // };
         // xml.configure(configurer);
-        PackDto dto = xml.parse(packXml, new TypeReference<PackDto>() {});
+        FileInputStream fileInputStream = new FileInputStream("pack.xml");
+        byte[] bytes = fileInputStream.readAllBytes();
+        String content = new String(bytes);
+
+        PackDto dto = xml.parse(content, new TypeReference<PackDto>() {});
         log.info("dto: {}", dto);
         xml.write(System.out, dto, true);
+
+        assertEquals("senderOrgname", new String(Base64Utils.decodeFromString(dto.getHeader().getSenderOrgname())));
+        assertEquals("senderSystemname", new String(Base64Utils.decodeFromString(dto.getHeader().getSenderSystemname())));
+        assertEquals("filename", new String(Base64Utils.decodeFromString(dto.getContents().getContent().get(0).getFilename())));
+        assertEquals("content-value", new String(Base64Utils.decodeFromString(dto.getContents().getContent().get(0).getValue())));
+
 
         // XmlMapper xmlMapper = new XmlMapper();
         // xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
@@ -102,27 +128,53 @@ public class PackDtoTest {
         XMLOutputFactory factory = mapper.getFactory().getXMLOutputFactory();
 
         String dtd = """
-            <!DOCTYPE EXCHANGE SYSTEM "exchange.dtd">
+            <!DOCTYPE pack SYSTEM "pack.dtd">
             """;
-        // FIXME: 파일명 생성
-        try (FileOutputStream fos = new FileOutputStream("pack.xml");) {
-            XML xml = new XML();
-            //dto.configureXmlMapper(xml.getXmlMapper());
-            xml.write(fos, dto, true);
-            xml.write(System.out, dto, true);
+        try (FileWriter w = new FileWriter("pack.xml")) {
+            XMLStreamWriter sw = factory.createXMLStreamWriter(w);
+            sw.writeStartDocument("EUC-KR", "1.0");
+            sw.writeDTD("\n"+dtd);
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            mapper.writeValue(sw, dto);
 
+            // StringWriter swr = new StringWriter();
+            // mapper.writeValue(swr, dto);
+            // System.out.println(swr.toString());
 
-            // XmlMapper xmlMapper = new XmlMapper();
-            // dto.configureXmlMapper(xmlMapper);
-            // //xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
-            // String str = xmlMapper.writeValueAsString(dto);
-            // System.out.println("Generated XML:");
-            // System.out.println(str);
-            //fos.flush();
+            // FileInputStream fileInputStream = new FileInputStream("pack.xml");
+            // byte[] bytes = fileInputStream.readAllBytes();
+            // String content = new String(bytes);
+            // System.out.println(content);
 
-        }catch (Exception e) {
+            // PackDto rtnDto = toObjByXml(content, PackDto.class);
+            //
+            // StringWriter swr = new StringWriter();
+            // mapper.writeValue(swr, content);
+            //System.out.println(swr.toString());
+
+        }catch (XMLStreamException e) {
             e.printStackTrace();
         }
+
+
+
+        // FIXME: 파일명 생성
+        // try (FileOutputStream fos = new FileOutputStream("pack.xml");) {
+        //     XML xml = new XML();
+        //     //dto.configureXmlMapper(xml.getXmlMapper());
+        //     xml.write(fos, dto, true);
+        //     xml.write(System.out, dto, true);
+        //     // XmlMapper xmlMapper = new XmlMapper();
+        //     // dto.configureXmlMapper(xmlMapper);
+        //     // //xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
+        //     // String str = xmlMapper.writeValueAsString(dto);
+        //     // System.out.println("Generated XML:");
+        //     // System.out.println(str);
+        //     //fos.flush();
+        //
+        // }catch (Exception e) {
+        //     e.printStackTrace();
+        // }
     }
 
     private static PackDto getPackDto() {
@@ -146,6 +198,7 @@ public class PackDtoTest {
             .contentRole("contentRole")
             .contentType("constentType")
             .charset("utf8")
+            .filename("filename")
             .value("content-value")
             .build();
 
@@ -159,5 +212,18 @@ public class PackDtoTest {
 
 
         return packDto;
+    }
+
+    private static <T> T toObjByXml(String xml, final Class<T> cls){
+        ObjectMapper OM = new ObjectMapper();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = null;
+        try {
+            builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new InputSource(new StringReader(xml)));
+            return new XML().parse(xml, cls);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw ApiCustomException.create(e.getMessage());
+        }
     }
 }

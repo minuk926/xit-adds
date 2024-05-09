@@ -1,7 +1,7 @@
 package cokr.xit.adds.inf.mois.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
@@ -31,10 +31,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ExchangeDto extends ExchangeCommon {
     @JacksonXmlProperty(localName =  "HEADER")
+    @JsonProperty(required = true)
     private Header header;
 
     @JacksonXmlProperty(localName =  "BODY")
-    @JacksonXmlCData
     private String body;
 
     @JacksonXmlProperty(localName =  "ATTACHMENTS")
@@ -46,9 +46,11 @@ public class ExchangeDto extends ExchangeCommon {
     @Builder
     public static class Header {
         @JacksonXmlProperty(localName = "COMMON")
+        @JsonProperty(required = true)
         private Common common;
 
         @JacksonXmlProperty(localName = "DIRECTION")
+        @JsonProperty(required = true)
         private Direction direction;
 
         @JacksonXmlProperty(localName =  "ADDENDA")
@@ -82,6 +84,7 @@ public class ExchangeDto extends ExchangeCommon {
          * all | final
          */
         @JacksonXmlProperty(isAttribute = true, localName = "notification")
+        @JsonProperty(required = true)
         @Builder.Default
         String notification = "all";
 
@@ -89,6 +92,7 @@ public class ExchangeDto extends ExchangeCommon {
         private Lines lines;
 
         @JacksonXmlProperty(localName =  "MODIFICATION_FLAG")
+        @JsonProperty(required = true)
         private ModificationFlag modificationFlag;
     }
 
@@ -98,12 +102,15 @@ public class ExchangeDto extends ExchangeCommon {
     @Builder
     public static class ToAdministrativeSystem {
         @JacksonXmlProperty(localName = "DOCNUM")
+        @JsonProperty(required = true)
         private Docnum docnum;
 
         @JacksonXmlProperty(localName = "SANCTION_INFO")
+        @JsonProperty(required = true)
         private SanctionInfo sanctionInfo;
 
         @JacksonXmlProperty(localName = "MODIFICATION_FLAG")
+        @JsonProperty(required = true)
         private ModificationFlag modificationFlag;
     }
 }

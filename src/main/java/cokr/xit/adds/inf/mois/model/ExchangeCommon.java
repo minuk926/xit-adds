@@ -3,6 +3,7 @@ package cokr.xit.adds.inf.mois.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -37,22 +38,27 @@ public class ExchangeCommon {
     @Builder
     public static class Common {
         @JacksonXmlProperty(localName = "SENDER")
+        @JsonProperty(required = true)
         private Sender sender;
 
         @JacksonXmlProperty(localName = "RECEIVER")
+        @JsonProperty(required = true)
         private Receiver receiver;
 
         @JacksonXmlProperty(localName = "TITLE")
-        @JacksonXmlCData
+        @JsonProperty(required = true)
         private String title;
 
         @JacksonXmlProperty(localName = "CREATED_DATE")
+        @JsonProperty(required = true)
         private String createdDate;
 
         @JacksonXmlProperty(localName = "ATTACHNUM")
+        @JsonProperty(required = true)
         private int attachnum;
 
         @JacksonXmlProperty(localName = "ADMINISTRATIVE_NUM")
+        @JsonProperty(required = true)
         private String administrativeNum;
     }
 
@@ -62,9 +68,11 @@ public class ExchangeCommon {
     @Builder
     public static class Sender {
         @JacksonXmlProperty(localName = "SERVERID")
+        @JsonProperty(required = true)
         private String serverid;
 
         @JacksonXmlProperty(localName = "USERID")
+        @JsonProperty(required = true)
         private String userid;
 
         @JacksonXmlProperty(localName = "EMAIL")
@@ -77,16 +85,16 @@ public class ExchangeCommon {
     @Builder
     public static class Receiver {
         @JacksonXmlProperty(localName = "SERVERID")
+        @JsonProperty(required = true)
         private String serverid;
 
         @JacksonXmlProperty(localName = "USERID")
+        @JsonProperty(required = true)
         private String userid;
 
         @JacksonXmlProperty(localName = "EMAIL")
         private String email;
     }
-
-
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NoArgsConstructor
@@ -94,11 +102,12 @@ public class ExchangeCommon {
     @Builder
     public static class Docnum {
         @JacksonXmlProperty(localName = "docnumcode", isAttribute = true)
+        @JsonProperty(required = true)
+        @JacksonXmlCData
         private String docnumcode;
 
         @XmlValue
         @JacksonXmlText
-        @JacksonXmlCData
         private String value;
     }
 
@@ -111,9 +120,11 @@ public class ExchangeCommon {
          * 진행| 완료
          */
         @JacksonXmlProperty(localName = "status", isAttribute = true)
+        @JsonProperty(required = true)
         private String status;
 
         @JacksonXmlProperty(localName = "LINES")
+        @JsonProperty(required = true)
         private Lines lines;
     }
 
@@ -124,6 +135,7 @@ public class ExchangeCommon {
     public static class Lines {
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "LINE")
+        @JsonProperty(required = true)
         private List<Line> line;
     }
 
@@ -133,9 +145,11 @@ public class ExchangeCommon {
     @Builder
     public static class Line {
         @JacksonXmlProperty(localName = "LEVEL")
+        @JsonProperty(required = true)
         private String level;
 
         @JacksonXmlProperty(localName = "SANCTION")
+        @JsonProperty(required = true)
         private Sanction sanction;
     }
 
@@ -150,6 +164,7 @@ public class ExchangeCommon {
          * </pre>
          */
         @JacksonXmlProperty(localName = "result", isAttribute = true)
+        @JsonProperty(required = true)
         private String result;
 
         /**
@@ -158,16 +173,18 @@ public class ExchangeCommon {
          * </pre>
          */
         @JacksonXmlProperty(localName = "type", isAttribute = true)
+        @JsonProperty(required = true)
         private String type;
 
         @JacksonXmlProperty(localName = "PERSON")
+        @JsonProperty(required = true)
         private Person person;
 
         @JacksonXmlProperty(localName = "COMMENT")
-        @JacksonXmlCData
         private String comment;
 
         @JacksonXmlProperty(localName = "DATE")
+        @JsonProperty(required = true)
         private String date;
     }
 
@@ -177,20 +194,23 @@ public class ExchangeCommon {
     @Builder
     public static class Person {
         @JacksonXmlProperty(localName = "USERID")
+        @JsonProperty(required = true)
         private String userid;
 
         @JacksonXmlProperty(localName = "NAME")
+        @JsonProperty(required = true)
         private String name;
 
         @JacksonXmlProperty(localName = "POSITION")
+        @JsonProperty(required = true)
         private String position;
 
         @JacksonXmlProperty(localName = "DEPT")
-        @JacksonXmlCData
+        @JsonProperty(required = true)
         private String dept;
 
         @JacksonXmlProperty(localName = "ORG")
-        @JacksonXmlCData
+        @JsonProperty(required = true)
         private String org;
     }
 
@@ -200,6 +220,7 @@ public class ExchangeCommon {
     @Builder
     public static class ModificationFlag {
         @JacksonXmlProperty(localName = "MODIFIABLE")
+        @JsonProperty(required = true)
         private Modifiable modifiable;
 
         @JacksonXmlProperty(localName = "MODIFIED")
@@ -215,6 +236,7 @@ public class ExchangeCommon {
          * yes | no
          */
         @JacksonXmlProperty(localName = "modifyflag", isAttribute = true)
+        @JsonProperty(required = true)
         @Builder.Default
         private String modifyflag = "no";
     }
@@ -234,14 +256,17 @@ public class ExchangeCommon {
     @Builder
     public static class Addendum {
         @JacksonXmlProperty(localName = "comment", isAttribute = true)
+        @JsonProperty(required = true)
+        @JacksonXmlCData
         private String comment;
 
         @JacksonXmlProperty(localName = "name", isAttribute = true)
+        @JsonProperty(required = true)
+        @JacksonXmlCData
         private String name;
 
         @XmlValue
         @JacksonXmlText
-        @JacksonXmlCData
         private String value;
     }
 
@@ -255,6 +280,7 @@ public class ExchangeCommon {
 
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "ATTACHMENT")
+        @JsonProperty(required = true)
         private List<Attachment> attachment;
     }
 
@@ -276,10 +302,19 @@ public class ExchangeCommon {
     @Builder
     public static class XMLFile {
         @JacksonXmlProperty(localName = "filename", isAttribute = true)
-        String filename;
+        @JsonProperty(required = true)
+        @JacksonXmlCData
+        private String filename;
 
         @JacksonXmlProperty(localName = "desc", isAttribute = true)
-        String desc;
+        @JsonProperty(required = true)
+        @JacksonXmlCData
+        private String desc;
+
+        @XmlValue
+        @JacksonXmlText
+        @JsonProperty(required = true)
+        private String value;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -288,10 +323,19 @@ public class ExchangeCommon {
     @Builder
     public static class XSLFile {
         @JacksonXmlProperty(localName = "filename", isAttribute = true)
-        String filename;
+        @JsonProperty(required = true)
+        @JacksonXmlCData
+        private String filename;
 
         @JacksonXmlProperty(localName = "desc", isAttribute = true)
-        String desc;
+        @JsonProperty(required = true)
+        @JacksonXmlCData
+        private String desc;
+
+        @XmlValue
+        @JacksonXmlText
+        @JsonProperty(required = true)
+        private String value;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -300,14 +344,18 @@ public class ExchangeCommon {
     @Builder
     public static class Attachment {
         @JacksonXmlProperty(localName = "filename", isAttribute = true)
+        @JsonProperty(required = true)
+        @JacksonXmlCData
         private String filename;
 
         @JacksonXmlProperty(localName = "desc", isAttribute = true)
+        @JsonProperty(required = true)
+        @JacksonXmlCData
         private String desc;
 
         @XmlValue
         @JacksonXmlText
-        @JacksonXmlCData
+        @JsonProperty(required = true)
         private String value;
     }
 }
