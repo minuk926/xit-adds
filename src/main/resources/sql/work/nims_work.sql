@@ -133,3 +133,16 @@ WITH RECURSIVE temp (
 from temp
 order by temp.path;
 
+
+SELECT user_acnt AS id
+           , user_nm AS name
+           , passwd AS password
+           , rsdnt_no AS ihidnum
+           , eml_adrs AS email
+           , 'USR' AS userSe
+           , org_id AS orgnzt_id
+           , user_id AS esntl_id
+      FROM tb_user
+      WHERE user_acnt = 'admin'
+      -- AND passwd = ?
+      AND stts = 'P'
