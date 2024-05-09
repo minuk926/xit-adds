@@ -159,8 +159,6 @@ public class ExchangeDtoTest {
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.writeValue(sw, dto);
 
-
-
             StringWriter swr = new StringWriter();
             mapper.writeValue(swr, dto);
             System.out.println(swr.toString());

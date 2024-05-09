@@ -25,13 +25,13 @@ public class SpringDocsConfig {
     private int SERVER_PORT;
     @Value("${server.http:0}")
     private int HTTP_PORT;
-    @Value("${app.swagger-url:}")
+    @Value("${app.swagger.url:}")
     private String swaggerUrl;
 
     @Bean
     public OpenAPI openAPI(
         @Value("${springdoc.version:v1}") String version,
-        @Value("${app.desc:}") String desc,
+        @Value("${app.swagger.desc:}") String desc,
         @Value("${spring.application.name}") String name,
         @Value("${spring.profiles.active}") String active) {
 

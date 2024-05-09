@@ -35,10 +35,13 @@ spring:
     hikari:
       driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy #org.mariadb.jdbc.Driver
       #driver-class-name: org.mariadb.jdbc.Driver
-      jdbc-url: jdbc:log4jdbc:mariadb://211.119.124.9:4407/adds?useUnicode=true&characterEncoding=utf-8&rewriteBatchedStatements=true&autoReconnect=true
       #jdbc-url: jdbc:mariadb://211.119.124.9:4407/egov?useUnicode=true&characterEncoding=utf-8&rewriteBatchedStatements=true&autoReconnect=true
-      username: addsweb
-      password: addsweb1234
+      #      jdbc-url: jdbc:log4jdbc:mariadb://211.119.124.9:4407/adds?useUnicode=true&characterEncoding=utf-8&rewriteBatchedStatements=true&autoReconnect=true
+      #      username: addsweb
+      #      password: addsweb1234
+      jdbc-url: ENC(O26qFSqrfqMEjEU6jHUqrboYIPpTnwDIHIYQg2ddL0k7VsGvDbAMd/SwDeXjan17CykVLz3Qe++xW+VqxvQpT7/+Kxhl2ry1hTElOPxRHp6OrN/8GyhaScLCcBZgpxNcEAZ3a5qWJKIyLR/+KFk6YpW77lD10jFJvscNNYvFoWQIs/K5eAa/m3JnktX9Ed2RN8ttGgBET5g=)
+      username: ENC(M4g3XkH/bzupKW2w4WYH3Q==)
+      password: ENC(fzV0zekJQ7t/QHiz75k+xqdsDUWW6+MY)
       auto-commit: false
   #      read-only: false
 
@@ -149,6 +152,9 @@ spring:
 #      read-only: false
 
 app:
+  swagger:
+    url:
+    desc: 사고마약류폐기지원시스템
   log:
     parameter-enabled: true
     response-enabled: true
