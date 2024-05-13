@@ -1,17 +1,24 @@
 package cokr.xit.adds.biz.nims.web;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.google.zxing.NotFoundException;
 
 import cokr.xit.adds.biz.nims.model.BizNimsRequest;
 import cokr.xit.adds.biz.nims.model.BizNimsResponse;
 import cokr.xit.adds.biz.nims.service.BizNimsService;
 import cokr.xit.adds.core.model.ApiBaseResponse;
+import cokr.xit.adds.core.util.XingUtils;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import cokr.xit.adds.inf.nims.model.NimsApiRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -146,8 +153,33 @@ public class BizNimsController {
     }
 
 
+    @Operation(summary = "barcode string 제품 제조 정보 조회", description = "barcode string 제품 제조 정보 조회<br><br>Barcode를 통한 제품 제조 정보 조회<br><br>ex) 01088065780457311717050110A1234210000000006")
+    @GetMapping(value = "/getPrdMnfSeqInfoOfBarcode")
+    public ApiBaseResponse<NimsApiDto.ProductInfoKd> getPrdMnfSeqInfoOfBarcode(
+        final String barcodeStr
+    ) {
+        return ApiBaseResponse.of(bizNimsService.getPrdMnfSeqInfoOfBarcode(barcodeStr));
+    }
 
+    @Operation(summary = "barcode 이미지 제품 제조 정보 조회", description = "barcode 이미지 제품 제조 정보 조회<br><br>barcode 이미지를 통한 제품 제조 정보 조회")
+    @PostMapping(value = "/getProductInfoByQrcodeImg", consumes = { "multipart/form-data" })
+    //@PostMapping(value = "/api/biz/nims/v1/getQrcode")
+    public ApiBaseResponse<List<NimsApiDto.ProductInfoKd>> getProductInfoByQrcodeImg(
+        @RequestParam("uploadFiles")
+        final List<MultipartFile> multipartFiles
+    ) {
+        List<NimsApiDto.ProductInfoKd> list = multipartFiles.stream().map(mf -> {
+            //System.out.println(mf.getOriginalFilename());
+            //System.out.println(mf.getSize());
+            try {
+                return bizNimsService.getPrdMnfSeqInfoOfBarcode(XingUtils.readQrcodeFromFile(XingUtils.convert(mf)));
+            } catch (IOException | NotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }).toList();
 
+        return ApiBaseResponse.of(list);
+    }
 
 
 

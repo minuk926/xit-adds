@@ -61,8 +61,9 @@ public interface BizNimsService {
 	BizNimsRequest.DsuseMgt saveDsuseMgt(BizNimsRequest.DsuseMgt dto);
 	List<BizNimsResponse.DsuseMgtRes> getDsuseMgts(BizNimsRequest.DsuseMgtInq dto);
 
+	NimsApiDto.ProductInfoKd getPrdMnfSeqInfoOfBarcode(final String barcodeStr);
 
-	// @Deprecated
+    // @Deprecated
 	// List<BizNimsResponse.DsuseRptInfoResponse> saveDsuseMgts(List<BizNimsRequest.DsuseMgt> dtos);
 
 

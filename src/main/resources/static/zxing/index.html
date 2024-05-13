@@ -169,7 +169,7 @@
 
                         document.getElementById('result').textContent = ''
                         requestSubmit({
-                            url: '/biz/nims/v1/getQrcode',
+                            url: '/api/biz/nims/v1/getProductInfoByQrcodeImg',
                             method: 'POST',
                             data: formData,
                             progress: () => {

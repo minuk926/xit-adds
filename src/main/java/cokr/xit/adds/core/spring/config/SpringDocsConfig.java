@@ -95,7 +95,8 @@ public class SpringDocsConfig {
             .group("2. BIZ API interface")
             .pathsToMatch(
                 "/api/biz/nims/**",
-                "/api/biz/iros/**"
+                "/api/biz/iros/**",
+                "/api/biz/mois/**"
             )
             .build();
     }
@@ -106,7 +107,8 @@ public class SpringDocsConfig {
             .group("3. Interface API")
             .pathsToMatch(
                 "/api/inf/nims/**",
-                "/api/inf/iros/**"
+                "/api/inf/iros/**",
+                "/api/inf/mois/**"
             )
             .build();
     }

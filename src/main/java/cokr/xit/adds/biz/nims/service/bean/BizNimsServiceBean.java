@@ -372,7 +372,25 @@ public class BizNimsServiceBean extends AbstractServiceBean implements BizNimsSe
 		return resList;
 	}
 
+	@Override
+	public NimsApiDto.ProductInfoKd getPrdMnfSeqInfoOfBarcode(final String barcodeStr) {
+		NimsApiDto.MnfSeqInfo mnfSeqInfo = new BizNimsResponse.Barcode().parseBarcode(barcodeStr);
 
+		NimsApiRequest.ProductInfoReq prdReq = NimsApiRequest.ProductInfoReq.builder()
+			.fg("1")
+			.pg("1")
+			.p(mnfSeqInfo.getPrductCd())
+			.dbSkipYn("N")
+			.build();
+		List<NimsApiDto.ProductInfoKd> productInfoKds = saveProductInfoKd(prdReq, false);
+		if(productInfoKds.size() != 1) {
+			throw ApiCustomException.create(String.format("제품정보 오류[Barcode 상품[%s] 데이타 확인이 필요 합니다.]", mnfSeqInfo.getPrductCd()));
+		}
+		mnfSeqInfo.setPrductNm(productInfoKds.get(0).getPrductNm());
+		productInfoKds.get(0).getMnfSeqInfos().add(mnfSeqInfo);
+
+		return productInfoKds.get(0);
+	}
 
 	/**
 	 * <pre>
