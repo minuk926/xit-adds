@@ -1,9 +1,13 @@
 package cokr.xit.adds.biz.nims.model;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import cokr.xit.adds.core.Constants;
 import cokr.xit.adds.inf.nims.model.NimsApiDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -147,5 +151,170 @@ public class BizNimsResponse {
 		//  * </pre>
 		//  */
 		// private String prtmSeNm;
+	}
+
+	/**
+	 * <pre>
+	 * Barcode(GS1-128) 조회 response
+	 * 최소 30자리 이상
+	 * AI상품식별코드(2) + 상품코드(14) + AI최대유통일자(2) + 유통일자(6) + AI로트번호(2) + 제조번호(1) + AI일련번호(2) + 제품일련번호(1)
+	 * -> 상품코드(확장코드(1) + 상품코드(13)), 제조번호(1), 제품일련번호(1) 은 필수로 포함한다는 가정
+	 * </pre>
+	 */
+	@Schema(name = "Barcode", description = "Barcode response DTO")
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public static class Barcode {
+		/**
+		 * <pre>
+		 * GS1-128 barcode - 01 : AI상품식별코드
+		 * 2자리 : 01
+		 * </pre>
+		 */
+		@Builder.Default
+		private String gsId = "01";
+
+		/**
+		 * <pre>
+		 * GS1-128 상품코드
+		 * 14자리 - 확장코드(0) + 상품코드(13)
+		 * </pre>
+		 */
+		private String gsPrductCd;
+
+		/**
+		 * <pre>
+		 * GS1-128 확장코드
+		 * 1자리 - 확장코드(0)
+		 * </pre>
+		 */
+		@Builder.Default
+		private String gsPrductExtCd = "0";
+
+		/**
+		 * <pre>
+		 * AI최대유통일자
+		 * 2자리 : 17
+		 * </pre>
+		 */
+		@Builder.Default
+		private String gsDistributionDel = "17";
+
+		/**
+		 * <pre>
+		 * 유통일자 : YYMMDD
+		 * 6자리
+		 * </pre>
+		 */
+		private String gsDistributionDate;
+
+		/**
+		 * <pre>
+		 * AI로트번호
+		 * 2자리 - 10
+		 * </pre>
+		 */
+		@Builder.Default
+		private String gsAiLotNo = "10";
+
+		/**
+		 * <pre>
+		 * 제조번호(제품의 생산라인 제조번호)
+		 * 20자 이하
+		 * AI로트번호(10) 이후 ~ AI일련번호(21) 이전
+		 * </pre>
+		 */
+		private String gsMnfNo;
+
+		/**
+		 * <pre>
+		 * AI일련번호
+		 * 2자리 - 21
+		 * </pre>
+		 */
+		@Builder.Default
+		private String gsAiSerialNo = "21";
+
+		/**
+		 * <pre>
+		 * 제품일련번호
+		 * AI일련번호 이후 20자 이하
+		 * </pre>
+		 */
+		private String gsMnfSeqNo;
+
+		/**
+		 * <pre>
+		 * 바코드 reader 사용시 - Barcode(GS1-128) 정보 파싱
+		 * 상품코드, 제조번호, 유효기간, 제조일련번호
+		 *
+		 * @param barcodeStr
+		 * @return NimsApiDto.MnfSeqInfo
+		 * </pre>
+		 */
+		public NimsApiDto.MnfSeqInfo parseBarcode(final String barcodeStr){
+			NimsApiDto.MnfSeqInfo mnfSeqInfo = new NimsApiDto.MnfSeqInfo();
+
+			if(barcodeStr.length() < 30){
+				throw new IllegalArgumentException("Barcode는 최소 30자리 이상이어야 합니다.");
+			}
+			// AI상품식별코드(01)로 시작
+			if(barcodeStr.startsWith(this.gsId) == false){
+				throw new IllegalArgumentException("Barcode(GS1-128)는 AI상품식별코드(01)로 시작 되어야 합니다.");
+			}
+			String barcode = barcodeStr.substring(barcodeStr.indexOf(this.gsId)+this.gsId.length());
+
+			// 상품코드(확장코드(0) + 상품코드(13))
+			String temp = barcode.substring(0, 14);
+			String regx = "^0(\\d{13})";
+			Pattern pattern = Pattern.compile(regx);
+			Matcher matcher = pattern.matcher(temp);
+			if(matcher.find()) {
+				//this.gsPrductCd = matcher.group(1);
+				mnfSeqInfo.setPrductCd(matcher.group(1));
+			}else{
+				throw new IllegalArgumentException("Barcode(GS1-128) 상품코드는 확장코드(0) + 상품코드(13)로 구성되어야 합니다.");
+			}
+			barcode = barcode.substring(14);
+
+			// 유통일자 : AI최대유통일자(17) + 6자리 유통일자
+			temp = barcode.substring(0, 8);
+			regx = "^17(\\d{6})";
+			pattern = Pattern.compile(regx);
+			matcher = pattern.matcher(temp);
+			if(matcher.find()) {
+				//this.gsDistributionDate = matcher.group(1);
+				mnfSeqInfo.setPrdValidDe(matcher.group(1));
+			}else{
+				throw new IllegalArgumentException("Barcode(GS1-128) 유통일자는 AI최대유통일자(17) + 유통일자(6)로 구성되어야 합니다.");
+			}
+			barcode = barcode.substring(8);
+
+			// 제조번호 : AI로트번호(10)로 시작 ~ 20자 이하 제조번호 ~ AI일련번호(21) 이전
+			regx = "^10(.{1,20})21";
+			pattern = Pattern.compile(regx);
+			matcher = pattern.matcher(barcode);
+			if(matcher.find()) {
+				//this.gsMnfNo = matcher.group(1);
+				mnfSeqInfo.setMnfNo(matcher.group(1));
+			}else {
+				throw new IllegalArgumentException("Barcode(GS1-128) 제조번호는 AI로트번호(10)로 시작 되어 AI일련번호(21)로 끝나야 합니다.");
+			}
+			barcode = barcode.substring(mnfSeqInfo.getMnfNo().length()+2);
+
+			// 제품일련번호 : AI일련번호(21)로 시작 ~ 20자 이하 제조일련번호
+			regx = "^21(.{1,20}$)";
+			pattern = Pattern.compile(regx);
+			matcher = pattern.matcher(barcode);
+			if(matcher.find()) {
+				//this.gsMnfSeqNo = matcher.group(1);
+				mnfSeqInfo.setMnfSeq(matcher.group(1));
+			}else {
+				throw new IllegalArgumentException("Barcode(GS1-128) 제조일련번호는 AI일련번호(21)로 시작 되어야 합니다.");
+			}
+			return mnfSeqInfo;
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package cokr.xit.adds.biz.nims.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.zxing.NotFoundException;
 
+import cokr.xit.adds.biz.nims.model.BizNimsResponse;
 import cokr.xit.adds.core.util.XingUtils;
+import cokr.xit.adds.inf.nims.model.NimsApiDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * <pre>
@@ -31,23 +35,26 @@ import cokr.xit.adds.core.util.XingUtils;
  *
  * </pre>
  */
+@Tag(name = "QrController", description = "qrcode API")
 @RestController
 public class QrController {
 
-	@GetMapping("/biz/nims/v1/qrcodeForm")
+	@GetMapping("/api/biz/nims/v1/qrcodeForm")
 	public ModelAndView qrcodeForm() {
 		return new ModelAndView("/zxing/index.html");
 	}
 
-	@PostMapping("/biz/nims/v1/getQrcode")
-	public List<Map<String, Object>> uploadQrCode(
+	@PostMapping(value = "/api/biz/nims/v1/getQrcode", consumes = { "multipart/form-data" })
+	public List<NimsApiDto.MnfSeqInfo> uploadQrCode(
 		@RequestParam("uploadFiles")
 		final List<MultipartFile> multipartFiles
 	) {
-		return multipartFiles.stream().map(mf -> {
+		List<NimsApiDto.MnfSeqInfo> mnfSeqInfos = new ArrayList<>();
+
+		List<Map<String, String>> list = multipartFiles.stream().map(mf -> {
 			System.out.println(mf.getOriginalFilename());
 			System.out.println(mf.getSize());
-			Map<String, Object> map = new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 			try {
 				map.put("qrcode", XingUtils.readQrcodeFromFile(XingUtils.convert(mf)));
 				map.put("name", mf.getOriginalFilename());
@@ -56,5 +63,13 @@ public class QrController {
 			}
 			return map;
 		}).toList();
+
+		for(Map<String,String> map: list){
+			System.out.println(map.get("qrcode"));
+
+			BizNimsResponse.Barcode barcode = new BizNimsResponse.Barcode();
+			mnfSeqInfos.add(barcode.parseBarcode(map.get("qrcode")));
+		}
+		return mnfSeqInfos;
 	}
 }
