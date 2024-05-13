@@ -276,7 +276,6 @@ public class BizNimsResponse {
 			Pattern pattern = Pattern.compile(regx);
 			Matcher matcher = pattern.matcher(temp);
 			if(matcher.find()) {
-				//this.gsPrductCd = matcher.group(1);
 				mnfSeqInfo.setPrductCd(matcher.group(1));
 			}else{
 				throw new IllegalArgumentException("Barcode(GS1-128) 상품코드는 확장코드(0) + 상품코드(13)로 구성되어야 합니다.");
@@ -289,8 +288,8 @@ public class BizNimsResponse {
 			pattern = Pattern.compile(regx);
 			matcher = pattern.matcher(temp);
 			if(matcher.find()) {
-				//this.gsDistributionDate = matcher.group(1);
-				mnfSeqInfo.setPrdValidDe(matcher.group(1));
+				// 20xx년 유통일자
+				mnfSeqInfo.setPrdValidDe("20" + matcher.group(1));
 			}else{
 				throw new IllegalArgumentException("Barcode(GS1-128) 유통일자는 AI최대유통일자(17) + 유통일자(6)로 구성되어야 합니다.");
 			}
@@ -301,7 +300,6 @@ public class BizNimsResponse {
 			pattern = Pattern.compile(regx);
 			matcher = pattern.matcher(barcode);
 			if(matcher.find()) {
-				//this.gsMnfNo = matcher.group(1);
 				mnfSeqInfo.setMnfNo(matcher.group(1));
 			}else {
 				throw new IllegalArgumentException("Barcode(GS1-128) 제조번호는 AI로트번호(10)로 시작 되어 AI일련번호(21)로 끝나야 합니다.");
@@ -313,7 +311,6 @@ public class BizNimsResponse {
 			pattern = Pattern.compile(regx);
 			matcher = pattern.matcher(barcode);
 			if(matcher.find()) {
-				//this.gsMnfSeqNo = matcher.group(1);
 				mnfSeqInfo.setMnfSeq(matcher.group(1));
 			}else {
 				throw new IllegalArgumentException("Barcode(GS1-128) 제조일련번호는 AI일련번호(21)로 시작 되어야 합니다.");
