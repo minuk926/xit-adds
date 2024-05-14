@@ -16,7 +16,29 @@ app:
         placeinfoV1: /api/placeinfo_v1.do
         reportinfo: /api/reportinfo_ggg.do
     mois:
-      serverId: ADM405000069
+      sender:
+        systemId: ADM405000069
+        systemNm: ADDS
+        orgname: 용인시
+      receiver:
+        systemId: DOC131000001
+        userId: cskim
+      dataPath:
+        root: ${app.data.root.path}/exchange/data
+        # 송신 연계 보관
+        send: /send
+        # 송신오류
+        sender: /sender
+        # 임시송신함 - 송신 대상 임시 보관
+        sendTemp: /sendtemp/
+        # 수신 연계 보관
+        receive: /receive
+        # 수신 오류
+        receiver: /receiver
+        # 결재연계 임시수신함 - 수신 대상 임시 보관
+        receiveTemp: /receivetemp
+        # 연계에서 사용하는 임시 수신함
+        exreceivetemp: /exreceivetemp
     iros:
       url: https://apis.data.go.kr
       api-key: 0fTkYnZU6XjaAPAp6GzKW9Q6fYq8iaoSH9wKUZwz2PBjRXGM04aUgtO3a61xYGjL8nFZn4fjLGS9XErhMSXq%2Bw%3D%3D

@@ -9,7 +9,6 @@ import org.springframework.util.Base64Utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -43,17 +42,23 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class PackDto {
+    /**
+     * 헤더 정보 - 필수
+     */
     @JacksonXmlProperty
     @JsonProperty(required = true)
     protected Header header;
 
+    /**
+     * 본문  - 필수
+     */
     @JacksonXmlProperty
     @JsonProperty(required = true)
     protected Contents contents;
 
     /**
      * <pre>
-     * 전송 파일명
+     * 전송 파일명  - 필수
      * </pre>
      */
     @JacksonXmlProperty(localName = "filename", isAttribute = true)
@@ -67,7 +72,7 @@ public class PackDto {
     public static class Header {
         /**
          * <pre>
-         * docType 속성
+         * docType 속성  - 필수
          * send | fail |arrive | receive | invalid | submit | return |approval
          * 발송 | 실패  | 도달  | 수신     |사용자없음| 상신    | 반송   |결재
          *</pre>
@@ -78,7 +83,8 @@ public class PackDto {
 
         /**
          * <pre>
-         * 날자 : YYYY-MM-DD HH:mm:ss
+         * 날자 - 필수
+         * YYYY-MM-DD HH:mm:ss
          *</pre>
          */
         @JacksonXmlProperty
@@ -86,36 +92,28 @@ public class PackDto {
         protected String date;
 
         /**
-         * <pre>
-         * 송신시스템
-         *</pre>
+         * 송신시스템  - 필수
          */
         @JacksonXmlProperty
         @JsonProperty(required = true)
         protected String sender;
 
         /**
-         * <pre>
-         * 수신시스템
-         *</pre>
+         * 수신시스템  - 필수
          */
         @JacksonXmlProperty
         @JsonProperty(required = true)
         protected String receiver;
 
         /**
-         * <pre>
-         * 송신자ID
-         *</pre>
+         * 송신자 ID  - 필수
          */
         @JacksonXmlProperty(localName = "sender_userid")
         @JsonProperty(required = true)
         protected String senderUserid;
 
         /**
-         * <pre>
-         * 수신자ID
-         *</pre>
+         * 수신자 ID - 필수
          */
         @JacksonXmlProperty(localName = "receiver_userid")
         @JsonProperty(required = true)
@@ -132,42 +130,26 @@ public class PackDto {
 
         /**
          * <pre>
-         * 송신 기관명 - base64 encoding
-         * CDATA
+         * 송신 기관명  - 필수
+         * base64 encoding
          *</pre>
          */
         @JacksonXmlProperty(localName = "sender_orgname")
         @JsonProperty(required = true)
-        @JacksonXmlCData
         protected String senderOrgname;
-        // public String getSenderOrgname() {
-        //     return new String(Base64Utils.decodeFromString(senderOrgname));
-        // }
-        // public void setSenderOrgname(String senderOrgname) {
-        //     this.senderOrgname = Base64Utils.encodeToString(senderOrgname.getBytes(StandardCharsets.UTF_8));
-        // }
 
         /**
          * <pre>
-         * 송신 시스템명 - base64 encoding
-         * CDATA
-         *</pre>
+         * 송신 시스템명 - 필수
+         * base64 encoding
+         * </pre>
          */
         @JacksonXmlProperty(localName = "sender_systemname")
         @JsonProperty(required = true)
-        @JacksonXmlCData
         protected String senderSystemname;
-        // public String getSenderSystemname() {
-        //     return new String(Base64Utils.decodeFromString(senderSystemname));
-        // }
-        //public void setSenderSystemname(String senderSystemname) {
-        //    this.senderSystemname = Base64Utils.encodeToString(senderSystemname.getBytes(StandardCharsets.UTF_8));
-        //}
 
         /**
-         * <pre>
-         * 행정정보처리번호
-         *</pre>
+         * 행정정보처리번호 - 필수
          */
         @JacksonXmlProperty(localName = "administrative_num")
         @JsonProperty(required = true)
@@ -205,7 +187,7 @@ public class PackDto {
     public static class Type {
         /**
          * <pre>
-         * docType 속성
+         * docType 속성 - 필수
          * send|fail|arrive|receive|invalid|submit|return|approval
          *</pre>
          */
@@ -238,24 +220,17 @@ public class PackDto {
     public static class Content {
         /**
          * <pre>
-         * content 내용 - base64 encoding
-         * CDATA
-         *</pre>
+         * content 내용 - 필수
+         * base64 encoding
+         * </pre>
          */
         @XmlValue
         @JacksonXmlText
-        @JacksonXmlCData
         protected String value;
-        // public String getValue() {
-        //     return new String(Base64Utils.decodeFromString(value));
-        // }
-        // public void setValue(String value) {
-        //     this.value = Base64Utils.encodeToString(value.getBytes(StandardCharsets.UTF_8));
-        // }
 
         /**
          * <pre>
-         * content 내용의 의미
+         * content 내용의 의미 - 필수
          * exchange - 연계 본문 문서 파일
          * notification - 결재 처리 정보 통보 문서 파일
          * attch - 일반 첨부 파일
@@ -266,40 +241,37 @@ public class PackDto {
          */
         @JacksonXmlProperty(localName = "content-role", isAttribute = true)
         @JsonProperty(required = true)
+        @JacksonXmlCData
         protected String contentRole;
 
         /**
          * 인코딩 방식 - default base64
          */
         @JacksonXmlProperty(localName = "content-transfer-encoding", isAttribute = true)
+        @JacksonXmlCData
         protected String contentTransferEncoding = "base64";
 
         /**
-         * 파일이름 - base64 encoding
-         * CDATA
+         * 파일이름 - 필수
+         * base64 encoding
          */
         @JacksonXmlProperty(localName = "filename", isAttribute = true)
         @JsonProperty(required = true)
         @JacksonXmlCData
         protected String filename;
-        // public String getFilename() {
-        //     return new String(Base64Utils.decodeFromString(filename));
-        // }
-        // public void setFilename(String filename) {
-        //     this.filename = Base64Utils.encodeToString(filename.getBytes(StandardCharsets.UTF_8));
-        // }
-
 
         /**
          * content-type(MIME)
          */
         @JacksonXmlProperty(localName = "content-type", isAttribute = true)
+        @JacksonXmlCData
         protected String contentType;
 
         /**
          * charset
          */
         @JacksonXmlProperty(localName = "charset", isAttribute = true)
+        @JacksonXmlCData
         protected String charset;
 
         public Content(
@@ -318,10 +290,5 @@ public class PackDto {
             this.contentType = contentType;
             this.charset = charset;
         }
-    }
-
-    public void configureXmlMapper(XmlMapper xmlMapper) {
-        // 필수 필드 체크를 활성화
-        xmlMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
     }
 }

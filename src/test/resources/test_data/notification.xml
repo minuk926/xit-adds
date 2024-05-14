@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE EXCHANGE SYSTEM "exchange.dtd">
+<EXCHANGE>
+    <HEADER>
+        <COMMON>
+            <SENDER>
+                <SERVERID>hangjung_groupware1</SERVERID>
+                <USERID>jspark</USERID>
+            </SENDER>
+            <RECEIVER>
+                <SERVERID>hangjung</SERVERID>
+                <USERID>cskim</USERID>
+            </RECEIVER>
+            <TITLE>전보대상자  명단제출</TITLE>
+            <CREATED_DATE>2005-07-15 17:44:06</CREATED_DATE>
+            <ATTACHNUM>0</ATTACHNUM>
+            <ADMINISTRATIVE_NUM>1234</ADMINISTRATIVE_NUM>
+        </COMMON>
+        <DIRECTION>
+            <TO_ADMINISTRATIVE_SYSTEM>
+                <DOCNUM docnumcode="1310505-90">총무-90</DOCNUM>
+                <SANCTION_INFO status="완료">
+                    <LINES>
+                        <LINE>
+                            <LEVEL>1</LEVEL>
+                            <SANCTION type="기안" result="상신">
+                                <PERSON>
+                                    <USERID>honggilddong</USERID>
+                                    <NAME>홍길동</NAME>
+                                    <POSITION>주사</POSITION>
+                                    <DEPT>행정정보화팀</DEPT>
+                                    <ORG>행정자치부</ORG>
+                                </PERSON>
+                                <DATE>2005-07-16 10:05:03</DATE>
+                            </SANCTION>
+                        </LINE>
+                        <LINE>
+                            <LEVEL>2</LEVEL>
+                            <SANCTION type="검토" result="승인">
+                                <PERSON>
+                                    <USERID>chulsu</USERID>
+                                    <NAME>김철수</NAME>
+                                    <POSITION>사무관</POSITION>
+                                    <DEPT>행정정보화팀</DEPT>
+                                    <ORG>행정자치부</ORG>
+                                </PERSON>
+                                <DATE>2005-07-16 11:05:03</DATE>
+                            </SANCTION>
+                        </LINE>
+                        <LINE>
+                            <LEVEL>final</LEVEL>
+                            <SANCTION type="전결" result="승인">
+                                <PERSON>
+                                    <USERID>mjkim</USERID>
+                                    <NAME>김민주</NAME>
+                                    <POSITION>팀장</POSITION>
+                                    <DEPT>행정정보화팀</DEPT>
+                                    <ORG>행정자치부</ORG>
+                                </PERSON>
+                                <DATE/>
+                            </SANCTION>
+                        </LINE>
+                    </LINES>
+                </SANCTION_INFO>
+                <MODIFICATION_FLAG>
+                    <MODIFIABLE/>
+                </MODIFICATION_FLAG>
+            </TO_ADMINISTRATIVE_SYSTEM>
+        </DIRECTION>
+    </HEADER>
+</EXCHANGE>

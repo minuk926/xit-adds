@@ -1,8 +1,10 @@
 package cokr.xit.adds.core.util;
 
-import java.net.URLEncoder;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -11,13 +13,21 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.xml.sax.SAXException;
+
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import cokr.xit.adds.core.spring.exception.ApiCustomException;
 import cokr.xit.foundation.data.JSON;
@@ -97,20 +107,6 @@ public class ApiUtil {
 		}
 	}
 
-	public static String getUtf8UrlEncoding(final String str) {
-		if(!org.springframework.util.StringUtils.hasText(str)) return StringUtils.EMPTY;
-
-		try {
-			return URLEncoder.encode(
-				org.apache.commons.codec.binary.StringUtils.newStringUtf8(
-					org.apache.commons.codec.binary.StringUtils.getBytesUtf8(str)),
-				StandardCharsets.UTF_8
-			);
-		} catch (Exception e) {
-			throw ApiCustomException.create(e.getLocalizedMessage());
-		}
-	}
-
 	/**
 	 * NimsApi 호출 - x-www-form-urlencoded 방식
 	 * @param uri String
@@ -155,6 +151,14 @@ public class ApiUtil {
 		}
 	}
 
+	public static <T> T toObjByObj(final Object obj, final TypeReference<T> typeRef) {
+		try {
+			return ObjectUtils.isNotEmpty(obj)? new JSON().getObjectMapper().convertValue(obj, typeRef) : null;
+		} catch (IllegalArgumentException e) {
+			throw ApiCustomException.create(e.getLocalizedMessage());
+		}
+	}
+
 	public static void toData(final WebClient.Request request, final Object obj){
 		if(ObjectUtils.isEmpty(obj))	return;
 		//MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -164,19 +168,55 @@ public class ApiUtil {
 		}
 	}
 
-	/**
-	 * Object
-	 * -> MultiValueMap<String, String> return
-	 * @param obj Object
-	 * @return MultiValueMap<String, String>
-	 */
-	public static MultiValueMap<String, String> toMultiValue(final Object obj){
-		if(ObjectUtils.isEmpty(obj))	return null;
-		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-		JSONObject jsonObj = toObjByObj(obj, JSONObject.class);
-		for (Object key : jsonObj.keySet()) {
-			formData.add((String) key, (String) jsonObj.get(key));
+	public static boolean validateXml(final String xmlStr, final String xsdFilePathName)  {
+		try {
+			FileInputStream fis = new FileInputStream(xsdFilePathName);
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			Schema schema = sf.newSchema(new StreamSource(fis));
+
+			javax.xml.validation.Validator validator = schema.newValidator();
+			validator.validate(new StreamSource(new StringReader(xmlStr)));
+			return true;
+
+		} catch (SAXException | IOException e) {
+			throw ApiCustomException.create(e.getMessage());
 		}
-		return formData;
 	}
+
+	public static boolean validateXmlFromXmlStr(final String xmlStr, final String xsdFilePath)  {
+		try {
+			FileInputStream fis = new FileInputStream(xsdFilePath);
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			Schema schema = sf.newSchema(new StreamSource(fis));
+
+			javax.xml.validation.Validator validator = schema.newValidator();
+			validator.validate(new StreamSource(new StringReader(xmlStr)));
+			return true;
+
+		} catch (SAXException | IOException e) {
+			throw ApiCustomException.create(e.getMessage());
+		}
+	}
+
+	public static boolean validateXmlFromFile(String xmlFilePath, final String xsdFilePath)  {
+		try (FileInputStream fileInputStream = new FileInputStream(xmlFilePath)) {
+			byte[] bytes = fileInputStream.readAllBytes();
+			return validateXmlFromXmlStr(new String(bytes), xsdFilePath);
+		}catch (IOException e) {
+			throw ApiCustomException.create(e.getMessage());
+		}
+	}
+
+
+		public static void main(String[] args) {
+			File imageFile = new File("src/main/resources/static/images/approval.jpg");
+			ITesseract instance = new Tesseract();  // JNA Interface Mapping
+			try {
+				String result = instance.doOCR(imageFile);
+				System.out.println(result);
+			} catch (TesseractException e) {
+				System.err.println(e.getMessage());
+			}
+		}
+
 }

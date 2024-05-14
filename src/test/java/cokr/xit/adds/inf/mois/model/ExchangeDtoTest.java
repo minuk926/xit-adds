@@ -2,9 +2,9 @@ package cokr.xit.adds.inf.mois.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -16,10 +16,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
+import cokr.xit.adds.core.util.ApiUtil;
+import cokr.xit.foundation.data.XML;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -155,18 +158,84 @@ public class ExchangeDtoTest {
         try (FileWriter w = new FileWriter("exchange.xml")) {
             XMLStreamWriter sw = factory.createXMLStreamWriter(w);
             sw.writeStartDocument("EUC-KR", "1.0");
-            sw.writeDTD("\n"+dtd);
+            //sw.writeDTD("\n"+dtd);
+            sw.writeDTD("\n");
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.writeValue(sw, dto);
 
-            StringWriter swr = new StringWriter();
-            mapper.writeValue(swr, dto);
-            System.out.println(swr.toString());
+            ApiUtil.validateXmlFromFile("exchange.xml", "src/main/resources/xsd/exchange.xsd");
 
         }catch (XMLStreamException e) {
             e.printStackTrace();
         }
     }
+
+    @DisplayName("전자결재 response xml read 테스트")
+    @Test
+    public void exchangeResXmlReadTest() throws IOException {
+        FileInputStream fileInputStream = new FileInputStream("src/test/resources/test_data/notification.xml");
+        byte[] bytes = fileInputStream.readAllBytes();
+        String content = new String(bytes, "EUC-KR");
+
+        JacksonXmlModule jacksonXmlModule = new JacksonXmlModule();
+        jacksonXmlModule.setDefaultUseWrapper(false);
+        //ObjectMapper xmlMapper = new XmlMapper(jacksonXmlModule);
+        XmlMapper xmlMapper = new XmlMapper(jacksonXmlModule);
+        xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        ExchangeDto dto
+            = xmlMapper.readValue(content, ExchangeDto.class);
+
+        assertNotNull(dto);
+
+        xmlMapper.writeValue(System.out, dto);
+
+        XML xml = new XML();
+        //ApiUtil.validateXmlFromXmlStr(content, "src/main/resources/xsd/pack.xsd");
+
+        ExchangeDto dto2 = xml.parse(content, new TypeReference<ExchangeDto>() {});
+        log.info("dto: {}", dto2);
+        xml.write(System.out, dto2, true);
+
+        // assertEquals("senderOrgname", new String(Base64Utils.decodeFromString(dto.getHeader().getSenderOrgname())));
+        // assertEquals("senderSystemname", new String(Base64Utils.decodeFromString(dto.getHeader().getSenderSystemname())));
+        // assertEquals("filename", new String(Base64Utils.decodeFromString(dto.getContents().getContent().get(0).getFilename())));
+        // assertEquals("content-value", new String(Base64Utils.decodeFromString(dto.getContents().getContent().get(0).getValue())));
+    }
+
+    @DisplayName("전자결재 send xml read 테스트")
+    @Test
+    public void exchangeSendXmlReadTest() throws IOException {
+        FileInputStream fileInputStream = new FileInputStream("D:\\data\\exchange\\data\\sendtemp\\cskimADM405000069DOC13100000120240513518034846931\\exchange.xml");
+        byte[] bytes = fileInputStream.readAllBytes();
+        String content = new String(bytes, "EUC-KR");
+
+        JacksonXmlModule jacksonXmlModule = new JacksonXmlModule();
+        jacksonXmlModule.setDefaultUseWrapper(false);
+        //ObjectMapper xmlMapper = new XmlMapper(jacksonXmlModule);
+        XmlMapper xmlMapper = new XmlMapper(jacksonXmlModule);
+        xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        ExchangeDto dto
+            = xmlMapper.readValue(content, ExchangeDto.class);
+
+        assertNotNull(dto);
+
+        xmlMapper.writeValue(System.out, dto);
+
+        XML xml = new XML();
+        //ApiUtil.validateXmlFromXmlStr(content, "src/main/resources/xsd/pack.xsd");
+
+        ExchangeDto dto2 = xml.parse(content, new TypeReference<ExchangeDto>() {});
+        log.info("dto: {}", dto2);
+        xml.write(System.out, dto2, true);
+
+        // assertEquals("senderOrgname", new String(Base64Utils.decodeFromString(dto.getHeader().getSenderOrgname())));
+        // assertEquals("senderSystemname", new String(Base64Utils.decodeFromString(dto.getHeader().getSenderSystemname())));
+        // assertEquals("filename", new String(Base64Utils.decodeFromString(dto.getContents().getContent().get(0).getFilename())));
+        // assertEquals("content-value", new String(Base64Utils.decodeFromString(dto.getContents().getContent().get(0).getValue())));
+    }
+
 
     private static ExchangeDto getExchangeDto() {
         ExchangeDto.Common common = ExchangeDto.Common.builder()
@@ -251,19 +320,19 @@ public class ExchangeDtoTest {
             .build();
 
         ExchangeDto.Direction direction = ExchangeDto.Direction.builder()
-            // .toDocumentSystem(
-            //     ExchangeDto.ToDocumentSystem.builder()
-            //         .notification("all")
-            //         .modificationFlag(
-            //             ExchangeDto.ModificationFlag.builder()
-            //                 .modifiable(
-            //                     ExchangeDto.Modifiable.builder()
-            //                         .modifyflag("yes")
-            //                         .build())
-            //                 .build())
-            //         .build()
-            // )
-            .toAdministrativeSystem(administrativeSystem)
+            .toDocumentSystem(
+                ExchangeDto.ToDocumentSystem.builder()
+                    .notification("all")
+                    .modificationFlag(
+                        ExchangeDto.ModificationFlag.builder()
+                            .modifiable(
+                                ExchangeDto.Modifiable.builder()
+                                    .modifyflag("yes")
+                                    .build())
+                            .build())
+                    .build()
+            )
+            //.toAdministrativeSystem(administrativeSystem)
             .build();
 
         ExchangeDto.Header header = ExchangeDto.Header.builder()
