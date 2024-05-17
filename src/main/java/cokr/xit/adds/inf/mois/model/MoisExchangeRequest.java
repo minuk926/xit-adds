@@ -50,5 +50,9 @@ public class MoisExchangeRequest {
     @NotEmpty(message = "폐기관리ID ID는 필수 입니다")
     private String dscdmngId;
 
+    @Schema(requiredMode = REQUIRED, title = "마약류취급자식별번호", description = "마약류취급자식별번호", example = "D04343033")
+    @NotEmpty(message = "마약류취급자식별번호는 필수 입니다")
+    private String bsshCd;
+
     private List<MultipartFile> files;
 }

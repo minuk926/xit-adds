@@ -18,4 +18,5 @@ import cokr.xit.adds.inf.mois.model.MoisExchangeRequest;
  */
 public interface InfMoisService {
     void sendExchange(MoisExchangeRequest dto);
+    void saveResultExchange();
 }

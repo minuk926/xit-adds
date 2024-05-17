@@ -153,7 +153,7 @@ public class BizNimsResponse {
 		// private String prtmSeNm;
 	}
 
-	/**
+		/**
 	 * <pre>
 	 * Barcode(GS1-128) 조회 response
 	 * 최소 30자리 이상

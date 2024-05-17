@@ -13,15 +13,16 @@ select *
 from tb_prduct_info
 where prduct_cd in( '8806717024900', '8806718050823');
 
+/**
+  H00008333, D04343033,
+ */
 select *
 from tb_bssh_info
 where 1=1
 -- and bssh_cd = 'H00099001'
 and bssh_nm like '수지미래%';
+-- and bssh_nm like '메디칼%';
 
-select *
-from tb_storge_info
-where bssh_cd = 'H00099001';
 
 select tdm.dscdmng_id                       /* 폐기관리ID */
      , '' AS uid                            /* 보고자식별ID */
@@ -56,7 +57,6 @@ select tdm.dscdmng_id                       /* 폐기관리ID */
      , '' AS uid                            /* 보고자식별ID */
      , tdmd.dscdmng_sn                      /* 폐기관리순번 */
      , '' AS usrRptLnIdNo                   /* 사용자보고라인식별번호 */
-     , tsi.storge_no AS storgeNo                 /* 저장소번호 */
      , '1102' AS mvmnTyCd                   /* 이동유형코드 */
      , tpi.prduct_cd                        /* 제품코드 */
      , '' AS mnfNo                          /* 제조번호 */
@@ -78,7 +78,6 @@ select tdm.dscdmng_id                       /* 폐기관리ID */
     on tdm.dscdmng_id = tdmd.dscdmng_id
   join tb_prduct_info tpi
     on tdmd.prduct_cd = tpi.prduct_cd
-  left outer join tb_storge_info tsi
     on tdm.bssh_cd = tsi.bssh_cd
  where tdm.dscdmng_id = '2024040001';
 

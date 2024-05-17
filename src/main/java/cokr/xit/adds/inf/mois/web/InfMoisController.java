@@ -43,4 +43,16 @@ public class InfMoisController {
 
         infMoisService.sendExchange(dto);
     }
+
+    /**
+     * 온나라 전자 결재 결과 수신
+     * 서버 시작후 1분후 10분마다 실행
+     */
+    @Operation(summary = "온나라 전자 결재 결과 수신", description = "온나라 전자 결재 결과 수신")
+    @PostMapping(value = "/saveResultExchange")
+    //@Scheduled(fixedRate = 600000, initialDelay = 60000)
+    public void saveResultExchange() {
+
+        infMoisService.saveResultExchange();
+    }
 }

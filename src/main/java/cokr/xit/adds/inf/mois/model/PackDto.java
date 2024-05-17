@@ -15,11 +15,16 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.xml.bind.annotation.XmlValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * <pre>
@@ -67,8 +72,9 @@ public class PackDto {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @NoArgsConstructor
-    @Builder
+    @SuperBuilder
     @Getter
+    @Setter
     public static class Header {
         /**
          * <pre>
@@ -155,6 +161,21 @@ public class PackDto {
         @JsonProperty(required = true)
         protected String administrativeNum;
 
+        /**
+         * <pre>
+         * TODO: senderOrgname, senderSystemname base64 encoding 여부 확인
+         * @param type
+         * @param date
+         * @param sender
+         * @param receiver
+         * @param senderUserid
+         * @param receiverUserid
+         * @param senderEmail
+         * @param senderOrgname
+         * @param senderSystemname
+         * @param administrativeNum
+         * </pre>
+         */
         public Header(
             Type type,
             String date,
@@ -290,5 +311,16 @@ public class PackDto {
             this.contentType = contentType;
             this.charset = charset;
         }
+    }
+
+    @Schema(name = "MoisPackRes", description = "전자결재 결과 조회 response DTO")
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @SuperBuilder
+    @EqualsAndHashCode(callSuper = true)
+    public static class MoisPackRes extends Header {
+        private String docType;
+
     }
 }

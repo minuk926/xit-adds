@@ -206,7 +206,7 @@ public class ExchangeDtoTest {
     @DisplayName("전자결재 send xml read 테스트")
     @Test
     public void exchangeSendXmlReadTest() throws IOException {
-        FileInputStream fileInputStream = new FileInputStream("D:\\data\\exchange\\data\\sendtemp\\cskimADM405000069DOC13100000120240513518034846931\\exchange.xml");
+        FileInputStream fileInputStream = new FileInputStream("D:\\data\\exchange\\data\\sendtemp\\cskimADM405000069DOC13100000120240513710121294549\\exchange.xml");
         byte[] bytes = fileInputStream.readAllBytes();
         String content = new String(bytes, "EUC-KR");
 

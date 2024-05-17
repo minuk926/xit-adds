@@ -1,6 +1,5 @@
 package cokr.xit.adds.core.util;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -22,10 +21,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.xml.sax.SAXException;
-
-import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -206,17 +201,4 @@ public class ApiUtil {
 			throw ApiCustomException.create(e.getMessage());
 		}
 	}
-
-
-		public static void main(String[] args) {
-			File imageFile = new File("src/main/resources/static/images/approval.jpg");
-			ITesseract instance = new Tesseract();  // JNA Interface Mapping
-			try {
-				String result = instance.doOCR(imageFile);
-				System.out.println(result);
-			} catch (TesseractException e) {
-				System.err.println(e.getMessage());
-			}
-		}
-
 }

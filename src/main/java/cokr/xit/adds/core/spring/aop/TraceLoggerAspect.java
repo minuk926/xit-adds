@@ -261,6 +261,7 @@ log.info("@@@@@@@@@@@@@@@@@로깅 start : [\n{}\n]",MDC.getCopyOfContextMap());
     private void requestLog(HttpServletRequest request, JSONObject params) {
 
         if (log.isDebugEnabled()) {
+            if(request == null) return;
             Map<String, Object> map = new LinkedHashMap<>();
             //sb.append("Ajax Call : " + "XMLHttpRequest".equals(request.getHeader(Globals.AJAX_HEADER))).append("\n");
             map.put("URI", request.getRequestURI());
@@ -285,6 +286,7 @@ log.info("@@@@@@@@@@@@@@@@@로깅 start : [\n{}\n]",MDC.getCopyOfContextMap());
 
     @SuppressWarnings("unchecked")
     private JSONObject getParams(HttpServletRequest request) {
+        if(request == null) return new JSONObject();
         JSONObject jsonObject = new JSONObject();
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {

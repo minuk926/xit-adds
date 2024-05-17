@@ -36,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 	DatasourceConfig.class,
 	TransactionConfig.class
 })
+//@EnableScheduling
 public class XitAddsApplication {
 
 	static final List<String> basePackages = new ArrayList<>(

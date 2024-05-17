@@ -28,15 +28,15 @@ app:
         # 송신 연계 보관
         send: /send
         # 송신오류
-        sender: /sender
+        senderr: /senderr
         # 임시송신함 - 송신 대상 임시 보관
         sendTemp: /sendtemp/
         # 수신 연계 보관
-        receive: /receive
+        receive: /receive/
         # 수신 오류
-        receiver: /receiver
+        receiveerr: /receiveerr
         # 결재연계 임시수신함 - 수신 대상 임시 보관
-        receiveTemp: /receivetemp
+        receiveTemp: /receivetemp/
         # 연계에서 사용하는 임시 수신함
         exreceivetemp: /exreceivetemp
     iros:
