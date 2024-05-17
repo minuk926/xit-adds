@@ -15,7 +15,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -210,97 +209,58 @@ public class InfMoisServiceBean extends AbstractServiceBean implements InfMoisSe
         List<File> files = listFilesUsingDirectoryStream(dataRootPath + receiveTemp);
         files.sort((a, b) -> b.getName().compareTo(a.getName()));
 
-        ArrayList<Map<String, String>> arrRcvTgtFiles = new ArrayList<>();
-        Map<String, String> mapRcvTgtFile = new HashMap<>();
-        for(File f : files){
-            if(!f.isFile())  continue;
+        List<Map<String, String>> rcvTgtFiles = new ArrayList<>();
+        List<PackDto.MoisPackRes> dtoList = new ArrayList<>();
+        for(File f : files) {
+            if (!f.isFile())
+                continue;
 
             String srcPath = f.getParent();
             String srcFileName = f.getName();
-            //String parentDir = f.getParent().substring(lastIndexOf("/"));
-            //String xmlFileNm = tempFileName.split(delimiter)[0];
             log.info("srcPath : {}", srcPath);
             log.info("srcFileNam : {}", srcFileName);
-            //log.info("parent dir : {}", f.getParent().lastIndexOf("/"));
+            rcvTgtFiles.add(Map.of(
+                "inFolder", srcPath + delimiter + srcFileName,
+                "outFolder",
+                dataRootPath + receiveDir + srcPath.substring(srcPath.lastIndexOf(delimiter) + 1) + delimiter,
+                "delFolder", srcPath
+            ));
 
             File file = new File(srcPath, srcFileName);
-            try {
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = dbf.newDocumentBuilder();
-                builder.setEntityResolver((String publicId, String systemId)
-                        -> {
-                        if (systemId.contains("pack.dtd")) { //pack.dtd 제외
-                            return new InputSource(new StringReader(""));
-                        } else {
-                            return null;
-                        }
-                    }
-                );
-
-                Document doc = builder.parse(file);
-                doc.getDocumentElement().normalize();
-
-                Element root = doc.getDocumentElement();
-                log.info(root.getTagName());
-                NodeList list = root.getElementsByTagName("type");
-                log.info("Node List Length:"+list.getLength());
-
-                PackDto.MoisPackRes moisPackRes = new PackDto.MoisPackRes();
-                for(int i=0;i<list.getLength();i++){
-                    Element element = (Element)list.item(i);
-                    moisPackRes.setDocType(element.getAttribute("doc-type"));
-                    log.info("doc_type:"+moisPackRes.getDocType());
-                }
-
-                NodeList CD_List = doc.getElementsByTagName("header");
-                for(int CD_idx=0; CD_idx<CD_List.getLength(); CD_idx++){
-                    Node CD_Node =  CD_List.item(CD_idx);
-
-                    if(CD_Node.getNodeType() == Node.ELEMENT_NODE){
-                        Element eElement = (Element) CD_Node;
-
-                        moisPackRes.setSender(getTagValue("sender",eElement));
-                        moisPackRes.setReceiver(getTagValue("receiver",eElement));
-                        moisPackRes.setAdministrativeNum(getTagValue("administrative_num",eElement));
-                        moisPackRes.setSenderUserid(getTagValue("sender_userid",eElement));
-                        moisPackRes.setReceiverUserid(getTagValue("receiver_userid",eElement));
-                        moisPackRes.setDate(getTagValue("date",eElement));
-                        moisPackRes.setSenderEmail(getTagValue("sender_email",eElement));
-                    }
-                }
-
-                // FIXME: 수신 결과 처리
-                //
-                //
-                //
-                mapRcvTgtFile.clear();
-                mapRcvTgtFile.put("inFolder", srcPath + delimiter + srcFileName);
-                mapRcvTgtFile.put("outFolder", dataRootPath + receiveDir + srcPath.substring(srcPath.lastIndexOf(delimiter)+1) + delimiter);
-                mapRcvTgtFile.put("delFolder", srcPath);
-                arrRcvTgtFiles.add(mapRcvTgtFile);
-            }catch (ParserConfigurationException | SAXException | IOException e) {
-                throw ApiCustomException.create(e.getMessage());
-            }
-
-            try {
-                fileMove(mapRcvTgtFile.get("inFolder"), mapRcvTgtFile.get("outFolder")); //수신파일 이동
-                deleteDirectory(mapRcvTgtFile.get("delFolder")); //파일삭제 후 해당 파일명으로 unpack 되어 있는 디렉토리 삭제
-            } catch (Exception e) {
-                for(Map<String, String> m : arrRcvTgtFiles) {
-                    String[] items = m.get("inFolder").split(delimiter);
-                    String fileName = items[items.length-1];
-                    String inFile = m.get("outFolder")+fileName;
-                    String outFile = m.get("inFolder").replace(fileName, "");
-
-                    File tmp = new File(inFile);
-                    if(!(tmp.exists() && tmp.isFile()))
-                        continue;
-
-                    fileMove(inFile, outFile);
-                }
-                throw ApiCustomException.create("(전자결재 연계 수신)파일 이동 및 디렉토리 제거 중 오류 발생::"+e.getMessage());
-            }
+            parseExchangeResult(file, dtoList);
         }
+
+        /////////////////////////////////////////////////////////////
+        // FIXME: 수신 결과 처리
+        /////////////////////////////////////////////////////////////
+        //
+        //
+        for (PackDto.MoisPackRes dto : dtoList) {
+            // 수신처리
+        }
+
+        // receivetemp -> receive file move
+        try {
+            for(Map<String, String> m : rcvTgtFiles) {
+                fileMove(m.get("inFolder"), m.get("outFolder"));
+                deleteDirectory(m.get("delFolder"));
+            }
+        } catch (Exception e) {
+            for(Map<String, String> m : rcvTgtFiles) {
+                String[] items = m.get("inFolder").split(delimiter);
+                String fileName = items[items.length-1];
+                String inFile = m.get("outFolder")+fileName;
+                String outFile = m.get("inFolder").replace(fileName, "");
+
+                File tmp = new File(inFile);
+                if(!(tmp.exists() && tmp.isFile()))
+                    continue;
+
+                fileMove(inFile, outFile);
+            }
+            throw ApiCustomException.create("(전자결재 연계 수신)파일 이동 및 디렉토리 제거 중 오류 발생::"+e.getMessage());
+        }
+
     }
 
     private void createExchangeXml(String pathName, MoisExchangeRequest reqDto, NimsApiDto.BsshInfoSt bsshInfoSt) {
@@ -567,6 +527,58 @@ public class InfMoisServiceBean extends AbstractServiceBean implements InfMoisSe
         Element person_org = doc.createElement("ORG");
         person.appendChild(person_org);
         person_org.appendChild(doc.createTextNode(org));
+    }
+
+    private void parseExchangeResult(File file, List<PackDto.MoisPackRes> dtoList) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            builder.setEntityResolver((String publicId, String systemId)
+                    -> {
+                    if (systemId.contains("pack.dtd")) { //pack.dtd 제외
+                        return new InputSource(new StringReader(""));
+                    } else {
+                        return null;
+                    }
+                }
+            );
+
+            Document doc = builder.parse(file);
+            doc.getDocumentElement().normalize();
+
+            Element root = doc.getDocumentElement();
+            log.info(root.getTagName());
+            NodeList list = root.getElementsByTagName("type");
+            log.info("Node List Length:" + list.getLength());
+
+            PackDto.MoisPackRes moisPackRes = new PackDto.MoisPackRes();
+            for (int i = 0; i < list.getLength(); i++) {
+                Element element = (Element)list.item(i);
+                moisPackRes.setDocType(element.getAttribute("doc-type"));
+                log.info("doc_type:" + moisPackRes.getDocType());
+            }
+
+            NodeList CD_List = doc.getElementsByTagName("header");
+            for (int CD_idx = 0; CD_idx < CD_List.getLength(); CD_idx++) {
+                Node CD_Node = CD_List.item(CD_idx);
+
+                if (CD_Node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element)CD_Node;
+
+                    moisPackRes.setSender(getTagValue("sender", eElement));
+                    moisPackRes.setReceiver(getTagValue("receiver", eElement));
+                    moisPackRes.setAdministrativeNum(getTagValue("administrative_num", eElement));
+                    moisPackRes.setSenderUserid(getTagValue("sender_userid", eElement));
+                    moisPackRes.setReceiverUserid(getTagValue("receiver_userid", eElement));
+                    moisPackRes.setDate(getTagValue("date", eElement));
+                    moisPackRes.setSenderEmail(getTagValue("sender_email", eElement));
+                }
+            }
+            dtoList.add(moisPackRes);
+
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw ApiCustomException.create(e.getMessage());
+        }
     }
 
     private String getTagValue(String sTag, Element eElement) {
